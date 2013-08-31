@@ -13,3 +13,5 @@
   * recursive via shell -- i.e. process all Season subfolders
   * remotely via plink.exe
 * manages traditional "S01E01" and dated "2013-08-01" TV show naming formats
+
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/tardisIVR.png?raw=true "tardisIVR Blueprint")
