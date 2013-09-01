@@ -5,8 +5,8 @@
 ## what is this?
 * not perfect (alpha)
 * blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV.
-* in-a-nutshell a Windows host (front-end) for file management and sharing.  a Linux guest (back-end) for download, transcode, rename, and tag.
-  * a Windows host serving a Linux guest running; SABnzbd, SickBeard, CouchPotato, HeadPhones
+* in-a-nutshell...
+  * a Windows host (front-end) for file management and sharing.  a Linux guest (back-end) for download, transcode, rename, and tag. (SABnzbd, SickBeard, CouchPotato, HeadPhones)
   * post-processing script (tardisIVRvideo.sh) encodes and tags files for iTunes/AppleTV.
 
 ## what you'll need
