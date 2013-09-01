@@ -13,7 +13,7 @@
 * a Windows host w/ Hypervisor (Win8/Hyper-V)
 * a Linux guest (ubuntu-12.04.2-server-amd64.iso)
   * 1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
-* working install of SABnzbd, SickBeard, CouchPotato
+* working knowledge of SABnzbd, SickBeard, CouchPotato
 * usenet account, nzb index account, etc
 
 ### INSTALL.md
