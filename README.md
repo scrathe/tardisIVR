@@ -27,8 +27,8 @@
   * regex supporting traditional "S01E01" and dated "2013-08-01" TV show naming formats
 * improved SABnzbd rename stripping; PROPER, 1080p, 720p, etc
 
-### tardisIVRvideo.sh arguments
-##### standard SABnzbd post-processing arguements
+### tardisIVRvideo.sh usage
+*standard SABnzbd post-processing arguments*
 ```
 $1=DIR="/media/tardis-x/media/Movies/Movie (2013)/"
 $2=NZB_FILE="Movie (2013).nzb"
@@ -38,12 +38,12 @@ $5=CATEGORY="movies"
 $6=GROUP="alt.binaries.teevee"
 $7=STATUS="0"
 ```
-##### additional tardisIVRvideo.sh arguments
+*additional tardisIVRvideo.sh arguments*
 ```
 $8=tag   # "tag" using AtomicParsley rather than full HandBrake re-encode processing
 ```
 ##### example shell usage
-TV encode and tag
+**TV encode and tag**
 ```
 $1=DIR, $5=CATEGORY
 ```
@@ -51,7 +51,7 @@ $1=DIR, $5=CATEGORY
 cd /media/TV/Show Name
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x
 ```
-TV tag
+**TV tag**
 ```
 $1=DIR, $5=CATEGORY, and/or $8 if "tag" only -- no re-encode
 ```
@@ -59,20 +59,18 @@ $1=DIR, $5=CATEGORY, and/or $8 if "tag" only -- no re-encode
 cd /media/TV/Show Name
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
 ```
-Movie
-
+**Movie**
 ```
 cd /media/Movies/Movie Name (2013)
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x tag
 ```
-TV recurse thru Season directories and tag
-
+**TV recurse thru Season directories and tag**
 ```
 cd /media/TV/Show Name
 for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv x x tag ; done
 ```
-!!! bug when using recursive.  cleanup leftover files; cast.jpg, cast.jpg.1, .2, etc
-
+**!!! bugs**
+* when using recursive, cleanup leftover files; cast.jpg, cast.jpg.1, .2, etc.  fixup -- 
 ```
 find -name cast.jpg* -exec rm {} \;
 ```
