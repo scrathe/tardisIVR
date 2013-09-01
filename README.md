@@ -21,7 +21,7 @@
   * locally via shell
   * recursive via shell -- i.e. process all Season subfolders
   * remotely via windows/plink.exe
-* re-uses post-processing folder workflow in SickBeard and CouchPotato
+* uses post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
 * tags Movies with Title, Year, Artwork
 * tags TV shows with Title, Season, Episode, Episode Name, Artwork
   * regex supporting traditional "S01E01" and dated "2013-08-01" TV show naming formats
