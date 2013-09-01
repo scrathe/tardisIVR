@@ -74,6 +74,13 @@ if [[ $CATEGORY = "movies" ]]; then
 
    # find locally available artwork
    cd "$DIR"
+   if [ $? -ne 0 ]; then
+   echo "$?"
+   echo "!!! ERROR, cd '$DIR'"
+   date
+   exit 1
+   fi
+
    find . -type f -maxdepth 1 -name '*.jpg' -exec mv '{}' "$movieartwork$NAME.jpg" \;
 
 ########################################
@@ -103,10 +110,11 @@ if [[ $CATEGORY = "movies" ]]; then
    
    # move all video files into the main processing folder
    cd "$DIR"
-   
    # finding files larger than 300MB for processing and delete files smaller than 30MB
    find "$DIR" -size +307200k -exec mv {} "$DIR" \;
    find "$DIR" -size -30720k -type f -exec rm {} \;
+   echo "  - mv errors above are ok."
+   echo
 
 ########################################
 # Join AVIs using avimerge or mencoder
@@ -139,6 +147,13 @@ if [[ $CATEGORY = "movies" ]]; then
    regex="(.*) \(([0-9]{4})\).*"
 
    cd "$DIR"
+   if [ $? -ne 0 ]; then
+   echo "$?"
+   echo "!!! ERROR, cd '$DIR'"
+   date
+   exit 1
+   fi
+
    # find media files to convert
    for i in *.mkv *.avi *.m4v *.mp4 *.wmv *.iso *.img *.ts; do
    NAME=${i%.*}
@@ -170,15 +185,12 @@ if [[ $CATEGORY = "movies" ]]; then
 ########################################
 
    # convert using handbrake
-   # but skip if already .m4v
-   if [[ $i == *.m4v ]]; then
-   echo "  - HandBrake skipping .m4v"
-   else
    echo "  - Transcoding!!!"
-   echo handbrake-cli -i "$i" -o "$movie_dest_file" --preset="$movie_preset"
+   echo handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset"
    echo
-   handbrake-cli -i "$i" -o "$movie_dest_file" --preset="$movie_preset" > /dev/null 2>&1
-   fi
+#   handbrake-cli -i "$i" -o "$movie_dest_file" --preset="$movie_preset" > /dev/null 2>&1
+   handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
+   done
 
    if [ $? != 0 ]; then
    echo "$?"
@@ -188,10 +200,11 @@ if [[ $CATEGORY = "movies" ]]; then
    fi
 
    # check output file created by handbrake
-   ls -l "$movie_dest_file" > /dev/null 2>&1
+#   ls -l "$movie_dest_file" > /dev/null 2>&1
+   ls -l "atomicFile.m4v" > /dev/null 2>&1
    if [[ $? -ne 0 ]]; then
    echo "$i"
-   echo "!!! ERROR, HandBrake \$movie_dest_file missing"
+   echo "!!! ERROR, HandBrake atomicFile.m4v missing"
    date
    exit 1
    continue
@@ -204,11 +217,11 @@ if [[ $CATEGORY = "movies" ]]; then
    # if artwork is available locally then tag.
    if [[ -e $(find "$movieartwork" -maxdepth 1 -name "$NAME.jpg") ]]; then
    echo "  - AtomicParsley!!!  tagging w/local artwork."
-   atomicparsley "$movie_dest_file" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
+   atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
    else
    # just tag
    echo "  - AtomicParsley!!!  tagging w/o artwork."
-   atomicparsley "$movie_dest_file" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
+   atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
    fi
    
    if [ $? != 0 ]; then
@@ -221,6 +234,8 @@ if [[ $CATEGORY = "movies" ]]; then
    # move the transcoded file to a folder.
    echo "  - Moved transcoded file to folder."
    echo "  - mv "$movie_dest_file" "$movie_dest_folder""
+# improve this
+   mv "atomicFile.m4v" "$movie_dest_file"
    mv "$movie_dest_file" "$movie_dest_folder"
 
    if [ $? -ne 0 ]; then
@@ -232,16 +247,10 @@ if [[ $CATEGORY = "movies" ]]; then
    echo
    
    # move the original downloaded file to a folder.
+   # don't fail if none is found.  i.e. re-encoding (moved) existing .m4v
    echo "  - Moved original downloaded file to folder."
-   echo "  - mv "$i" "$unwatched_dest_folder""
-   mv "$i" "$unwatched_dest_folder"
-
-   if [ $? -ne 0 ]; then
-   echo "$?"
-   echo "!!! ERROR, mv exit code"
-   date
-   exit 1
-   fi
+   echo "  - mv "$i" "$postproc_dest_folder$i""
+   mv "$i" "$postproc_dest_folder$i"
    echo
 
 # untested
@@ -270,7 +279,6 @@ if [[ $CATEGORY = "movies" ]]; then
    echo
    date
    echo "  - COMPLETED!    $movie_dest_file"
-   done
 fi
 
 ########################################
@@ -289,13 +297,19 @@ fi
 
    # custom processing for shows
    # regex matches: the soup - 2013-08-01 - episode name.xyz
-   regex_soup="([tT][hH][eE]\s[sS][oO][uU][pP])[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
+   regex_soup="([tT][hH][eE]\s[sS][oO][uU][pP])[([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[(.*).*"
 
    if [[ $CATEGORY = "tv" ]]; then
    # stops error printing in loop if there are no video files in the folder
    shopt -s nullglob
 
    cd "$DIR"
+   if [ $? -ne 0 ]; then
+   echo "$?"
+   echo "!!! ERROR, cd '$DIR'"
+   date
+   exit 1
+   fi
 
    # Finding files and deleting any smaller than 30MB
    # this helps remove sample files that Sabnzbd accidentally downloads
@@ -348,16 +362,24 @@ fi
    season=$year
    episode=$month$day
 
+   # convert double space to single
+   show_name=$(echo $show_name|sed 's/\s\s/\s/g')
+   episode_name=$(echo $episode_name|sed 's/\s\s/\s/g')
+
 ## research fixup episode_name
 #  episode_name=$(echo $episode_name|sed 's/[- .][pP][dD][tT][vV].*//g')
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
-   # strip everything after HDTV
-   episode_name=$(echo $episode_name|sed 's/[- .][hH][dD][tT][vV].*//g')
+   # strip everything after " - HDTV"
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}[hH][dD][tT][vV].*//g')
+   # strip WEBRIP
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}[wW][eE][bB][rR][iI][pP].*//g')
+   # strip 1080P
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}1080[pP].*//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- .][7][2][0][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}720[pP].*//g')
    # strip PROPER
-   episode_name=$(echo $episode_name|sed 's/[- .]PROPER.*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}PROPER.*//g')
 
    # destination filename
    tv_dest_file=$show_name" - "$year-$month-$day".m4v"
@@ -378,14 +400,24 @@ fi
    season=$year
    episode=$month$day
 
+   # convert double space to single
+   show_name=$(echo $show_name|sed 's/\s\s/\s/g')
+   episode_name=$(echo $episode_name|sed 's/\s\s/\s/g')
+
 ## research fixup episode_name
 #  episode_name=$(echo $episode_name|sed 's/[- .][pP][dD][tT][vV].*//g')
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
-   # strip everything after HDTV
-   episode_name=$(echo $episode_name|sed 's/[- .][hH][dD][tT][vV].*//g')
+   # strip everything after " - HDTV"
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}[hH][dD][tT][vV].*//g')
+   # strip WEBRIP
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}[wW][eE][bB][rR][iI][pP].*//g')
+   # strip 1080P
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}1080[pP].*//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- .][7][2][0][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}720[pP].*//g')
+   # strip PROPER
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}PROPER.*//g')
 
    # destination filename
    tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
@@ -402,6 +434,25 @@ fi
    episode=${BASH_REMATCH[3]}
    episode_name=${BASH_REMATCH[4]}
 
+   # convert double space to single
+   show_name=$(echo $show_name|sed 's/\s\s/\s/g')
+   episode_name=$(echo $episode_name|sed 's/\s\s/\s/g')
+
+## research fixup episode_name
+#  episode_name=$(echo $episode_name|sed 's/[- .][pP][dD][tT][vV].*//g')
+#  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
+
+   # strip everything after " - HDTV"
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}[hH][dD][tT][vV].*//g')
+   # strip WEBRIP
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}[wW][eE][bB][rR][iI][pP].*//g')
+   # strip 1080P
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}1080[pP].*//g')
+   # strip 720P
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}720[pP].*//g')
+   # strip PROPER
+   episode_name=$(echo $episode_name|sed 's/[- ]{3}PROPER.*//g')
+
    # destination filename
    tv_dest_file=$show_name" - S"$season"E"$episode" - "$episode_name".m4v"
 
@@ -410,6 +461,8 @@ fi
    echo "!!! skipping $i"
    continue
    fi
+
+# improve this
 
    # If there is already an M4V file stop
    if [[ -e "$tv_dest_folder$tv_dest_file" ]]; then
@@ -422,17 +475,15 @@ fi
 # HandBrake
 ########################################
 
+   # when running via shell check for tag switch
+   if [[ $8 != "tag" ]]; then 
    # convert using handbrake
-   # but skip if already .m4v
-   if [[ $i == *.m4v ]]; then
-   echo "  - HandBrake skipping .m4v"
-   else
    echo "  - Transcoding!!!"
-   echo handbrake-cli -i "$i" -o "$tv_dest_file" --preset="$tv_preset"
+   echo handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$tv_preset"
    echo
-   handbrake-cli -i "$i" -o "$tv_dest_file" --preset="$tv_preset" > /dev/null 2>&1
+#   handbrake-cli -i "$i" -o "$tv_dest_file" --preset="$tv_preset" > /dev/null 2>&1
+   handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
    # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
-   fi
    
    if [ $? != 0 ]; then
    echo "$?"
@@ -441,12 +492,16 @@ fi
    exit 1
    fi
 
-   # check output file created by handbrake
-   ls -l "$tv_dest_file" > /dev/null 2>&1
+   elif [[ $8 == "tag" ]]; then
+   mv "$i" "atomicFile.m4v"
+   fi
 
-   if [[ $? -ne 0 ]]; then
+   # check output file created by handbrake
+   ls -l "atomicFile.m4v" > /dev/null 2>&1
+
+   if [[ $? != 0 ]]; then
    echo "$i"
-   echo "!!! ERROR, HandBrake \$tv_dest_file missing"
+   echo "!!! ERROR, atomicFile.m4v missing"
    date
    exit 1
    continue
@@ -464,17 +519,17 @@ fi
    # if artwork is available locally then tag.
    if [[ -e $(find "$tvartwork" -maxdepth 1 -name "$show_name.jpg") ]]; then
    echo "  - AtomicParsley!!!  tagging w/local artwork."
-   atomicparsley "$tv_dest_file" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --artwork "$tvartwork$show_name.jpg" --overWrite > /dev/null 2>&1
+   atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "$tvartwork$show_name.jpg" --overWrite > /dev/null 2>&1
 
    # else get artwork if available from epguides.com and tag.
    elif [[ -e $(find . -name "cast.jpg") ]]; then
    echo "  - AtomicParsley!!!  tagging w/epguides.com artwork."
-   atomicparsley "$tv_dest_file" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --artwork "cast.jpg" --overWrite > /dev/null 2>&1
+   atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "cast.jpg" --overWrite > /dev/null 2>&1
 
    # otherwise tag without artwork.
    else
    echo "  - AtomicParsley!!!  tagging w/o artwork."
-   atomicparsley "$tv_dest_file" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --overWrite > /dev/null 2>&1
+   atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --overWrite > /dev/null 2>&1
    echo "  - Tag and rename completed."
    fi
 
@@ -496,10 +551,10 @@ fi
 
    # move the transcoded file to a folder.
    echo "  - Moved transcoded file to folder."
-   echo "  - mv "$tv_dest_file" "$tv_dest_folder""
-   mv "$tv_dest_file" "$tv_dest_folder"
+   echo "mv "atomicFile.m4v" "$tv_dest_folder$tv_dest_file""
+   mv "atomicFile.m4v" "$tv_dest_folder$tv_dest_file"
 
-   if [ $? -ne 0 ]; then
+   if [ $? != 0 ]; then
    echo "$?"
    echo "!!! ERROR, mv exit code"
    date
@@ -508,18 +563,12 @@ fi
    echo
    
    # move the original downloaded file to a folder.
+   # don't fail if none is found.  i.e. re-encoding (moved) existing .m4v
    echo "  - Moved original downloaded file to folder."
-   echo "  - mv -f "$i" "$postproc_dest_folder$i""
+   echo "  - mv "$i" "$postproc_dest_folder$i""
    mv "$i" "$postproc_dest_folder$i"
-
-   if [ $? -ne 0 ]; then
-   echo "$?"
-   echo "!!! ERROR, mv exit code"
-   date
-   exit 1
-   fi
    echo
-   
+
    # Post Processing for TV Show complete
    echo "  - Details:"
    echo "    DIR:          $1"
