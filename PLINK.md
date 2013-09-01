@@ -11,7 +11,6 @@
 * modify ```$win_path``` and ```$lnx_path``` variables.  remember to use triple-slash "\\\" for windows directories.
 
 ```
-mkdir -p ~/.sabnzbd/scripts
 vi ~/.sabnzbd/scripts/tardisIVR/plink-tardisIVR.sh
 ```
 
