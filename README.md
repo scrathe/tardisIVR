@@ -29,3 +29,6 @@
 
 ### PLINK.md
 * installation and configuration guide for remote execute from windows
+
+### HARDWARE.md
+* an example mini-itx tardis build
