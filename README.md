@@ -6,14 +6,21 @@
 * not perfect (alpha)
 * blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV.
 * in-a-nutshell a Windows host (front-end) for file management and sharing.  a Linux guest (back-end) for download, transcode, rename, and tag.
-  * a Win8.x host serving a Linux guest running; SABnzbd, SickBeard, CouchPotato, HeadPhones
+  * a Windows host serving a Linux guest running; SABnzbd, SickBeard, CouchPotato, HeadPhones
   * post-processing script (tardisIVRvideo.sh) encodes and tags files for iTunes/AppleTV.
 
+## what you'll need
+* a Windows host w/ Hypervisor (Win8/Hyper-V)
+* a Linux guest (ubuntu-12.04.2-server-amd64.iso)
+  * 1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
+* working install of SABnzbd, SickBeard, CouchPotato
+* usenet account, nzb index account, etc
+
 ### INSTALL.md
-* installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
+* Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 
 ### CONFIG.md
-* configuration guide
+* configuration guide for tardisIVRvideo.sh, SABnzbd, SickBeard, CouchPotato, HeadPhones
  
 ### tardisIVRvideo.sh
 * BASH script supporting the following run scenarios;
@@ -32,7 +39,7 @@
 ```
 $1=DIR="/media/tardis-x/media/Movies/Movie (2013)/"
 $2=NZB_FILE="Movie (2013).nzb"
-$3=NAME="Movie (2009)"
+$3=NAME="Movie (2013)"
 $4=NZB_ID=""
 $5=CATEGORY="movies"
 $6=GROUP="alt.binaries.teevee"
