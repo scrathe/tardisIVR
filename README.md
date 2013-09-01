@@ -1,6 +1,6 @@
 # tardisIVR
 
-![alt text](https://github.com/scrathe/tardisIVR/blob/master/tardisIVR.png?raw=true "tardisIVR Blueprint")
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/files/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is it?
 * blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV.
