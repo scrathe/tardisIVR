@@ -28,4 +28,4 @@
 * improved SABnzbd rename stripping; PROPER, 1080p, 720p, etc
 
 ### PLINK.md
-* installation and configuration guide for FileMenuTools -- remotely execute tardisIVRvideo.sh from Windows using plink.exe
+* installation and configuration guide for remote execute from windows
