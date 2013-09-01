@@ -1,5 +1,5 @@
 ## my tardis
-![alt text](https://github.com/scrathe/tardisIVR/blob/master/files/tardisITX00.png?raw=true "tardisITX")
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisITX00.png?raw=true "tardisITX")
 * Motherboard:  AsRock Z87E-ITX;  http://www.asrock.com/mb/Intel/Z87E-ITX/
 * Case:  Lian-Li PC-Q25B;  http://www.lian-li.com/en/dt_portfolio/pc-q25/
   * supports 8 HDs in total.  however this Z87E-ITX only has SATA 6-ports onboard.
@@ -18,10 +18,10 @@
   * bottom plate supports additional 2.5/3.5" mounts
 
 #### pic below w/o power and cooler
-![alt text](https://github.com/scrathe/tardisIVR/blob/master/files/tardisITX01.png?raw=true "tardisITX")
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisITX01.png?raw=true "tardisITX")
 
 #### pic below w/power
-![alt text](https://github.com/scrathe/tardisIVR/blob/master/files/tardisITX02.png?raw=true "tardisITX")
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisITX02.png?raw=true "tardisITX")
 * Lian-Li claims power supply depth = 180 mm = 7.08 inches (w/o HD backplane?)
 * SilverStone SF55F-G 550W = 5.52 inches
   * fully modular cables allow plenty of space

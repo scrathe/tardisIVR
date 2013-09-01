@@ -1,6 +1,6 @@
 # tardisIVR
 ### Internet Video Recorder w/ lots of space
-![alt text](https://github.com/scrathe/tardisIVR/blob/master/files/tardisIVR.png?raw=true "tardisIVR Blueprint")
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is this?
 * blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV
