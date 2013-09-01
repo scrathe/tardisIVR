@@ -5,7 +5,7 @@
   * supports 8 HDs in total.  however this Z87E-ITX only has 6-ports.  seems most ITX motherboards have 4-ports.
 * CPU:  Intel Haswell i7-4770K + things i learned about Haswell K
   * Haswell **does not support** older SandForce SSD 12xx/15xx controllers;  http://www.ocztechnologyforum.com/forum/showthread.php?111964-Vertex-2-Agility-2-and-Haswell
-  * K lacks vPro/TXT/VT-d/SIPP/IOMMU support;  http://www.anandtech.com/show/7001/intels-haswell-quadcore-desktop-processor-skus
+  * K **lacks** vPro/TXT/VT-d/SIPP/IOMMU support;  http://www.anandtech.com/show/7001/intels-haswell-quadcore-desktop-processor-skus
   * K overclocks to 4.0Ghz with stock Intel cooler however runs much hotter than Ivy Bridge.  apparently no matter which low cost cooler you use, 100c temps are normal.
   * the Lian-Li Q25 keeps everything as chilly as possible.  less heat output than a PS3.
   * arctic silver thermal paste did not improve temps whatsoever.  yes i followed best practices applying thermal paste ;)
