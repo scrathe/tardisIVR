@@ -1,5 +1,10 @@
-# Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
-* create and use sudo enabled user e.g. "elvie"
+### Windows
+* share your storage...
+* Windows share: \\servername\sharename
+* setup your Linux guest;  1-2GB RAM, 4-8GB HD, 
+ 
+### Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
+* first things first, create and use sudo enabled user e.g. "elvie"
 
 ##### install some prereqs
 ```
@@ -8,8 +13,8 @@ sudo apt-get install -y avimerge genisoimage git openssh-server wget
 
 ##### mount windows shares
 * bug?  can not mount \\server\c$ administrative share.  i suspect this is a new Win8 security default.
-* Windows share:   \\servername\sharename
-* Linux mount:  /media/sharename
+* Windows share: \\servername\sharename
+* Linux mount:   /media/sharename
 
 ```
 sudo apt-get install -y smbfs
