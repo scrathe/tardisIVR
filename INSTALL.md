@@ -1,9 +1,9 @@
-### Windows Host
+### Windows Host (Win8/Hyper-V)
 * share your storage...
-* Windows share: \\servername\sharename
+* Windows share: \\\servername\sharename
 * setup your Linux guest;  1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
  
-### Linux Guest
+### Linux Guest (ubuntu-12.04.2-server-amd64.iso)
 * Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 * first things first, create and use sudo enabled user e.g. "elvie"
 
@@ -13,8 +13,8 @@ sudo apt-get install -y avimerge genisoimage git openssh-server wget
 ```
 
 ##### mount windows shares
-* bug?  can not mount \\server\c$ administrative share.  i suspect this is a new Win8 security default.
-* Windows share: \\servername\sharename
+* bug?  can not mount \\\server\c$ administrative share.  i suspect this is a new Win8 security default.
+* Windows share: \\\servername\sharename
 * Linux mount:   /media/sharename
 
 ```
