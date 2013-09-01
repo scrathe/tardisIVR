@@ -8,8 +8,12 @@
   * a Win8.x host serving a Linux guest running; SABnzbd, SickBeard, CouchPotato, HeadPhones
   * custom post-processing script using HandBrake and AtomicParsley to encode and tag files for iTunes/AppleTV.
 
-### INSTALL
-* installation and configuration guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
+## FILES
+### INSTALL.md
+* installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
+
+### CONFIG.md
+* configuration guide
  
 ### tardisIVRvideo.sh
 * BASH script supporting the following run scenarios;
@@ -23,5 +27,5 @@
   * regex supporting traditional "S01E01" and dated "2013-08-01" TV show naming formats
 * improved SABnzbd rename stripping; PROPER, 1080p, 720p, etc
 
-### PLINK
+### PLINK.md
 * installation and configuration guide for FileMenuTools -- remotely execute tardisIVRvideo.sh from Windows using plink.exe
