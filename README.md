@@ -88,7 +88,13 @@ cd /media/TV/Show Name
 for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv x x tag ; done
 ```
 **!!! bugs**
-* when using recursive, cleanup leftover files; cast.jpg, cast.jpg.1, .2, etc.  fixup -- 
-```
-find -name cast.jpg* -exec rm {} \;
-```
+* when using recursive, cleanup leftover files; cast.jpg, cast.jpg.1, .2, etc.  fixup -- ```
+find -name cast.jpg* -exec rm {} \;```
+
+### resources
+https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/
+http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
+https://wiki.ubuntu.com/MountWindowsSharesPermanently
+http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
+http://gskinner.com/RegExr/
+
