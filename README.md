@@ -23,10 +23,10 @@
 * Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 
 ### SETTINGS.md
-* settings guide for file paths, file naming conventions, tardisIVRvideo.sh, SABnzbd, SickBeard, CouchPotato, HeadPhones
+* settings guide for;  file paths, file naming conventions, tardis scripts, SABnzbd, SickBeard, CouchPotato, HeadPhones
  
 ### PLINK.md
-* installation and configuration guide for remote execute from Windows
+* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
 * tardisIVR.bat -- Windows script
 * tardisIVR.sh -- Linux script
 
