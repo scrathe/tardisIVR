@@ -26,7 +26,9 @@
 * settings guide for file paths, file naming conventions, tardisIVRvideo.sh, SABnzbd, SickBeard, CouchPotato, HeadPhones
  
 ### PLINK.md
-* installation and configuration guide for remote execute from windows
+* installation and configuration guide for remote execute from Windows
+* tardisIVR.bat -- Windows script
+* tardisIVR.sh -- Linux script
 
 ### HARDWARE.md
 * an example mini-itx tardis build
