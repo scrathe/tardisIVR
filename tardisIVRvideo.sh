@@ -1,6 +1,6 @@
 #!/bin/bash
 date
-# big thanks to the original author(s) especially the BASH/OSX community
+# big thanks to the original author(s), especially the BASH/OSX community
 # author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
 # author 2) ???
 #
