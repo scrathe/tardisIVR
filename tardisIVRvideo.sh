@@ -1,27 +1,32 @@
 #!/bin/bash
 date
-# some of the applications you need
+# big thanks to the original author(s)
+# author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
+# author 2) ???
 #
-# 1) HandbrakeCLI (transcodes video)
-# 2) Mencoder (used for joining 2 AVI's)
-# 3) mkisofs (convert VIDEO_TS folders to .iso format)
-# 4) tvrenamer.pl (fetches episode names for SxxExx TV Shows)
-#       Written by: Robert Meerman (robert.meerman@gmail.com, ICQ# 37099562)
-#       Website: http://www.robmeerman.co.uk/coding/file_rename
-# 5) AtomicParsley (tags video files with info and cover art)
+# some applications you need
+#
+# HandbrakeCLI (transcodes video)
+# Mencoder (used for joining 2 AVI's)
+# mkisofs (convert VIDEO_TS folders to .iso format)
+# tvrenamer.pl (fetches episode names for SxxExx TV Shows)
+#    Written by: Robert Meerman (robert.meerman@gmail.com, ICQ# 37099562)
+#    Website: http://www.robmeerman.co.uk/coding/file_rename
+# AtomicParsley (tags video files with info and cover art)
 
-# Sample option 'Ignore Samples' in Sabnzbd | Config | Switches, must be set to 'Do not download'
+# sample option 'Ignore Samples' in Sabnzbd | Config | Switches, must be set to 'Do not download'
 
-# User definable locations
+# user definable locations
 
 # Movie transcoded file destination
 movie_dest_folder="/media/tardis-x/downloads/epic/postprocessing/couchpotato/"
 
 # Movie original downloaded file destination
+# this script keeps the original files in case something goes wrong.  empty this dir regularly.
 unwatched_dest_folder="/media/tardis-x/downloads/epic/trash/"
 
 # Movie artwork location if you have it
-# Files must be formatted to match the Show Name and have a jpg extension eg: "The West Wing.jpg"
+# files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
 movieartwork="/media/tardis-x/downloads/epic/artwork/movies/"
 
 # Movie HandBrake preset
@@ -37,7 +42,7 @@ postproc_dest_folder="/media/tardis-x/downloads/epic/trash/"
 dest_false=" - SE.m4v"
 
 # TV Show artwork location if you have it
-# Files must be formatted to match the Show Name and have a jpg extension eg: "The West Wing.jpg"
+# files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
 tvartwork="/media/tardis-x/downloads/epic/artwork/tv/"
    
 # TV Show HandBrake preset
@@ -129,7 +134,7 @@ if [[ $CATEGORY = "movies" ]]; then
    # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
    # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
 
-#!!!! not sure if avimerge works yet
+# !!! untested
    avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
    echo "  - AVImerge!!! complete"
    mkdir "Unjoined AVIs"
