@@ -3,25 +3,36 @@
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/files/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is this?
+* blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV
+* in-a-nutshell...
+  * a Windows host (front-end) for file management and sharing
+  * a Linux guest (back-end) for download, transcode, rename, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
+  * post-processing script (tardisIVRvideo.sh) encodes and tags files for iTunes/AppleTV
 * not perfect (alpha)
-* blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV.
-* in-a-nutshell a Windows host (front-end) for file management and sharing.  a Linux guest (back-end) for download, transcode, rename, and tag.
-  * a Windows host serving a Linux guest running; SABnzbd, SickBeard, CouchPotato, HeadPhones
-  * post-processing script (tardisIVRvideo.sh) encodes and tags files for iTunes/AppleTV.
+  * some code/conditions are untested.  look for "# untested" and "# improve this" comments.
+  * HeadPhones is not working at this time
 
 ## what you'll need
 * a Windows host w/ Hypervisor (Win8/Hyper-V)
 * a Linux guest (ubuntu-12.04.2-server-amd64.iso)
   * 1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
-* working knowledge of SABnzbd, SickBeard, CouchPotato
+* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones
 * usenet account, nzb index account, etc
 
 ### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 
 ### SETTINGS.md
-* settings guide for file paths, file naming conventions, tardisIVRvideo.sh, SABnzbd, SickBeard, CouchPotato, HeadPhones
+* settings guide for;  file paths, file naming conventions, tardis scripts, SABnzbd, SickBeard, CouchPotato, HeadPhones
  
+### PLINK.md
+* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
+* tardisIVR.bat -- Windows script
+* tardisIVR.sh -- Linux script
+
+### HARDWARE.md
+* an example mini-itx tardis build
+
 ### tardisIVRvideo.sh
 * BASH script supporting the following run scenarios;
   * via SABnzbd categories post-processing
@@ -34,7 +45,7 @@
   * regex supporting traditional "S01E01" and dated "2013-08-01" TV show naming formats
 * improved SABnzbd rename stripping; PROPER, 1080p, 720p, etc
 
-### tardisIVRvideo.sh usage
+### example tardisIVRvideo.sh usage
 *standard SABnzbd post-processing arguments*
 ```
 $1=DIR="/media/tardis-x/media/Movies/Movie (2013)/"
@@ -81,9 +92,3 @@ for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i
 ```
 find -name cast.jpg* -exec rm {} \;
 ```
-
-### PLINK.md
-* installation and configuration guide for remote execute from windows
-
-### HARDWARE.md
-* an example mini-itx tardis build

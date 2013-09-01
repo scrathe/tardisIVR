@@ -1,9 +1,10 @@
-## Lian-Li PC-Q25B + external 4-bay SansDigital
+## my tardis
 * Motherboard:  AsRock Z87E-ITX
-* Lian-Li Q25 supports 8 HDs in total.  however this Z87E-ITX only has 6-ports.  seems most ITX motherboards have 4-ports.
+* Case:  Lian-Li PC-Q25B; http://www.lian-li.com/en/dt_portfolio/pc-q25/
+  * supports 8 HDs in total.  however this Z87E-ITX only has 6-ports.  seems most ITX motherboards have 4-ports.
 * CPU:  Intel Haswell i7-4770K + things i learned about Haswell K
+  * Haswell **does not support** older SandForce 12xx SSD drives
   * K does not support VT-d/IOMMU CPU instructions
-  * Haswell does not support older SandForce 12xx SSD drives
   * K overclocks to 4.0Ghz with stock Intel cooler however runs much hotter than Ivy Bridge.  apparently no matter which low cost cooler you use, 100c temps are normal.
   * the Lian-Li Q25 keeps everything as chilly as possible.  less ambient heat output than a PS3.
   * arctic silver thermal paste did not improve temps whatsoever.  yes i followed best practices applying thermal paste ;)

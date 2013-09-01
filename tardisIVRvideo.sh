@@ -1,6 +1,6 @@
 #!/bin/bash
 date
-# big thanks to the original author(s)
+# big thanks to the original author(s), especially the BASH/OSX community
 # author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
 # author 2) ???
 #
@@ -134,7 +134,7 @@ if [[ $CATEGORY = "movies" ]]; then
    # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
    # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
 
-# !!! untested
+# untested
    avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
    echo "  - AVImerge!!! complete"
    mkdir "Unjoined AVIs"
