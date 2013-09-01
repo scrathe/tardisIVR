@@ -19,8 +19,8 @@
 ### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 
-### CONFIG.md
-* configuration guide for tardisIVRvideo.sh, SABnzbd, SickBeard, CouchPotato, HeadPhones
+### SETTINGS.md
+* settings guide for file paths, file naming conventions, tardisIVRvideo.sh, SABnzbd, SickBeard, CouchPotato, HeadPhones
  
 ### tardisIVRvideo.sh
 * BASH script supporting the following run scenarios;
