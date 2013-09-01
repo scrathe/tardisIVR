@@ -27,4 +27,5 @@ plink -batch -i c:\path\to\key.ppk user@linux "ls"
 * provides custom right-click menu
 * configure FileMenuTools.  uncheck all the unneeded commands.
 * add (4) commands and modify properties to match settings and arguments below
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/fileMenuTools01.png?raw=true "FileMenuTools Setup")
 
