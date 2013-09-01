@@ -170,11 +170,15 @@ if [[ $CATEGORY = "movies" ]]; then
 ########################################
 
    # convert using handbrake
+   # but skip if already .m4v
+   if [[ $i == *.m4v ]]; then
+   echo "  - HandBrake skipping .m4v"
+   else
    echo "  - Transcoding!!!"
    echo handbrake-cli -i "$i" -o "$movie_dest_file" --preset="$movie_preset"
    echo
    handbrake-cli -i "$i" -o "$movie_dest_file" --preset="$movie_preset" > /dev/null 2>&1
-   done
+   fi
 
    if [ $? != 0 ]; then
    echo "$?"
@@ -266,6 +270,7 @@ if [[ $CATEGORY = "movies" ]]; then
    echo
    date
    echo "  - COMPLETED!    $movie_dest_file"
+   done
 fi
 
 ########################################
@@ -418,11 +423,16 @@ fi
 ########################################
 
    # convert using handbrake
+   # but skip if already .m4v
+   if [[ $i == *.m4v ]]; then
+   echo "  - HandBrake skipping .m4v"
+   else
    echo "  - Transcoding!!!"
    echo handbrake-cli -i "$i" -o "$tv_dest_file" --preset="$tv_preset"
    echo
    handbrake-cli -i "$i" -o "$tv_dest_file" --preset="$tv_preset" > /dev/null 2>&1
    # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
+   fi
    
    if [ $? != 0 ]; then
    echo "$?"
