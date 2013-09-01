@@ -1,4 +1,4 @@
-## my tardis
+# my tardis
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisITX00.png?raw=true "tardisITX")
 * Motherboard:  AsRock Z87E-ITX;  http://www.asrock.com/mb/Intel/Z87E-ITX/
 * Case:  Lian-Li PC-Q25B;  http://www.lian-li.com/en/dt_portfolio/pc-q25/
