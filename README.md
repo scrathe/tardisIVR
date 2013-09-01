@@ -66,7 +66,7 @@ $8=tag   # "tag" using AtomicParsley rather than full HandBrake re-encode proces
 $1=DIR, $5=CATEGORY
 ```
 ```
-cd /media/TV/Show Name
+cd /media/TV/Show Name/Season 01
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x
 ```
 **TV tag**
@@ -74,7 +74,7 @@ cd /media/TV/Show Name
 $1=DIR, $5=CATEGORY, and/or $8 if "tag" only -- no re-encode
 ```
 ```
-cd /media/TV/Show Name
+cd /media/TV/Show Name/Season 01
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
 ```
 **Movie**
@@ -82,7 +82,7 @@ cd /media/TV/Show Name
 cd /media/Movies/Movie Name (2013)
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x tag
 ```
-**TV recurse thru Season directories and tag**
+**TV recurse thru Season XX directories and tag**
 ```
 cd /media/TV/Show Name
 for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv x x tag ; done
