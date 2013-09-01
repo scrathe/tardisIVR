@@ -1,9 +1,10 @@
-### Windows
+### Windows Host
 * share your storage...
 * Windows share: \\servername\sharename
 * setup your Linux guest;  1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
  
-### Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
+### Linux Guest
+* Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 * first things first, create and use sudo enabled user e.g. "elvie"
 
 ##### install some prereqs
