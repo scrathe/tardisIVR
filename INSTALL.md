@@ -1,4 +1,4 @@
-## guest setup
+# Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 * create and use sudo enabled user e.g. "elvie"
 
 ##### install some prereqs
