@@ -1,6 +1,7 @@
 #!/bin/bash
 
-script="~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh"
+# use full path to script
+script="/home/elvie/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh"
 
 if [[ "$2" == "movies" ]]; then
     win_path="X:\\\media\\\Movies"
