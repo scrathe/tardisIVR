@@ -210,6 +210,7 @@ if [[ $CATEGORY = "movies" ]]; then
    fi
 
    if [[ -d /media/iso/BDMV ]]; then
+   # find the largest .m2ts file
    M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
    echo "  - Transcoding!!! BlueRay,"
    echo handbrake-cli -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset"
