@@ -160,8 +160,9 @@ if [[ $CATEGORY = "movies" ]]; then
    fi
 
    # find media files to convert
-   for i in *.mkv *.avi *.m4v *.mp4 *.wmv *.iso *.img *.ts; do
+   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS]; do
    NAME=${i%.*}
+   EXT=${i##*.}
       
    if [[ $CATEGORY = "movies" && $NAME =~ $regex ]]; then
    echo "  - REGEX processing Movie,"
@@ -189,13 +190,43 @@ if [[ $CATEGORY = "movies" ]]; then
 # HandBrake
 ########################################
 
+# experimental
+   regex_iso=".*[iI][sS][oO]"
+   if [[ $i =~ $regex_iso ]]; then
+   echo "  - REGEX processing ISO,"
+   echo "  - $regex_iso"
+   echo "  - $i"
+   echo
+
+   echo "  - mounting .iso,"
+   # need sudo access with NOPASSWD
+   sudo mount -o loop "$i" /media/iso
+
+   if [ $? != 0 ]; then
+   echo "$?"
+   echo "!!! ERROR, mount .iso exit code"
+   date
+   exit 1
+   fi
+
+   if [[ -d /media/iso/BDMV ]]; then
+   M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
+   echo "  - Transcoding!!! BlueRay,"
+   echo handbrake-cli -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset"
+   echo
+   handbrake-cli -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
+   sudo umount /media/iso
+   continue
+   fi
+
+   fi
+
    # convert using handbrake
    echo "  - Transcoding!!!"
    echo handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset"
    echo
 #   handbrake-cli -i "$i" -o "$movie_dest_file" --preset="$movie_preset" > /dev/null 2>&1
    handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
-   done
 
    if [ $? != 0 ]; then
    echo "$?"
@@ -203,6 +234,8 @@ if [[ $CATEGORY = "movies" ]]; then
    date
    exit 1
    fi
+
+   done
 
    # check output file created by handbrake
 #   ls -l "$movie_dest_file" > /dev/null 2>&1
