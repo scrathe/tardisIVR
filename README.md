@@ -69,7 +69,7 @@ $1=DIR, $5=CATEGORY
 cd /media/TV/Show Name/Season 01
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x
 ```
-**TV tag**
+**TV tag only**
 ```
 $1=DIR, $5=CATEGORY, and/or $8 if "tag" only -- no re-encode
 ```
@@ -77,7 +77,7 @@ $1=DIR, $5=CATEGORY, and/or $8 if "tag" only -- no re-encode
 cd /media/TV/Show Name/Season 01
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
 ```
-**Movie**
+**Movie tag only**
 ```
 cd /media/Movies/Movie Name (2013)
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x tag
@@ -92,9 +92,9 @@ for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i
 find -name cast.jpg* -exec rm {} \;```
 
 ### resources
-https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/
-http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
-https://wiki.ubuntu.com/MountWindowsSharesPermanently
-http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
-http://gskinner.com/RegExr/
+* https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/
+* http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
+* https://wiki.ubuntu.com/MountWindowsSharesPermanently
+* http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
+* http://gskinner.com/RegExr/
 
