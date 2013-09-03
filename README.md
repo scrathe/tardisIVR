@@ -97,5 +97,6 @@ find -name cast.jpg* -exec rm {} \;```
 * http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
 * https://wiki.ubuntu.com/MountWindowsSharesPermanently
 * http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
+* http://tldp.org/LDP/abs/html/bashver3.html#REGEXMATCHREF
 * http://gskinner.com/RegExr/
 
