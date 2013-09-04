@@ -7,7 +7,7 @@
 * in-a-nutshell...
   * a Windows host (front-end) for file management and sharing
   * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
-  * post-processing script (tardisIVRvideo.sh) encodes/handbrake & tags/tomicparsley for iTunes/AppleTV
+  * a post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
 
 ## what you'll need
 * a Windows host w/ Hypervisor (Win8/Hyper-V)
@@ -29,7 +29,7 @@
 * tardisIVR.sh -- Linux script
 
 ### HARDWARE.md
-* an example mini-itx tardis build
+* an example mini-itx tardis build (the files are inside? the computer!?)
 
 ### tardisIVRvideo.sh
 * BASH script supports the following run scenarios;
@@ -38,10 +38,8 @@
   * recursive via shell -- i.e. process all Season subfolders
   * remotely via Windows/plink.exe
 * uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
-* tags Movies with Title, Year, Artwork
-* tags TV shows with Title, Season, Episode, Episode Name, Artwork
-  * regex supporting traditional "S01E01" and dated "2013-08-01" TV show naming formats
-* improved SABnzbd rename stripping; PROPER, 1080p, 720p, etc
+* supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
+* attempts to improve SABnzbd rename stripping; PROPER, 1080p, 720p, etc
 
 ### example tardisIVRvideo.sh usage
 *standard SABnzbd post-processing arguments*
