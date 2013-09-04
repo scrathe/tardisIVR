@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# read PLINK.md for setup
+
 # the $win_path directories defined below are the only locations right-click-to-plink works
 # improve this
 
