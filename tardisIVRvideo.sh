@@ -190,7 +190,7 @@ if [[ $CATEGORY = "movies" ]]; then
 # HandBrake
 ########################################
 
-# experimental
+# experimental BlueRay .iso support
    regex_iso=".*[iI][sS][oO]"
    if [[ $i =~ $regex_iso ]]; then
    echo "  - REGEX processing ISO,"
