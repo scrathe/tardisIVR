@@ -3,31 +3,28 @@
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is this?
-* blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV
+* blueprints for box that holds Movies and TV shows
 * in-a-nutshell...
   * a Windows host (front-end) for file management and sharing
-  * a Linux guest (back-end) for download, transcode, rename, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
-  * post-processing script (tardisIVRvideo.sh) encodes and tags files for iTunes/AppleTV
-* not perfect (alpha)
-  * some code/conditions are untested.  look for "# untested" and "# improve this" comments.
-  * HeadPhones is not working at this time
+  * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
+  * post-processing script (tardisIVRvideo.sh) encodes/handbrake & tags/tomicparsley for iTunes/AppleTV
 
 ## what you'll need
 * a Windows host w/ Hypervisor (Win8/Hyper-V)
-  * design can be easily adapted to use 2 physical machines instead
+  * or two or more boxen.  hack freely!
 * a Linux guest (ubuntu-12.04.2-server-amd64.iso)
-  * 1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
-* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones
+  * 1-2GB RAM, 4-8GB HD, numerous-cpu-cores, bridged network
+* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings... but! the end result is worth it.)
 * usenet account, nzb index account, etc
 
 ### INSTALL.md
-* Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
+* Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
 ### SETTINGS.md
-* settings guide for;  file paths, file naming conventions, tardis scripts, SABnzbd, SickBeard, CouchPotato, HeadPhones
+* appendix for settings;  file paths, file naming conventions, tardis variables, SABnzbd, SickBeard, CouchPotato, HeadPhones, wheeeeeeee!
  
 ### PLINK.md
-* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
+* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux (this is where it gets strange, entirely optional.)
 * tardisIVR.bat -- Windows script
 * tardisIVR.sh -- Linux script
 
@@ -35,12 +32,12 @@
 * an example mini-itx tardis build
 
 ### tardisIVRvideo.sh
-* BASH script supporting the following run scenarios;
+* BASH script supports the following run scenarios;
   * via SABnzbd categories post-processing
   * locally via shell
   * recursive via shell -- i.e. process all Season subfolders
   * remotely via Windows/plink.exe
-* uses post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
+* uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
 * tags Movies with Title, Year, Artwork
 * tags TV shows with Title, Season, Episode, Episode Name, Artwork
   * regex supporting traditional "S01E01" and dated "2013-08-01" TV show naming formats
