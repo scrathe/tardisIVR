@@ -21,7 +21,7 @@
 * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
 ### SETTINGS.md
-* appendix for settings;  file paths, file naming conventions, tardis variables, SABnzbd, SickBeard, CouchPotato, HeadPhones, wheeeeeeee!
+* appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, tardis variables, wheeeeeeee!
  
 ### PLINK.md
 * installation and configuration guide for remote execution (plink.exe) from Windows -> Linux (this is where it gets strange, entirely optional.)
@@ -39,7 +39,7 @@
   * remotely via Windows/plink.exe
 * uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
 * supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
-* attempts to improve SABnzbd rename stripping; PROPER, 1080p, 720p, etc
+* attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
 ### example tardisIVRvideo.sh usage
 *standard SABnzbd post-processing arguments*
