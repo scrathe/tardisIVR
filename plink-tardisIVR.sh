@@ -11,7 +11,6 @@ script="/home/elvie/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh"
 
 if [[ "$2" == "movies" ]]; then
     # Movies
-    # windows/host is serving storage
     # setup your windows/source to linux/mount storage paths
     win_path="X:\\\media\\\Movies"
     lnx_path="/media/tardis-x/media/Movies"
