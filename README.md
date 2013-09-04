@@ -3,7 +3,7 @@
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is this?
-* blueprints for box that holds Movies and TV shows
+* blueprints for a box that holds Movies and TV shows
 * in-a-nutshell...
   * a Windows host (front-end) for file management and sharing
   * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
