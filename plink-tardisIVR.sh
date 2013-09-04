@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# the $win_path directories defined below are the only location right-click-to-plink works
+# the $win_path directories defined below are the only locations right-click-to-plink works
 # improve this
 
 # ~/.sabnzbd   # tidle ~/ home directory reference doesn't seem to work
