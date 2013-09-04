@@ -54,7 +54,7 @@ $7=STATUS="0"
 ```
 *additional tardisIVRvideo.sh arguments*
 ```
-$8=tag   # "tag" using AtomicParsley rather than full HandBrake re-encode processing
+$8=tag   # just "tag" with AtomicParsley rather than the full HandBrake re-encode then tag process
 ```
 ##### example shell usage
 **TV encode and tag**
