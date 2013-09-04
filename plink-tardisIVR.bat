@@ -1,4 +1,4 @@
-REM arguments are pass in from FileMenuTools
+REM arguments are passed in from FileMenuTools
 REM example usage:
 REM arguments = tv
 REM arguments = tv tag
