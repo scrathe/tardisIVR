@@ -49,7 +49,7 @@ $2=NZB_FILE="Movie (2013).nzb"
 $3=NAME="Movie (2013)"
 $4=NZB_ID=""
 $5=CATEGORY="movies"
-$6=GROUP="alt.binaries.teevee"
+$6=GROUP="alt.binaries.tardis"
 $7=STATUS="0"
 ```
 *additional tardisIVRvideo.sh arguments*
