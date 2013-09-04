@@ -1,4 +1,6 @@
-REM arguments are passed in from FileMenuTools.  read PLINK.md for setup.
+REM read PLINK.md for setup
+
+REM arguments are passed in from FileMenuTools
 REM example usage:
 REM arguments = tv
 REM arguments = tv tag
