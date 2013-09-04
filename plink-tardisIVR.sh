@@ -5,7 +5,7 @@
 # the $win_path directories defined below are the only locations right-click-to-plink works
 # improve this
 
-# ~/.sabnzbd   # tidle ~/ home directory reference doesn't seem to work
+# ~/.sabnzbd   # tidle ~/ home directory alias doesn't seem to work
 # use full path to script instead
 script="/home/elvie/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh"
 
