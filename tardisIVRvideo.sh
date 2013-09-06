@@ -290,6 +290,7 @@ if [[ $CATEGORY = "movies" ]]; then
    echo "  - Moved original downloaded file to folder."
    echo "  - mv "$i" "$postproc_dest_folder$i""
    mv "$i" "$postproc_dest_folder$i"
+   echo "  - mv errors above are ok."
    echo
 
 # untested
@@ -605,6 +606,7 @@ fi
    echo "  - Moved original downloaded file to folder."
    echo "  - mv "$i" "$postproc_dest_folder$i""
    mv "$i" "$postproc_dest_folder$i"
+   echo "  - mv errors above are ok."
    echo
 
    # Post Processing for TV Show complete
