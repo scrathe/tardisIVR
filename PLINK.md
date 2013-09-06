@@ -8,7 +8,7 @@
 
 #### guest
 * modify ```plink-tardisIVR.sh```
-* modify ```$win_path``` and ```$lnx_path``` variables.  remember to use triple-slash "\\\" for windows directories.
+* modify ```$win_path``` and ```$lnx_path``` variables.  remember to use triple-slash '\\\\\\' for windows directories.
 
 ```
 vi ~/.sabnzbd/scripts/tardisIVR/plink-tardisIVR.sh

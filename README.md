@@ -3,48 +3,43 @@
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is this?
-* blueprints for automated acquisition of Movies and TV shows for use with iTunes and AppleTV
+* blueprints for a box that holds Movies and TV shows
 * in-a-nutshell...
   * a Windows host (front-end) for file management and sharing
-  * a Linux guest (back-end) for download, transcode, rename, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
-  * post-processing script (tardisIVRvideo.sh) encodes and tags files for iTunes/AppleTV
-* not perfect (alpha)
-  * some code/conditions are untested.  look for "# untested" and "# improve this" comments.
-  * HeadPhones is not working at this time
+  * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
+  * a post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
 
 ## what you'll need
 * a Windows host w/ Hypervisor (Win8/Hyper-V)
-  * design can be easily adapted to use 2 physical machines instead
+  * or two or more boxen.  hack freely!
 * a Linux guest (ubuntu-12.04.2-server-amd64.iso)
-  * 1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
-* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones
+  * 1-2GB RAM, 4-8GB HD, numerous-cpu-cores, bridged network
+* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings... but! the end result is worth it.)
 * usenet account, nzb index account, etc
 
 ### INSTALL.md
-* Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
+* Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
 ### SETTINGS.md
-* settings guide for;  file paths, file naming conventions, tardis scripts, SABnzbd, SickBeard, CouchPotato, HeadPhones
+* appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, tardis variables, wheeeeeeee!
  
 ### PLINK.md
-* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
+* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux (this is where it gets strange, entirely optional.)
 * tardisIVR.bat -- Windows script
 * tardisIVR.sh -- Linux script
 
 ### HARDWARE.md
-* an example mini-itx tardis build
+* an example mini-itx tardis build (the files are inside? the computer!?)
 
 ### tardisIVRvideo.sh
-* BASH script supporting the following run scenarios;
+* BASH script supports the following run scenarios;
   * via SABnzbd categories post-processing
   * locally via shell
   * recursive via shell -- i.e. process all Season subfolders
   * remotely via Windows/plink.exe
-* uses post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
-* tags Movies with Title, Year, Artwork
-* tags TV shows with Title, Season, Episode, Episode Name, Artwork
-  * regex supporting traditional "S01E01" and dated "2013-08-01" TV show naming formats
-* improved SABnzbd rename stripping; PROPER, 1080p, 720p, etc
+* uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
+* supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
+* attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
 ### example tardisIVRvideo.sh usage
 *standard SABnzbd post-processing arguments*
@@ -54,12 +49,12 @@ $2=NZB_FILE="Movie (2013).nzb"
 $3=NAME="Movie (2013)"
 $4=NZB_ID=""
 $5=CATEGORY="movies"
-$6=GROUP="alt.binaries.teevee"
+$6=GROUP="alt.binaries.tardis"
 $7=STATUS="0"
 ```
 *additional tardisIVRvideo.sh arguments*
 ```
-$8=tag   # "tag" using AtomicParsley rather than full HandBrake re-encode processing
+$8=tag   # just "tag" with AtomicParsley rather than the full HandBrake re-encode then tag process
 ```
 ##### example shell usage
 **TV encode and tag**
@@ -97,5 +92,6 @@ find -name cast.jpg* -exec rm {} \;```
 * http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
 * https://wiki.ubuntu.com/MountWindowsSharesPermanently
 * http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
+* http://tldp.org/LDP/abs/html/bashver3.html#REGEXMATCHREF
 * http://gskinner.com/RegExr/
 
