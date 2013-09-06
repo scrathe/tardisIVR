@@ -332,7 +332,7 @@ fi
    regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
 
    # regex matches: the daily show - 2013-08-01 - episode name.xyz
-   regex_dated="(.*)[- .]{1,3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{1,3}(.*).*"
+   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
 
    # custom processing for shows
    # regex matches: the soup - 2013-08-01 - episode name.xyz
