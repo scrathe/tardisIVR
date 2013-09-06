@@ -332,7 +332,7 @@ fi
    regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
 
    # regex matches: the daily show - 2013-08-01 - episode name.xyz
-   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
+   regex_dated="(.*)[- .]{1,3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{1,3}(.*).*"
 
    # custom processing for shows
    # regex matches: the soup - 2013-08-01 - episode name.xyz
@@ -410,15 +410,15 @@ fi
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
    # strip everything after " - HDTV"
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}[hH][dD][tT][vV].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[hH][dD][tT][vV].*//g')
    # strip WEBRIP
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}[wW][eE][bB][rR][iI][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[wW][eE][bB][rR][iI][pP].*//g')
    # strip 1080P
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}1080[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}1080[pP].*//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}720[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}720[pP].*//g')
    # strip PROPER
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}PROPER.*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}PROPER.*//g')
 
    # destination filename
    tv_dest_file=$show_name" - "$year-$month-$day".m4v"
@@ -448,15 +448,15 @@ fi
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
    # strip everything after " - HDTV"
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}[hH][dD][tT][vV].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[hH][dD][tT][vV].*//g')
    # strip WEBRIP
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}[wW][eE][bB][rR][iI][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[wW][eE][bB][rR][iI][pP].*//g')
    # strip 1080P
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}1080[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}1080[pP].*//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}720[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}720[pP].*//g')
    # strip PROPER
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}PROPER.*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}PROPER.*//g')
 
    # destination filename
    tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
@@ -482,15 +482,15 @@ fi
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
    # strip everything after " - HDTV"
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}[hH][dD][tT][vV].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[hH][dD][tT][vV].*//g')
    # strip WEBRIP
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}[wW][eE][bB][rR][iI][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[wW][eE][bB][rR][iI][pP].*//g')
    # strip 1080P
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}1080[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}1080[pP].*//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}720[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}720[pP].*//g')
    # strip PROPER
-   episode_name=$(echo $episode_name|sed 's/[- ]{3}PROPER.*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}PROPER.*//g')
 
    # destination filename
    tv_dest_file=$show_name" - S"$season"E"$episode" - "$episode_name".m4v"
@@ -520,7 +520,6 @@ fi
    echo "  - Transcoding!!!"
    echo handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$tv_preset"
    echo
-#   handbrake-cli -i "$i" -o "$tv_dest_file" --preset="$tv_preset" > /dev/null 2>&1
    handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
    # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
    
