@@ -551,7 +551,7 @@ fi
 
    # get artwork from epguides.com
    epguidesartwork=$(echo $show_name|sed 's/ *//g')
-   wget http://epguides.com/$epguidesartwork/cast.jpg > /dev/null 2>&1
+   wget -N http://epguides.com/$epguidesartwork/cast.jpg > /dev/null 2>&1
    echo "  - Retrieved Artwork from http://epguides.com"
 
    # if artwork is available locally then tag.
