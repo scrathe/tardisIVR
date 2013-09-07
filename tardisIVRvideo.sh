@@ -337,7 +337,7 @@ fi
 
    # custom processing for shows
    # regex matches: the soup - 2013-08-01 - episode name.xyz
-   regex_soup="([tT][hH][eE]\s[sS][oO][uU][pP])[([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[(.*).*"
+   regex_soup="([tT][hH][eE] [sS][oO][uU][pP]) - ([0-9]{4})-([0-9]{2})-([0-9]{2}) - (.*)\..*"
 
    if [[ $CATEGORY = "tv" ]]; then
    # stops error printing in loop if there are no video files in the folder
