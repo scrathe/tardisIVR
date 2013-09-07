@@ -411,15 +411,15 @@ fi
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
    # strip everything after " - HDTV"
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[hH][dD][tT][vV].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ][hH][dD][tT][vV].*//g'|sed 's/ *$//g')
    # strip WEBRIP
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[wW][eE][bB][rR][iI][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ][wW][eE][bB][rR][iI][pP].*//g'|sed 's/ *$//g')
    # strip 1080P
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}1080[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]1080[pP].*//g'|sed 's/ *$//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}720[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]720[pP].*//g'|sed 's/ *$//g')
    # strip PROPER
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}PROPER.*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]PROPER.*//g'|sed 's/ *$//g')
 
    # destination filename
    tv_dest_file=$show_name" - "$year-$month-$day".m4v"
@@ -449,15 +449,15 @@ fi
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
    # strip everything after " - HDTV"
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[hH][dD][tT][vV].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ][hH][dD][tT][vV].*//g'|sed 's/ *$//g')
    # strip WEBRIP
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[wW][eE][bB][rR][iI][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ][wW][eE][bB][rR][iI][pP].*//g'|sed 's/ *$//g')
    # strip 1080P
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}1080[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]1080[pP].*//g'|sed 's/ *$//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}720[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]720[pP].*//g'|sed 's/ *$//g')
    # strip PROPER
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}PROPER.*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]PROPER.*//g'|sed 's/ *$//g')
 
    # destination filename
    tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
@@ -483,15 +483,15 @@ fi
 #  episode_name=$(echo $episode_name|sed 's/[- .][wW][eE][bB].*//g')
 
    # strip everything after " - HDTV"
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[hH][dD][tT][vV].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ][hH][dD][tT][vV].*//g'|sed 's/ *$//g')
    # strip WEBRIP
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}[wW][eE][bB][rR][iI][pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ][wW][eE][bB][rR][iI][pP].*//g'|sed 's/ *$//g')
    # strip 1080P
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}1080[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]1080[pP].*//g'|sed 's/ *$//g')
    # strip 720P
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}720[pP].*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]720[pP].*//g'|sed 's/ *$//g')
    # strip PROPER
-   episode_name=$(echo $episode_name|sed 's/[- ]{1,3}PROPER.*//g')
+   episode_name=$(echo $episode_name|sed 's/[- ]PROPER.*//g'|sed 's/ *$//g')
 
    # destination filename
    tv_dest_file=$show_name" - S"$season"E"$episode" - "$episode_name".m4v"
