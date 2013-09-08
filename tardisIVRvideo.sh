@@ -85,7 +85,7 @@ if [[ $CATEGORY = "movies" ]]; then
     exit 1
   fi
 
-# improve this
+  # improve this
   # populate $NAME to match against $regex
   echo "  - Discovered media files:"
   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS]; do
@@ -127,14 +127,14 @@ if [[ $CATEGORY = "movies" ]]; then
   # find and move files larger than 300MB to parent folder for processing
   find "$DIR" -size +307200k -exec mv {} "$DIR" \;
 
-# improve this / it doesn't work
+  # improve this / it doesn't work
   # errors ok when running from BASH or FileMenuTools
   if [ $? -ne 0 ]; then
     echo "  - mv errors above are ok."
     echo
   fi
 
-# improve this
+  # improve this
   # find and delete files smaller than 30MB
   # move this cleanup to end of routine.  otherwise it potentially deletes wanted files.
   # find "$DIR" -size -30720k -type f -exec rm -f {} \;
@@ -143,7 +143,7 @@ if [[ $CATEGORY = "movies" ]]; then
 # mkisofs
 ########################################
 
-# untested
+  # untested
   # find VIDEO_TS folder and files
   if [[ -e $(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO") ]]; then
     IFO=$(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO")
@@ -174,9 +174,9 @@ if [[ $CATEGORY = "movies" ]]; then
     exit 1
   fi
 
-# avimerge works!
-# mencoder untested
-# improve this
+  # avimerge works!
+  # mencoder untested
+  # improve this
   # find .AVI files  
   for i in *{CD2,cd2}.avi; do
     NAME=${i%.*}
@@ -302,7 +302,7 @@ if [[ $CATEGORY = "movies" ]]; then
     # move the transcoded file to a folder.
     echo "  - Moved transcoded file to folder."
     echo "  - mv "$movie_dest_file" "$movie_dest_folder""
-# improve this
+    # improve this
     mv "atomicFile.m4v" "$movie_dest_file"
     mv "$movie_dest_file" "$movie_dest_folder"
 
@@ -325,7 +325,7 @@ if [[ $CATEGORY = "movies" ]]; then
       echo
     fi
 
-# untested
+    # untested
     # delete extraneous files and VIDEO_TS folder 
     # rm -R "$DIR"
     # echo "  - Original files moved to Movie Library"
@@ -393,7 +393,7 @@ if [[ $CATEGORY = "tv" ]]; then
 # Detect season vs dated naming.  i.e.  S01E02 vs 2013-08-01
 ########################################
 
-# improve this
+  # improve this
   # populate $NAME to match against $regex
   echo "  - Discovered media files:"
   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS]; do
@@ -528,8 +528,8 @@ if [[ $CATEGORY = "tv" ]]; then
       continue
     fi
 
-# improve this
-    # If there is already an M4V file stop
+    # improve this
+    # if there is already an M4V file stop
     if [[ -e "$tv_dest_folder$tv_dest_file" ]]; then
       echo "!!! An M4V with the same name already exists,"
       echo "!!! skipping $i"
