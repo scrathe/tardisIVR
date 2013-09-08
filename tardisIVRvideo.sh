@@ -77,7 +77,6 @@ if [[ $CATEGORY = "movies" ]]; then
    # stops error printing in loop if there are no video files in the folder
    shopt -s nullglob
 
-   # find locally available artwork
    cd "$DIR"
    if [ $? -ne 0 ]; then
    echo "$?"
@@ -86,16 +85,63 @@ if [[ $CATEGORY = "movies" ]]; then
    exit 1
    fi
 
+# improve this
+   # discover media files
+   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS]; do
+   NAME=${i%.*}
+   EXT=${i##*.}
+   echo "  - Found media file: $NAME.$EXT"
+   done
+
+   # matches: movie name (2013).xyz
+   regex="(.*) \(([0-9]{4})\).*"
+
+   # detect movie
+   if [[ $CATEGORY = "movies" && $NAME =~ $regex ]]; then
+   echo "  - REGEX processing Movie,"
+   echo "  - $regex"
+   echo "  - $i"
+   echo
+
+   # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
+   year=${BASH_REMATCH[2]}
+   # customize movie title tag for atomicparsley
+   # title =${BASH_REMATCH[1]} # = "Movie"
+   title=$NAME # NAME = "Movie (2013)"
+
+   else
+   echo "!!! REGEX error,"
+   echo "  - $regex"
+   echo "  - $i"
+   date
+   # exit if no media files found
+   exit 1
+   fi
+
    # find existing artwork and store
-   find . -maxdepth 1 -type f -name '*.jpg' -exec mv '{}' "$movieartwork$NAME.jpg" \;
+   find . -maxdepth 1 -type f -name '*.jpg' -exec mv '{}' "$movieartwork/$NAME.jpg" \;
+
+   # move all video files into the main processing folder
+   # find and move files larger than 300MB to parent folder for processing
+   find "$DIR" -size +307200k -exec mv {} "$DIR" \;
+
+# improve this / it doesn't work
+   # errors ok when running from BASH or FileMenuTools
+   if [ $? -ne 0 ]; then
+   echo "  - mv errors above are ok."
+   echo
+   fi
+
+# improve this
+   # find and delete files smaller than 30MB
+   # move this cleanup to end of routine.  otherwise it potentially deletes wanted files.
+   # find "$DIR" -size -30720k -type f -exec rm -f {} \;
 
 ########################################
 # mkisofs
 ########################################
 
 # untested
-   cd "$DIR"
-
    # find VIDEO_TS folder and files
    if [[ -e $(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO") ]]; then
    IFO=$(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO")
@@ -114,22 +160,20 @@ if [[ $CATEGORY = "movies" ]]; then
       
    fi
    
-   # move all video files into the main processing folder
-   cd "$DIR"
-   # finding files larger than 300MB for processing and delete files smaller than 30MB
-   find "$DIR" -size +307200k -exec mv {} "$DIR" \;
-# move this cleanup to end of routine.  otherwise it potentially deletes wanted files.
-#   find "$DIR" -size -30720k -type f -exec rm -f {} \;
-   echo "  - mv errors above are ok."
-   echo
-
 ########################################
 # Join AVIs using avimerge or mencoder
 ########################################
 
-# untested
    # if there are 2 AVI's join them
    cd "$DIR"
+   if [ $? -ne 0 ]; then
+   echo "$?"
+   echo "!!! ERROR, cd '$DIR'"
+   date
+   exit 1
+   fi
+
+# improve this
    # finding .AVI files   
    for i in *{CD2,cd2}.avi; do
    NAME=${i%.*}
@@ -137,7 +181,6 @@ if [[ $CATEGORY = "movies" ]]; then
    # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
    # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
 
-# untested
    # strip CD1 from $NAME
    NAME=$(echo $NAME|sed 's/[- ][cC][dD][12].*//g'|sed 's/ *$//g')
    avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
@@ -153,9 +196,6 @@ if [[ $CATEGORY = "movies" ]]; then
 # Loop thru media files.  Transcode and Tag.
 ########################################
 
-   # matches: movie name (2013).xyz
-   regex="(.*) \(([0-9]{4})\).*"
-
    cd "$DIR"
    if [ $? -ne 0 ]; then
    echo "$?"
@@ -169,25 +209,6 @@ if [[ $CATEGORY = "movies" ]]; then
    NAME=${i%.*}
    EXT=${i##*.}
       
-   if [[ $CATEGORY = "movies" && $NAME =~ $regex ]]; then
-   echo "  - REGEX processing Movie,"
-   echo "  - $regex"
-   echo "  - $i"
-   echo
-
-   # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
-   year=${BASH_REMATCH[2]}
-   # customize movie title tag for atomicparsley
-   # title =${BASH_REMATCH[1]} # = "Movie"
-   title=$NAME # NAME = "Movie (2013)"
-
-   else
-   echo "!!! REGEX error,"
-   echo "!!! skipping $i"
-   echo
-   continue
-   fi
-
    # destination filename
    movie_dest_file="${i%.*}"".m4v"
          
@@ -223,8 +244,9 @@ if [[ $CATEGORY = "movies" ]]; then
    echo handbrake-cli -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset"
    echo
    handbrake-cli -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
+   echo "  - un-mounting .iso"
    sudo umount /media/iso
-   continue
+   echo
    fi
 
    fi
@@ -233,7 +255,6 @@ if [[ $CATEGORY = "movies" ]]; then
    echo "  - Transcoding!!!"
    echo handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset"
    echo
-#   handbrake-cli -i "$i" -o "$movie_dest_file" --preset="$movie_preset" > /dev/null 2>&1
    handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
 
    if [ $? != 0 ]; then
@@ -243,10 +264,7 @@ if [[ $CATEGORY = "movies" ]]; then
    exit 1
    fi
 
-   done
-
    # check output file created by handbrake
-#   ls -l "$movie_dest_file" > /dev/null 2>&1
    ls -l "atomicFile.m4v" > /dev/null 2>&1
    if [[ $? -ne 0 ]]; then
    echo "$i"
@@ -297,8 +315,11 @@ if [[ $CATEGORY = "movies" ]]; then
    echo "  - Moved original downloaded file to folder."
    echo "  - mv "$i" "$postproc_dest_folder$i""
    mv "$i" "$postproc_dest_folder$i"
+
+   if [ $? -ne 0 ]; then
    echo "  - mv errors above are ok."
    echo
+   fi
 
 # untested
    # delete extraneous files and VIDEO_TS folder 
@@ -326,6 +347,9 @@ if [[ $CATEGORY = "movies" ]]; then
    echo
    date
    echo "  - COMPLETED!    $movie_dest_file"
+
+   done
+
 fi
 
 ########################################
@@ -617,8 +641,11 @@ fi
    echo "  - Moved original downloaded file to folder."
    echo "  - mv "$i" "$postproc_dest_folder$i""
    mv "$i" "$postproc_dest_folder$i"
+
+   if [ $? -ne 0 ]; then
    echo "  - mv errors above are ok."
    echo
+   fi
 
    # Post Processing for TV Show complete
    echo "  - Details:"
@@ -643,6 +670,7 @@ fi
    date
    echo "  - COMPLETED!    $tv_dest_file"
    echo
+
    done
 fi
 
