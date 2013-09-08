@@ -107,6 +107,8 @@ if [[ $CATEGORY = "movies" ]]; then
    # customize movie title tag for atomicparsley
    # title =${BASH_REMATCH[1]} # = "Movie"
    title=$NAME # NAME = "Movie (2013)"
+   # strip CD1 from $title
+   title=$(echo $title|sed 's/[- ][cC][dD][12].*//g'|sed 's/ *$//g')
 
    else
    echo "!!! REGEX error,"
