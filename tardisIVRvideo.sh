@@ -44,7 +44,7 @@ dest_false=" - SE.m4v"
 # TV Show artwork location if you have it
 # files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
 tvartwork="/media/tardis-x/downloads/epic/artwork/tv/"
-   
+
 # TV Show HandBrake preset
 tv_preset="AppleTV"
 
@@ -86,7 +86,8 @@ if [[ $CATEGORY = "movies" ]]; then
    exit 1
    fi
 
-   find . -type f -maxdepth 1 -name '*.jpg' -exec mv '{}' "$movieartwork$NAME.jpg" \;
+   # find existing artwork and store
+   find . -maxdepth 1 -type f -name '*.jpg' -exec mv '{}' "$movieartwork$NAME.jpg" \;
 
 ########################################
 # mkisofs
@@ -103,7 +104,7 @@ if [[ $CATEGORY = "movies" ]]; then
    VIDEOTSROOT=$(echo $VIDEOTS|sed 's/[vV][iI][dD][eE][oO][_][tT][sS].*//g')
    echo
    echo "VIDEO_TS Found, converting to an ISO"
-   mkisofs -input-charset iso8859-1 -dvd-video -o "$DIR/$NAME.iso" "$VIDEOTSROOT"  > /dev/null 2>&1
+   mkisofs -input-charset iso8859-1 -dvd-video -o "$DIR/atomicFile.iso" "$VIDEOTSROOT"  > /dev/null 2>&1
    echo
    echo "  - Conversion to ISO complete"
    echo
@@ -117,7 +118,8 @@ if [[ $CATEGORY = "movies" ]]; then
    cd "$DIR"
    # finding files larger than 300MB for processing and delete files smaller than 30MB
    find "$DIR" -size +307200k -exec mv {} "$DIR" \;
-   find "$DIR" -size -30720k -type f -exec rm {} \;
+# move this cleanup to end of routine.  otherwise it potentially deletes wanted files.
+#   find "$DIR" -size -30720k -type f -exec rm -f {} \;
    echo "  - mv errors above are ok."
    echo
 
@@ -130,14 +132,17 @@ if [[ $CATEGORY = "movies" ]]; then
    cd "$DIR"
    # finding .AVI files   
    for i in *{CD2,cd2}.avi; do
+   NAME=${i%.*}
    echo "  - 2 AVI files found"
    # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
    # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
 
 # untested
+   # strip CD1 from $NAME
+   NAME=$(echo $NAME|sed 's/[- ][cC][dD][12].*//g'|sed 's/ *$//g')
    avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
    echo "  - AVImerge!!! complete"
-   mkdir "Unjoined AVIs"
+   mkdir "Unjoined AVIs" > /dev/null
    mv *{CD1,cd1}.avi "Unjoined AVIs/."
    mv *{CD2,cd2}.avi "Unjoined AVIs/."
    echo "  - Moved original AVIs to folder 'Unjoined AVIs'"
@@ -209,6 +214,8 @@ if [[ $CATEGORY = "movies" ]]; then
    exit 1
    fi
 
+# BDMV works
+# need to add non-BlueRay support
    if [[ -d /media/iso/BDMV ]]; then
    # find the largest .m2ts file
    M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
@@ -361,10 +368,14 @@ fi
 # Detect season vs dated naming.  i.e.  S01E02 vs 2013-08-01
 ########################################
 
+# improve this
    # get the filename
    for i in *.mkv *.avi *.m4v *.mp4 *.wmv *.iso *.img *.ts; do
    NAME=${i%.*}
    done
+
+   # find existing artwork and store
+   find . -type f -maxdepth 1 -name '*.jpg' -exec mv '{}' "$tvartwork$NAME.jpg" \;
 
 ########################################
 # Run tvrenamer.pl if SxxExx is detected.
