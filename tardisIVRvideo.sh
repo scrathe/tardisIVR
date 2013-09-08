@@ -336,21 +336,21 @@ if [[ $CATEGORY = "movies" ]]; then
 ########################################
 
     echo "  - Details:"
-    echo "   DIR:       $1"
-    echo "   NZB_FILE:    $2"
-    echo "   NAME:      $3"
-    echo "   NZB_ID:     $4"
-    echo "   CATEGORY:    $5"
-    echo "   GROUP:      $6"
-    echo "   STATUS:     $7"
-    echo "   Input File:  $i"
-    echo "   Dest Folder:  $movie_dest_folder"
-    echo "   Dest File:   $movie_dest_file"
-    echo "   Title:      $title"
-    echo "   Year:      $year"
+    echo "    DIR:         $1"
+    echo "    NZB_FILE:    $2"
+    echo "    NAME:        $3"
+    echo "    NZB_ID:      $4"
+    echo "    CATEGORY:    $5"
+    echo "    GROUP:       $6"
+    echo "    STATUS:      $7"
+    echo "    Input File:  $i"
+    echo "    Dest Folder: $movie_dest_folder"
+    echo "    Dest File:   $movie_dest_file"
+    echo "    Title:       $title"
+    echo "    Year:        $year"
     echo
     date
-    echo "  - COMPLETED!   $movie_dest_file"
+    echo "  - COMPLETED!  $movie_dest_file"
 
   done
 fi
@@ -639,26 +639,26 @@ if [[ $CATEGORY = "tv" ]]; then
 
     # Post Processing for TV Show complete
     echo "  - Details:"
-    echo "   DIR:       $1"
-    echo "   NZB_FILE:    $2"
-    echo "   NAME:      $3"
-    echo "   NZB_ID:     $4"
-    echo "   CATEGORY:    $5"
-    echo "   GROUP:      $6"
-    echo "   STATUS:     $7"
-    echo "   Input File:  $i"
-    echo "   Dest Folder:  $tv_dest_folder"
-    echo "   Dest File:   $tv_dest_file"
-    echo "   Show Name:   $show_name"
-    echo "   Season:     $season"
-    echo "   Episode:    $episode"
-    echo "   Episode Name: $episode_name"
-    echo "   Year:      $year"
-    echo "   Month:      $month"
-    echo "   Day:       $day"
+    echo "    DIR:          $1"
+    echo "    NZB_FILE:     $2"
+    echo "    NAME:         $3"
+    echo "    NZB_ID:       $4"
+    echo "    CATEGORY:     $5"
+    echo "    GROUP:        $6"
+    echo "    STATUS:       $7"
+    echo "    Input File:   $i"
+    echo "    Dest Folder:  $tv_dest_folder"
+    echo "    Dest File:    $tv_dest_file"
+    echo "    Show Name:    $show_name"
+    echo "    Season:       $season"
+    echo "    Episode:      $episode"
+    echo "    Episode Name: $episode_name"
+    echo "    Year:         $year"
+    echo "    Month:        $month"
+    echo "    Day:          $day"
     echo
     date
-    echo "  - COMPLETED!   $tv_dest_file"
+    echo "  - COMPLETED!    $tv_dest_file"
     echo
 
   done
