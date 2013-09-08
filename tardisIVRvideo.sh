@@ -142,7 +142,7 @@ if [[ $CATEGORY = "movies" ]]; then
    NAME=$(echo $NAME|sed 's/[- ][cC][dD][12].*//g'|sed 's/ *$//g')
    avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
    echo "  - AVImerge!!! complete"
-   mkdir "Unjoined AVIs" > /dev/null
+   mkdir -p "Unjoined AVIs"
    mv *{CD1,cd1}.avi "Unjoined AVIs/."
    mv *{CD2,cd2}.avi "Unjoined AVIs/."
    echo "  - Moved original AVIs to folder 'Unjoined AVIs'"
