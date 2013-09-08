@@ -98,9 +98,8 @@ if [[ $CATEGORY = "movies" ]]; then
 
    # detect movie
    if [[ $CATEGORY = "movies" && $NAME =~ $regex ]]; then
-   echo "  - REGEX processing Movie,"
+   echo "  - REGEX detected Movie,"
    echo "  - $regex"
-   echo "  - $i"
    echo
 
    # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
@@ -219,7 +218,7 @@ if [[ $CATEGORY = "movies" ]]; then
 # experimental BlueRay .iso support
    regex_iso=".*[iI][sS][oO]"
    if [[ $i =~ $regex_iso ]]; then
-   echo "  - REGEX processing ISO,"
+   echo "  - REGEX detected ISO,"
    echo "  - $regex_iso"
    echo "  - $i"
    echo
@@ -360,6 +359,11 @@ fi
 # /begin CATEGORY = TV
 ########################################
 
+   if [[ $CATEGORY = "tv" ]]; then
+
+   # stops error printing in loop if there are no video files in the folder
+   shopt -s nullglob
+
    # regex matches: show name - s01e02 - episode name.xyz
    regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
 
@@ -369,10 +373,6 @@ fi
    # custom processing for shows
    # regex matches: the soup - 2013-08-01 - episode name.xyz
    regex_soup="([tT][hH][eE] [sS][oO][uU][pP]) - ([0-9]{4})-([0-9]{2})-([0-9]{2}) - (.*)\..*"
-
-   if [[ $CATEGORY = "tv" ]]; then
-   # stops error printing in loop if there are no video files in the folder
-   shopt -s nullglob
 
    cd "$DIR"
    if [ $? -ne 0 ]; then
@@ -393,13 +393,15 @@ fi
 ########################################
 
 # improve this
-   # get the filename
-   for i in *.mkv *.avi *.m4v *.mp4 *.wmv *.iso *.img *.ts; do
+   # discover media files
+   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS]; do
    NAME=${i%.*}
+   EXT=${i##*.}
+   echo "  - Found media file: $NAME.$EXT"
    done
 
    # find existing artwork and store
-   find . -type f -maxdepth 1 -name '*.jpg' -exec mv '{}' "$tvartwork$NAME.jpg" \;
+   find . -type f -maxdepth 1 -name '*.jpg' -exec mv '{}' "$tvartwork/$NAME.jpg" \;
 
 ########################################
 # Run tvrenamer.pl if SxxExx is detected.
@@ -417,13 +419,13 @@ fi
 # Loop thru media files.  Transcode and Tag.
 ########################################
 
-   for i in *.mkv *.avi *.m4v *.mp4 *.wmv *.iso *.img *.ts; do
+   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS]; do
    NAME=${i%.*}
 
    # the soup requires custom processing
    if [[ $CATEGORY = "tv" && $NAME =~ $regex_soup ]]; then
 
-   echo "  - REGEX processing The Soup,"
+   echo "  - REGEX detected The Soup,"
    echo "  - $regex_soup"
    echo "  - $i"
    echo
@@ -461,7 +463,7 @@ fi
 
    elif [[ $CATEGORY = "tv" && $NAME =~ $regex_dated ]]; then
 
-   echo "  - REGEX processing Dated TV Show,"
+   echo "  - REGEX detected Dated TV Show,"
    echo "  - $regex_dated"
    echo "  - $i"
    echo
@@ -498,7 +500,7 @@ fi
    tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
 
    elif [[ $CATEGORY = "tv" && $NAME =~ $regex ]]; then
-   echo "  - REGEX Processing TV Show,"
+   echo "  - REGEX detected TV Show,"
    echo "  - $regex"
    echo "  - $i"
    echo
