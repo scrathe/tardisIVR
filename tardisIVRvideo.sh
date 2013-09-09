@@ -17,6 +17,7 @@ date
 # sample option 'Ignore Samples' in Sabnzbd | Config | Switches, must be set to 'Do not download'
 
 # user definable locations
+# ensure ALL directories end with '/'
 
 # Movie transcoded file destination
 movie_dest_folder="/media/tardis-x/downloads/epic/postprocessing/couchpotato/"
