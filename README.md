@@ -83,9 +83,6 @@ cd /media/Movies/Movie Name (2013)
 cd /media/TV/Show Name
 for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv x x tag ; done
 ```
-**!!! bugs**
-* when using recursive, cleanup leftover files; cast.jpg, cast.jpg.1, .2, etc.  fixup -- ```
-find -name cast.jpg* -exec rm {} \;```
 
 ### resources
 * https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/
