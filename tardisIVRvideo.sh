@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Home; https://github.com/scrathe/tardisIVR
 # Documentation; https://github.com/scrathe/tardisIVR/blob/master/README.md
 # Settings; https://github.com/scrathe/tardisIVR/blob/master/SETTINGS.md
@@ -8,11 +9,11 @@
 # author 2+) ??? (the scores of unnamed authors)
 #
 # some applications you need:
-# HandbrakeCLI (transcodes video)
-# AtomicParsley (tags video files with info and cover art)
+# HandbrakeCLI (transcodes video) http://handbrake.fr/
+# AtomicParsley (tags video files with info and cover art) http://atomicparsley.sourceforge.net
 # avimerge (join .avi files) http://manpages.ubuntu.com/manpages/dapper/man1/avimerge.1.html
-# mencoder (alternative method to join .avi files)
-# mkisofs (convert VIDEO_TS folders to .iso format)
+# MEncoder (alternative method to join .avi files) https://help.ubuntu.com/community/MEncoder
+# mkisofs (convert VIDEO_TS folders to .iso format) http://manpages.ubuntu.com/manpages/gutsy/man8/mkisofs.8.html
 # tvrenamer.pl (fetches episode names for SxxExx TV Shows) http://www.robmeerman.co.uk/coding/file_rename
 
 # sample option 'Ignore Samples' in Sabnzbd | Config | Switches, must be set to 'Do not download'
