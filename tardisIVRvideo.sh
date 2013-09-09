@@ -1,18 +1,19 @@
 #!/bin/bash
-date
-# big thanks to the original author(s), especially the BASH/OSX community
+# Home; https://github.com/scrathe/tardisIVR
+# Documentation; https://github.com/scrathe/tardisIVR/blob/master/README.md
+# Settings; https://github.com/scrathe/tardisIVR/blob/master/SETTINGS.md
+#
+# big thanks to the original author(s), especially the BASH/OSX community who helped me achieve my goals.
 # author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
-# author 2) ???
+# author 2+) ??? (the scores of unnamed authors)
 #
-# some applications you need
-#
+# some applications you need:
 # HandbrakeCLI (transcodes video)
-# Mencoder (used for joining 2 AVI's)
-# mkisofs (convert VIDEO_TS folders to .iso format)
-# tvrenamer.pl (fetches episode names for SxxExx TV Shows)
-#    Written by: Robert Meerman (robert.meerman@gmail.com, ICQ# 37099562)
-#    Website: http://www.robmeerman.co.uk/coding/file_rename
 # AtomicParsley (tags video files with info and cover art)
+# avimerge (join .avi files) http://manpages.ubuntu.com/manpages/dapper/man1/avimerge.1.html
+# mencoder (alternative method to join .avi files)
+# mkisofs (convert VIDEO_TS folders to .iso format)
+# tvrenamer.pl (fetches episode names for SxxExx TV Shows) http://www.robmeerman.co.uk/coding/file_rename
 
 # sample option 'Ignore Samples' in Sabnzbd | Config | Switches, must be set to 'Do not download'
 
@@ -67,6 +68,7 @@ STATUS=$7
 # GROUP="alt.binaries.teevee"
 # STATUS="0"
 
+date
 # stops error printing in loop if there are no video files in the folder
 shopt -s nullglob
 
