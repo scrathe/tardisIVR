@@ -3,7 +3,7 @@
 # Documentation; https://github.com/scrathe/tardisIVR/blob/master/README.md
 # Settings; https://github.com/scrathe/tardisIVR/blob/master/SETTINGS.md
 #
-# big thanks to the original author(s), especially the BASH/OSX community who helped me achieve my goals.
+# BIG thanks to the original author(s), especially the BASH/OSX community who helped me achieve my goals.
 # author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
 # author 2+) ??? (the scores of unnamed authors)
 #
