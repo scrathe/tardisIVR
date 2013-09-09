@@ -73,10 +73,10 @@ $1=DIR, $5=CATEGORY, and/or $8 if "tag" only -- no re-encode
 cd /media/TV/Show Name/Season 01
 ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
 ```
-**Movie tag only**
+**Movie encode and tag**
 ```
 cd /media/Movies/Movie Name (2013)
-~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x tag
+~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x
 ```
 **TV recurse thru Season XX directories and tag**
 ```
