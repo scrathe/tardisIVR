@@ -445,19 +445,21 @@ if [[ $CATEGORY = "tv" ]]; then
       episode=$month$day
 
       # convert double space to single
-      show_name=$(echo $show_name|sed 's/\s\s/\s/g')
-      episode_name=$(echo $episode_name|sed 's/\s\s/\s/g')
+      show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
+      episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
+      # strip leading characters
+      episode_name=$(echo $episode_name | sed -r 's/[- ]{1,3}//g')
 
       # strip everything after " - HDTV"
-      episode_name=$(echo $episode_name|sed 's/[- ][hH][dD][tT][vV].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
       # strip WEBRIP
-      episode_name=$(echo $episode_name|sed 's/[- ][wW][eE][bB][rR][iI][pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
       # strip 1080P
-      episode_name=$(echo $episode_name|sed 's/[- ]1080[pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
       # strip 720P
-      episode_name=$(echo $episode_name|sed 's/[- ]720[pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
       # strip PROPER
-      episode_name=$(echo $episode_name|sed 's/[- ]PROPER.*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
 
       # destination filename
       tv_dest_file=$show_name" - "$year-$month-$day".m4v"
@@ -479,19 +481,21 @@ if [[ $CATEGORY = "tv" ]]; then
       episode=$month$day
 
       # convert double space to single
-      show_name=$(echo $show_name|sed 's/\s\s/\s/g')
-      episode_name=$(echo $episode_name|sed 's/\s\s/\s/g')
+      show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
+      episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
+      # strip leading characters
+      episode_name=$(echo $episode_name | sed -r 's/[- ]{1,3}//g')
 
       # strip everything after " - HDTV"
-      episode_name=$(echo $episode_name|sed 's/[- ][hH][dD][tT][vV].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
       # strip WEBRIP
-      episode_name=$(echo $episode_name|sed 's/[- ][wW][eE][bB][rR][iI][pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
       # strip 1080P
-      episode_name=$(echo $episode_name|sed 's/[- ]1080[pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
       # strip 720P
-      episode_name=$(echo $episode_name|sed 's/[- ]720[pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
       # strip PROPER
-      episode_name=$(echo $episode_name|sed 's/[- ]PROPER.*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
 
       # destination filename
       tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
@@ -509,19 +513,21 @@ if [[ $CATEGORY = "tv" ]]; then
       episode_name=${BASH_REMATCH[4]}
 
       # convert double space to single
-      show_name=$(echo $show_name|sed 's/\s\s/\s/g')
-      episode_name=$(echo $episode_name|sed 's/\s\s/\s/g')
+      show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
+      episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
+      # strip leading characters
+      episode_name=$(echo $episode_name | sed -r 's/[- ]{1,3}//g')
 
       # strip everything after " - HDTV"
-      episode_name=$(echo $episode_name|sed 's/[- ][hH][dD][tT][vV].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
       # strip WEBRIP
-      episode_name=$(echo $episode_name|sed 's/[- ][wW][eE][bB][rR][iI][pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
       # strip 1080P
-      episode_name=$(echo $episode_name|sed 's/[- ]1080[pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
       # strip 720P
-      episode_name=$(echo $episode_name|sed 's/[- ]720[pP].*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
       # strip PROPER
-      episode_name=$(echo $episode_name|sed 's/[- ]PROPER.*//g'|sed 's/ *$//g')
+      episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
 
       # destination filename
       tv_dest_file=$show_name" - S"$season"E"$episode" - "$episode_name".m4v"
