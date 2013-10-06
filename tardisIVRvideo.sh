@@ -113,7 +113,7 @@ if [[ $CATEGORY = "movies" ]]; then
     # title =${BASH_REMATCH[1]} # = "Movie"
     title=$NAME # NAME = "Movie (2013)"
     # strip CD1 from $title
-    title=$(echo $title|sed 's/[- ][cC][dD][12].*//g'|sed 's/ *$//g')
+    title=$(echo $title | sed -r 's/[- ][cC][dD][12].*//g' | sed 's/ *$//g')
 
   else
     echo "!!! REGEX error,"
@@ -152,8 +152,8 @@ if [[ $CATEGORY = "movies" ]]; then
   if [[ -e $(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO") ]]; then
     IFO=$(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO")
     echo "folder/file: $IFO"
-    VIDEOTS=$(echo $IFO|sed 's/[vV][iI][dD][eE][oO][_][tT][sS][.][iI][fF][oO].*//g')
-    VIDEOTSROOT=$(echo $VIDEOTS|sed 's/[vV][iI][dD][eE][oO][_][tT][sS].*//g')
+    VIDEOTS=$(echo $IFO | sed -r 's/[vV][iI][dD][eE][oO][_][tT][sS][.][iI][fF][oO].*//g')
+    VIDEOTSROOT=$(echo $VIDEOTS | sed -r 's/[vV][iI][dD][eE][oO][_][tT][sS].*//g')
     echo
     echo "VIDEO_TS Found, converting to an ISO"
     mkisofs -input-charset iso8859-1 -dvd-video -o "$DIR/atomicFile.iso" "$VIDEOTSROOT"  > /dev/null 2>&1
@@ -189,7 +189,7 @@ if [[ $CATEGORY = "movies" ]]; then
     # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
 
     # strip CD1 from $NAME
-    NAME=$(echo $NAME|sed 's/[- ][cC][dD][12].*//g'|sed 's/ *$//g')
+    NAME=$(echo $NAME | sed -r 's/[- ][cC][dD][12].*//g' | sed -r 's/ *$//g')
     avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
     echo "  - AVImerge!!! complete"
     mkdir -p "Unjoined AVIs"
