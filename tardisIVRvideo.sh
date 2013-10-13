@@ -130,13 +130,7 @@ if [[ $CATEGORY = "movies" ]]; then
   # move all video files into the main processing folder
   # find and move files larger than 300MB to parent folder for processing
   find "$DIR" -size +307200k -exec mv {} "$DIR" \;
-
-  # improve this / it doesn't work
-  # errors ok when running from BASH or FileMenuTools
-  if [ $? -ne 0 ]; then
-    echo "  - mv errors above are ok."
-    echo
-  fi
+  echo "  - mv errors above are ok."
 
   # improve this
   # find and delete files smaller than 30MB
