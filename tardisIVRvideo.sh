@@ -213,8 +213,10 @@ if [[ $CATEGORY = "movies" ]]; then
 
   # find media files to convert
   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS]; do
+  echo "  - Discovered media files:"
     NAME=${i%.*}
     EXT=${i##*.}
+    echo "    $NAME.$EXT"
     
     # destination filename
     movie_dest_file="${i%.*}"".m4v"
