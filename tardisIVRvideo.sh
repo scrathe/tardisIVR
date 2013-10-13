@@ -448,7 +448,7 @@ if [[ $CATEGORY = "tv" ]]; then
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
       episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
       # strip leading characters
-      episode_name=$(echo $episode_name | sed -r 's/^[- ]{1,3}//g')
+      episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
 
       # strip everything after " - HDTV"
       episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
@@ -460,6 +460,9 @@ if [[ $CATEGORY = "tv" ]]; then
       episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
       # strip PROPER
       episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
+
+      # strip ending characters
+      episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
 
       # destination filename
       tv_dest_file=$show_name" - "$year-$month-$day".m4v"
@@ -484,7 +487,7 @@ if [[ $CATEGORY = "tv" ]]; then
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
       episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
       # strip leading characters
-      episode_name=$(echo $episode_name | sed -r 's/^[- ]{1,3}//g')
+      episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
 
       # strip everything after " - HDTV"
       episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
@@ -496,6 +499,9 @@ if [[ $CATEGORY = "tv" ]]; then
       episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
       # strip PROPER
       episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
+
+      # strip ending characters
+      episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
 
       # destination filename
       tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
@@ -516,7 +522,7 @@ if [[ $CATEGORY = "tv" ]]; then
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
       episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
       # strip leading characters
-      episode_name=$(echo $episode_name | sed -r 's/^[- ]{1,3}//g')
+      episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
 
       # strip everything after " - HDTV"
       episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
@@ -528,6 +534,9 @@ if [[ $CATEGORY = "tv" ]]; then
       episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
       # strip PROPER
       episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
+
+      # strip ending characters
+      episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
 
       # destination filename
       tv_dest_file=$show_name" - S"$season"E"$episode" - "$episode_name".m4v"
