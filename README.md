@@ -14,22 +14,22 @@
   * or two or more boxen.  hack freely!
 * a Linux guest (ubuntu-12.04.2-server-amd64.iso)
   * 1-2GB RAM, 4-8GB HD, numerous-cpu-cores, bridged network
-* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings... but! the end result is worth it.)
+* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings.)
 * usenet account, nzb index account, etc
 
 ### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
 ### SETTINGS.md
-* appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, tardis variables, wheeeeeeee!
+* appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables
  
 ### PLINK.md
-* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux (this is where it gets strange, entirely optional.)
+* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux (optional)
 * tardisIVR.bat -- Windows script
 * tardisIVR.sh -- Linux script
 
 ### HARDWARE.md
-* an example mini-itx tardis build (the files are inside? the computer!?)
+* an example mini-itx tardis build (the files are inside? the computer?)
 
 ### tardisIVRvideo.sh
 * BASH script supports the following run scenarios;
