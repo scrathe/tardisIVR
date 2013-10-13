@@ -188,9 +188,16 @@ if [[ $CATEGORY = "movies" ]]; then
     # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
     # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
 
-    # strip CD1 from $NAME
-    NAME=$(echo $NAME | sed -r 's/[- ][cC][dD][12].*//g' | sed -r 's/ *$//g')
+    # strip CD1 and trailing characters from $NAME
+    NAME=$(echo $NAME | sed -r 's/[cC][dD][12].*//g' | sed -r 's/[- .]{1,}$//g')
     avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo "$?"
+      echo "!!! ERROR, avimerge exit code"
+      date
+      exit 1
+    fi
+
     echo "  - AVImerge!!! complete"
     mkdir -p "Unjoined AVIs"
     mv *{CD1,cd1}.avi "Unjoined AVIs/."
@@ -198,7 +205,7 @@ if [[ $CATEGORY = "movies" ]]; then
     echo "  - Moved original AVIs to folder 'Unjoined AVIs'"
     echo
   done
-  
+
 ########################################
 # Loop thru media files. Transcode and Tag.
 ########################################
