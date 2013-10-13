@@ -200,8 +200,8 @@ if [[ $CATEGORY = "movies" ]]; then
 
     echo "  - AVImerge!!! complete"
     mkdir -p "Unjoined AVIs"
-    mv *{CD1,cd1}.avi "Unjoined AVIs/."
-    mv *{CD2,cd2}.avi "Unjoined AVIs/."
+    # improve this, spits out errors but works
+    mv *[cD][12].avi "Unjoined AVIs/."
     echo "  - Moved original AVIs to folder 'Unjoined AVIs'"
     echo
   done
