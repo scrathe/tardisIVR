@@ -23,7 +23,7 @@
 * appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables
  
 ### PLINK.md
-* installation and configuration guide for remote execution (plink.exe) from Windows -> Linux (optional)
+* optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
 * tardisIVR.bat -- Windows script
 * tardisIVR.sh -- Linux script
 
@@ -31,7 +31,7 @@
 * an example mini-itx tardis build (the files are inside? the computer?)
 
 ### tardisIVRvideo.sh
-* BASH script supports the following run scenarios;
+* BASH script supports run scenarios;
   * via SABnzbd categories post-processing
   * locally via shell
   * recursive via shell -- i.e. process all Season subfolders
