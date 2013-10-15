@@ -8,7 +8,7 @@
   * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
   * a post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
 
-## what is it made of?
+## what's it made of?
 * a Windows host w/ Hypervisor (Win8/Hyper-V)
   * or two or more boxen.  hack freely!
 * a Linux guest (ubuntu-12.04.2-server-amd64.iso)
