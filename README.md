@@ -9,12 +9,12 @@
   * a post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
 
 ## what's it made of?
-* a Windows host w/ Hypervisor (Win8/Hyper-V)
-  * or two or more boxen.  hack freely!
-* a Linux guest (ubuntu-12.04.2-server-amd64.iso)
-  * 1-2GB RAM, 4-8GB HD, numerous-cpu-cores, bridged network
-* working knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings.)
-* usenet account, nzb index account, etc
+* essentially 1 Windows machine for managing and sharing media and 1 Linux machine for automated download and transcode.
+  * this documentation is specific to the following hardware:
+    * a Windows 8 host w/Hyper-V
+    * a Linux guest (ubuntu-12.04.3-server-amd64.iso) RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Network bridged
+  * requires some knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
+  * requires usenet account, nzb index account, etc
 
 ### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
