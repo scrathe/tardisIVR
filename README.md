@@ -6,7 +6,7 @@
 * blueprints for a box that holds Movies and TV shows
   * a Windows host (front-end) for file management and sharing
   * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
-  * a post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
+  * a BASH post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
 
 ## what does it require?
 * a Windows 8 machine with plenty of redundant storage
@@ -30,8 +30,8 @@
 ###### SETTINGS.md
 * appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables
  
-###### **tardisIVRvideo.sh**
-* BASH script supports run scenarios;
+###### tardisIVRvideo.sh
+* **tardisIVRvideo.sh** supports run scenarios;
   * via SABnzbd categories post-processing
   * locally via shell
   * recursive via shell -- i.e. process all Season subfolders
