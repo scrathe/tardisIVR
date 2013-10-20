@@ -95,7 +95,8 @@ if [[ $CATEGORY = "movies" ]]; then
   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS]; do
     NAME=${i%.*}
     EXT=${i##*.}
-    echo "    $NAME.$EXT"
+    ISIZE=`ls -lh "$i"  | awk '{print $5}'`
+    echo "    $NAME.$EXT $ISIZE"
   done
 
   # matches: movie name (2013).xyz
@@ -217,7 +218,8 @@ if [[ $CATEGORY = "movies" ]]; then
   echo "  - Discovered media files:"
     NAME=${i%.*}
     EXT=${i##*.}
-    echo "    $NAME.$EXT"
+    ISIZE=`ls -lh "$i"  | awk '{print $5}'`
+    echo "    $NAME.$EXT $ISIZE"
     
     # destination filename
     movie_dest_file="${i%.*}"".m4v"
@@ -345,6 +347,8 @@ if [[ $CATEGORY = "movies" ]]; then
 # Cleanup, Move, and print details to log.
 ########################################
 
+    OSIZE=`ls -lh "$movie_dest_folder/$movie_dest_file"  | awk '{print $5}'`
+
     echo "  - Details:"
     echo "    DIR:         $1"
     echo "    NZB_FILE:    $2"
@@ -353,14 +357,14 @@ if [[ $CATEGORY = "movies" ]]; then
     echo "    CATEGORY:    $5"
     echo "    GROUP:       $6"
     echo "    STATUS:      $7"
-    echo "    Input File:  $i"
+    echo "    Input File:  $i $ISIZE"
     echo "    Dest Folder: $movie_dest_folder"
     echo "    Dest File:   $movie_dest_file"
     echo "    Title:       $title"
     echo "    Year:        $year"
     echo
     date
-    echo "  - COMPLETED!  $movie_dest_file"
+    echo "  - COMPLETED!  $movie_dest_file $OSIZE"
 
   done
 fi
@@ -409,7 +413,8 @@ if [[ $CATEGORY = "tv" ]]; then
   for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS]; do
     NAME=${i%.*}
     EXT=${i##*.}
-    echo "    $NAME.$EXT"
+    ISIZE=`ls -lh "$i"  | awk '{print $5}'`
+    echo "    $NAME.$EXT $ISIZE"
   done
 
   # find existing artwork and store
@@ -662,7 +667,8 @@ if [[ $CATEGORY = "tv" ]]; then
       echo
     fi
 
-    # Post Processing for TV Show complete
+    OSIZE=`ls -lh "$tv_dest_folder/$tv_dest_file"  | awk '{print $5}'`
+
     echo "  - Details:"
     echo "    DIR:          $1"
     echo "    NZB_FILE:     $2"
@@ -671,7 +677,7 @@ if [[ $CATEGORY = "tv" ]]; then
     echo "    CATEGORY:     $5"
     echo "    GROUP:        $6"
     echo "    STATUS:       $7"
-    echo "    Input File:   $i"
+    echo "    Input File:   $i $ISIZE"
     echo "    Dest Folder:  $tv_dest_folder"
     echo "    Dest File:    $tv_dest_file"
     echo "    Show Name:    $show_name"
@@ -683,7 +689,7 @@ if [[ $CATEGORY = "tv" ]]; then
     echo "    Day:          $day"
     echo
     date
-    echo "  - COMPLETED!    $tv_dest_file"
+    echo "  - COMPLETED!    $tv_dest_file $OSIZE"
     echo
 
   done
