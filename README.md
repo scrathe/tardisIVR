@@ -24,8 +24,8 @@
  
 ### PLINK.md
 * optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
-* tardisIVR.bat -- Windows script
-* tardisIVR.sh -- Linux script
+* plink-tardisIVR.bat -- Windows script
+* plink-tardisIVR.sh -- Linux script
 
 ### HARDWARE.md
 * an example mini-itx tardis build (the files are inside? the computer?)
