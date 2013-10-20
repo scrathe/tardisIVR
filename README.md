@@ -16,21 +16,21 @@
 * a usenet account, nzb index account, etc
 
 ## files
+###### HARDWARE.md
+* an example mini-itx tardis build (the files are inside? the computer?)
+
 ###### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
+
+###### PLINK.md
+* optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
+* **plink-tardisIVR.bat** -- Windows script
+* **plink-tardisIVR.sh** -- Linux script
 
 ###### SETTINGS.md
 * appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables
  
-###### PLINK.md
-* optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
-* plink-tardisIVR.bat -- Windows script
-* plink-tardisIVR.sh -- Linux script
-
-###### HARDWARE.md
-* an example mini-itx tardis build (the files are inside? the computer?)
-
-###### tardisIVRvideo.sh
+###### **tardisIVRvideo.sh**
 * BASH script supports run scenarios;
   * via SABnzbd categories post-processing
   * locally via shell
