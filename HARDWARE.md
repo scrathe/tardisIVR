@@ -9,7 +9,7 @@
   * K overclocks to 4.0Ghz with stock Intel cooler, however runs **way** hotter than Ivy Bridge.  apparently no matter which low cost cooler you use, 100c temps are normal.
   * the Lian-Li Q25 keeps everything as chilly as possible.  less heat output than a PS3.
   * arctic silver thermal paste did not improve temps whatsoever.  yes i followed best practices applying thermal paste ;)
-  * ended up assigning 6-cores (3 of the 4 real-cores) to my Linux guest that executes handbrake and it dropped the temps ~72-82c
+  * ended up assigning 6-cores (3 of the 4 real-cores) to my Linux guest that executes handbrake and it dropped the temps slightly
 * 2 x 8GB RAM G.SKILL Ares 1866Mhz
 * 1 x HighPoint RocketRAID 622 controller.  eSATA to SansDigital 4 x 2TB JBOD = RAID5
 * 3 x 4TB HDD Seagate ST4000DM000 SATA 6Gb/s w/ Windows Storage Spaces
