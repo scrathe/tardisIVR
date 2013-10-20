@@ -15,21 +15,22 @@
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
 * a usenet account, nzb index account, etc
 
-### INSTALL.md
+## FILES
+###### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
-### SETTINGS.md
+###### SETTINGS.md
 * appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables
  
-### PLINK.md
+###### PLINK.md
 * optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
 * plink-tardisIVR.bat -- Windows script
 * plink-tardisIVR.sh -- Linux script
 
-### HARDWARE.md
+###### HARDWARE.md
 * an example mini-itx tardis build (the files are inside? the computer?)
 
-### tardisIVRvideo.sh
+###### tardisIVRvideo.sh
 * BASH script supports run scenarios;
   * via SABnzbd categories post-processing
   * locally via shell
@@ -39,7 +40,7 @@
 * supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
 * attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
-### example tardisIVRvideo.sh usage
+## example tardisIVRvideo.sh usage
 *standard SABnzbd post-processing arguments*
 ```
 $1=DIR="/media/tardis-x/media/Movies/Movie (2013)/"
