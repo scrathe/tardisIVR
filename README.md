@@ -9,7 +9,7 @@
   * a post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
 
 ## what does it require?
-* a Windows 8 workstation with plenty of redundant storage
+* a Windows 8 machine with plenty of redundant storage
 * a Linux virtual machine
   * ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
