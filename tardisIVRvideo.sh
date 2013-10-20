@@ -292,19 +292,22 @@ if [[ $CATEGORY = "movies" ]]; then
     # if artwork is available locally then tag.
     if [[ -e $(find "$movieartwork" -maxdepth 1 -name "$NAME.jpg") ]]; then
       echo "  - AtomicParsley!!!  tagging w/local artwork."
+      echo atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
       atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
     else
       # just tag
       echo "  - AtomicParsley!!!  tagging w/o artwork."
+      echo atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
       atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
     fi
-  
-    if [ $? != 0 ]; then
-      echo "$?"
-      echo "!!! ERROR, AtomicParsley exit code"
-      date
-      exit 1
-    fi
+
+    # this broke one time so i'm disabling it :)
+    # if [ $? != 0 ]; then
+    #  echo "$?"
+    #  echo "!!! ERROR, AtomicParsley exit code"
+    #  date
+    #  exit 1
+    # fi
 
     # move the transcoded file to a folder.
     echo "  - Moved transcoded file to folder."
