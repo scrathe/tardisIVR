@@ -16,29 +16,29 @@
 * a usenet account, nzb index account, etc
 
 ## files
-###### HARDWARE.md
-* an example mini-itx tardis build (the files are inside? the computer?)
+* HARDWARE.md
+  * an example mini-itx tardis build (the files are inside? the computer?)
 
-###### INSTALL.md
-* Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
+* INSTALL.md
+  * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
-###### PLINK.md
-* optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
-* **plink-tardisIVR.bat** -- Windows script
-* **plink-tardisIVR.sh** -- Linux script
+* PLINK.md
+  * optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
+  * **plink-tardisIVR.bat** -- Windows script
+  * **plink-tardisIVR.sh** -- Linux script
 
-###### SETTINGS.md
-* appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables
+* SETTINGS.md
+  * appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables
  
-###### tardisIVRvideo.sh
-* **tardisIVRvideo.sh** supports run scenarios;
-  * via SABnzbd categories post-processing
-  * locally via shell
-  * recursive via shell -- i.e. process all Season subfolders
-  * remotely via Windows/plink.exe
-* uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
-* supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
-* attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
+* **tardisIVRvideo.sh**
+  * BASH script supports run scenarios:
+    * via SABnzbd categories post-processing
+    * locally via shell
+    * recursive via shell -- i.e. process all Season subfolders
+    * remotely via Windows/plink.exe
+  * uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
+  * supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
+  * attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
 ## example tardisIVRvideo.sh usage
 *standard SABnzbd post-processing arguments*
