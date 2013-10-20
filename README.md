@@ -15,7 +15,7 @@
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
 * a usenet account, nzb index account, etc
 
-## FILES
+## files
 ###### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
@@ -55,7 +55,7 @@ $7=STATUS="0"
 ```
 $8=tag   # just "tag" with AtomicParsley rather than the full HandBrake re-encode then tag process
 ```
-##### example shell usage
+## example shell usage
 **TV encode and tag**
 ```
 $1=DIR, $5=CATEGORY
@@ -83,7 +83,7 @@ cd /media/TV/Show Name
 for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv x x tag ; done
 ```
 
-### resources
+## sources
 * https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/
 * http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
 * https://wiki.ubuntu.com/MountWindowsSharesPermanently
