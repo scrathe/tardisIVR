@@ -8,13 +8,13 @@
   * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
   * a post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
 
-## what's it made of?
-* essentially 1 Windows machine for managing and sharing media and 1 Linux machine for automated download and transcode.
-  * this documentation is specific to the following hardware:
-    * a Windows 8 host w/Hyper-V
-    * a Linux guest (ubuntu-12.04.3-server-amd64.iso) RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Network bridged
-  * requires some knowledge of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
-  * requires usenet account, nzb index account, etc
+## what does it require?
+* a Windows 8 workstation with Hyper-V for managing and sharing media
+  * plenty of redundant storage
+* a Linux virtual machine for automating download and transcode
+  * ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Network bridged
+* strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
+* usenet account, nzb index account, etc
 
 ### INSTALL.md
 * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
