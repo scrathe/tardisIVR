@@ -10,11 +10,11 @@
 
 ## what does it require?
 * a Windows 8 machine with plenty of redundant storage
-  * ewwww, do i have to use Win8?  absolutely not.  use any Hypervisor or bare-metal.
-* * a Linux virtual machine
+  * Q: ewwww, do i have to use Win8?  A: absolutely not -- use any Hypervisor or bare-metal.
+* a Linux virtual machine
   * ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
-* a usenet account, nzb index account, etc
+* a usenet account and nzb index account
 
 ## files
 **HARDWARE.md**
