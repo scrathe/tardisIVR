@@ -229,7 +229,7 @@ if [[ $CATEGORY = "movies" ]]; then
 ########################################
 
     # if .iso, mount, convert, umount
-    regex_iso=".*[iI][sS][oO]"
+    regex_iso="\.*[iI][sS][oO]$"
     if [[ $i =~ $regex_iso ]]; then
       echo "  - REGEX detected ISO,"
       echo "  - $regex_iso"
