@@ -15,6 +15,9 @@
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
 * a usenet account, nzb index account, etc
 
+#### ewwww, do i have to use Win8?
+* absolutely not.  use any Hypervisor or bare-metal.
+
 ## files
 **HARDWARE.md**
   * an example mini-itx tardis build (the files are inside? the computer?)
