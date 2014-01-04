@@ -1,5 +1,5 @@
 # tardisIVR
-### a box that's larger on the inside to put the internet in.
+### a box that's bigger on the inside to put the internet in.
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is this?
