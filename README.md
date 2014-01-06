@@ -91,4 +91,4 @@ for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i
 * http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
 * http://tldp.org/LDP/abs/html/bashver3.html#REGEXMATCHREF
 * http://gskinner.com/RegExr/
-* http://www.mindtwist.de/main/linux/3-linux-tipps/49-how-to-mass-rename-your-iso-movie-database.html
+* http://www.mindtwist.de/main/linux/3-linux-tipps/9-how-to-mass-convert-dvd-folders-to-iso-files.html
