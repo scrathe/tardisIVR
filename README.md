@@ -1,5 +1,5 @@
 # tardisIVR
-### a box that's larger on the inside to put the internet in.
+### a box that's bigger on the inside to put the internet in.
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true "tardisIVR Blueprint")
 
 ## what is this?
@@ -10,10 +10,11 @@
 
 ## what does it require?
 * a Windows 8 machine with plenty of redundant storage
+  * Q: ewwww, do i have to use Win8?  A: absolutely not -- use any Hypervisor or bare-metal.
 * a Linux virtual machine
   * ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
-* a usenet account, nzb index account, etc
+* a usenet account and nzb index account
 
 ## files
 **HARDWARE.md**
@@ -90,4 +91,4 @@ for i in * ; do cd "`pwd`" && ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i
 * http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html
 * http://tldp.org/LDP/abs/html/bashver3.html#REGEXMATCHREF
 * http://gskinner.com/RegExr/
-* http://www.mindtwist.de/main/linux/3-linux-tipps/49-how-to-mass-rename-your-iso-movie-database.html
+* http://www.mindtwist.de/main/linux/3-linux-tipps/9-how-to-mass-convert-dvd-folders-to-iso-files.html
