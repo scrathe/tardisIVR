@@ -92,7 +92,7 @@ if [[ $CATEGORY = "movies" ]]; then
   # improve this
   # populate $NAME to match against $regex
   echo "  - Discovered media files:"
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS]; do
+  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS] *.[dD][iI][vV][xX]; do
     NAME=${i%.*}
     EXT=${i##*.}
     ISIZE=`ls -lh "$i"  | awk '{print $5}'`
@@ -214,7 +214,7 @@ if [[ $CATEGORY = "movies" ]]; then
   fi
 
   # find media files to convert
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS]; do
+  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS] *.[dD][iI][vV][xX]; do
   echo "  - Discovered media files:"
     NAME=${i%.*}
     EXT=${i##*.}
@@ -410,7 +410,7 @@ if [[ $CATEGORY = "tv" ]]; then
   # improve this
   # populate $NAME to match against $regex
   echo "  - Discovered media files:"
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS]; do
+  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS] *.[dD][iI][vV][xX]; do
     NAME=${i%.*}
     EXT=${i##*.}
     ISIZE=`ls -lh "$i"  | awk '{print $5}'`
@@ -425,17 +425,17 @@ if [[ $CATEGORY = "tv" ]]; then
 ########################################
 
   # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
-  if [[ $CATEGORY = "tv" && $NAME =~ $regex  ]]; then
-    echo "  - Renaming the file with tvrenamer.pl"
-    /usr/local/bin/tvrenamer.pl --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series > /dev/null 2>&1
-    echo
-  fi
+#  if [[ $CATEGORY = "tv" && $NAME =~ $regex  ]]; then
+#    echo "  - Renaming the file with tvrenamer.pl"
+#    /usr/local/bin/tvrenamer.pl --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series > /dev/null 2>&1
+#    echo
+#  fi
   
 ########################################
 # Loop thru media files.  Transcode and Tag.
 ########################################
 
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS]; do
+  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS] *.[dD][iI][vV][xX]; do
     NAME=${i%.*}
 
     # the soup requires custom processing
