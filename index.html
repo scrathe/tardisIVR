@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="tardisIVR : BASH post-processing script for SABnzbd" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>tardisIVR</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/scrathe/tardisIVR">View on GitHub</a>
+
+          <h1 id="project_title">tardisIVR</h1>
+          <h2 id="project_tagline">BASH post-processing script for SABnzbd</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/scrathe/tardisIVR/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/scrathe/tardisIVR/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="tardisivr" class="anchor" href="#tardisivr"><span class="octicon octicon-link"></span></a>tardisIVR</h1>
+
+<h3>
+<a name="a-box-thats-bigger-on-the-inside-to-put-the-internet-in" class="anchor" href="#a-box-thats-bigger-on-the-inside-to-put-the-internet-in"><span class="octicon octicon-link"></span></a>a box that's bigger on the inside to put the internet in.</h3>
+
+<p><img src="https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true" alt="alt text" title="tardisIVR Blueprint"></p>
+
+<h2>
+<a name="what-is-this" class="anchor" href="#what-is-this"><span class="octicon octicon-link"></span></a>what is this?</h2>
+
+<ul>
+<li>blueprints for a box that holds Movies and TV shows
+
+<ul>
+<li>a Windows host (front-end) for file management and sharing</li>
+<li>a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)</li>
+<li>a BASH post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley</li>
+</ul>
+</li>
+</ul><h2>
+<a name="what-does-it-require" class="anchor" href="#what-does-it-require"><span class="octicon octicon-link"></span></a>what does it require?</h2>
+
+<ul>
+<li>a Windows 8 machine with plenty of redundant storage
+
+<ul>
+<li>Q: ewwww, do i have to use Win8?  A: absolutely not -- use any Hypervisor or bare-metal.</li>
+</ul>
+</li>
+<li>a Linux virtual machine
+
+<ul>
+<li>ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking</li>
+</ul>
+</li>
+<li>a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)</li>
+<li>a usenet account and nzb index account</li>
+</ul><h2>
+<a name="files" class="anchor" href="#files"><span class="octicon octicon-link"></span></a>files</h2>
+
+<p><strong>HARDWARE.md</strong></p>
+
+<ul>
+<li>an example mini-itx tardis build (the files are inside? the computer?)</li>
+</ul><p><strong>INSTALL.md</strong></p>
+
+<ul>
+<li>Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git</li>
+</ul><p><strong>PLINK.md</strong></p>
+
+<ul>
+<li>optional installation and configuration guide for remote execution (plink.exe) from Windows -&gt; Linux</li>
+<li>
+<strong>plink-tardisIVR.bat</strong> -- Windows script</li>
+<li>
+<strong>plink-tardisIVR.sh</strong> -- Linux script</li>
+</ul><p><strong>SETTINGS.md</strong></p>
+
+<ul>
+<li>appendix for settings; SABnzbd, SickBeard, CouchPotato, HeadPhones, file paths, file naming, script variables</li>
+</ul><p><strong>tardisIVRvideo.sh</strong></p>
+
+<ul>
+<li>BASH script supports run scenarios:
+
+<ul>
+<li>via SABnzbd categories post-processing</li>
+<li>locally via shell</li>
+<li>recursive via shell -- i.e. process all Season subfolders</li>
+<li>remotely via Windows/plink.exe</li>
+</ul>
+</li>
+<li>uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato</li>
+<li>supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames</li>
+<li>attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)</li>
+</ul><h2>
+<a name="example-tardisivrvideosh-usage" class="anchor" href="#example-tardisivrvideosh-usage"><span class="octicon octicon-link"></span></a>example tardisIVRvideo.sh usage</h2>
+
+<p><em>standard SABnzbd post-processing arguments</em></p>
+
+<pre><code>$1=DIR="/media/tardis-x/media/Movies/Movie (2013)/"
+$2=NZB_FILE="Movie (2013).nzb"
+$3=NAME="Movie (2013)"
+$4=NZB_ID=""
+$5=CATEGORY="movies"
+$6=GROUP="alt.binaries.tardis"
+$7=STATUS="0"
+</code></pre>
+
+<p><em>additional tardisIVRvideo.sh arguments</em></p>
+
+<pre><code>$8=tag   # just "tag" with AtomicParsley rather than the full HandBrake re-encode then tag process
+</code></pre>
+
+<h2>
+<a name="example-shell-usage" class="anchor" href="#example-shell-usage"><span class="octicon octicon-link"></span></a>example shell usage</h2>
+
+<p><strong>TV encode and tag</strong></p>
+
+<pre><code>$1=DIR, $5=CATEGORY
+</code></pre>
+
+<pre><code>cd /media/TV/Show Name/Season 01
+~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x
+</code></pre>
+
+<p><strong>TV tag only</strong></p>
+
+<pre><code>$1=DIR, $5=CATEGORY, and/or $8 if "tag" only -- no re-encode
+</code></pre>
+
+<pre><code>cd /media/TV/Show Name/Season 01
+~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
+</code></pre>
+
+<p><strong>Movie encode and tag</strong></p>
+
+<pre><code>cd /media/Movies/Movie Name (2013)
+~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x
+</code></pre>
+
+<p><strong>TV recurse thru Season XX directories and tag</strong></p>
+
+<pre><code>cd /media/TV/Show Name
+for i in * ; do cd "`pwd`" &amp;&amp; ~/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv x x tag ; done
+</code></pre>
+
+<h2>
+<a name="sources" class="anchor" href="#sources"><span class="octicon octicon-link"></span></a>sources</h2>
+
+<ul>
+<li><a href="https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/">https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/</a></li>
+<li><a href="http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/">http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/</a></li>
+<li><a href="https://wiki.ubuntu.com/MountWindowsSharesPermanently">https://wiki.ubuntu.com/MountWindowsSharesPermanently</a></li>
+<li><a href="http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html">http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html</a></li>
+<li><a href="http://tldp.org/LDP/abs/html/bashver3.html#REGEXMATCHREF">http://tldp.org/LDP/abs/html/bashver3.html#REGEXMATCHREF</a></li>
+<li><a href="http://gskinner.com/RegExr/">http://gskinner.com/RegExr/</a></li>
+<li><a href="http://www.mindtwist.de/main/linux/3-linux-tipps/9-how-to-mass-convert-dvd-folders-to-iso-files.html">http://www.mindtwist.de/main/linux/3-linux-tipps/9-how-to-mass-convert-dvd-folders-to-iso-files.html</a></li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">tardisIVR maintained by <a href="https://github.com/scrathe">scrathe</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
