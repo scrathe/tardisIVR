@@ -253,9 +253,9 @@ if [[ $CATEGORY = "movies" ]]; then
         # find the largest .m2ts file
         M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
         echo "  - Transcoding!!! BlueRay,"
-        echo handbrake-cli -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset"
+        echo handbrake-cli -O -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset"
         echo
-        handbrake-cli -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
+        handbrake-cli -O -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
         echo "  - un-mounting .iso"
         sudo umount /media/iso
         echo
@@ -264,9 +264,9 @@ if [[ $CATEGORY = "movies" ]]; then
     else
       # if not .iso then just transcode
       echo "  - Transcoding!!!"
-      echo handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset"
+      echo handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$movie_preset"
       echo
-      handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
+      handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
 
     fi
 
@@ -425,12 +425,17 @@ if [[ $CATEGORY = "tv" ]]; then
 ########################################
 
   # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
-#  if [[ $CATEGORY = "tv" && $NAME =~ $regex  ]]; then
-#    echo "  - Renaming the file with tvrenamer.pl"
-#    /usr/local/bin/tvrenamer.pl --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series > /dev/null 2>&1
-#    echo
-#  fi
-  
+  if [[ $CATEGORY = "tv" && $NAME =~ $regex  ]]; then
+    echo "  - Renaming the file with tvrenamer.pl"
+    rm *.[uU][rR][lL]
+    # tvrenamer.pl hangs a LOT.  here we background the cmd and kill it after X seconds.
+    /usr/local/bin/tvrenamer.pl --debug --noANSI --nogroup --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series &
+    TASK_PID=$!
+    sleep 10
+    kill -9 $TASK_PID
+    echo
+  fi
+
 ########################################
 # Loop thru media files.  Transcode and Tag.
 ########################################
@@ -450,10 +455,11 @@ if [[ $CATEGORY = "tv" ]]; then
       show_name=${BASH_REMATCH[1]}
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
+      month2=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
       season=$year
-      episode=$month$day
+      episode=$month2$day
 
       # convert double space to single
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
@@ -489,10 +495,11 @@ if [[ $CATEGORY = "tv" ]]; then
       show_name=${BASH_REMATCH[1]}
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
+      month2=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
       season=$year
-      episode=$month$day
+      episode=$month2$day
 
       # convert double space to single
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
@@ -574,9 +581,9 @@ if [[ $CATEGORY = "tv" ]]; then
     if [[ $8 != "tag" ]]; then 
       # convert using handbrake
       echo "  - Transcoding!!!"
-      echo handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$tv_preset"
+      echo handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$tv_preset"
       echo
-      handbrake-cli -i "$i" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
+      handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
       # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
     
       if [ $? != 0 ]; then
