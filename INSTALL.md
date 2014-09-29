@@ -81,7 +81,7 @@ sudo ln -s /usr/bin/AtomicParsley /usr/bin/atomicparsley
 ### tvrenamer.pl install
 ```
 cd ~
-wget https://github.com/meermanr/TVSeriesRenamer/blob/master/tvrenamer.pl
+wget https://github.com/meermanr/TVSeriesRenamer/raw/master/tvrenamer.pl
 sudo mv tvrenamer.pl /usr/local/bin/
 sudo chmod +x /usr/local/bin/tvrenamer.pl
 sudo apt-get install -y libterm-readkey-perl libwww-perl
