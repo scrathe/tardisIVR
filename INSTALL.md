@@ -12,6 +12,11 @@
 sudo apt-get install -y avimerge genisoimage git openssh-server wget
 ```
 
+##### download tardisIVRvideo.sh to SABnzbd's script directory
+```
+git clone https://github.com/scrathe/tardisIVR.git ~/.sabnzbd/scripts/tardisIVR
+```
+
 ##### mount windows shares
 * bug?  can not mount \\\server\c$ administrative share.  i suspect this is a new Win8 security default.
 * Windows share: \\\servername\sharename
