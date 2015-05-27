@@ -92,9 +92,7 @@ if [[ $CATEGORY = "movies" ]]; then
   # improve this
   # populate $NAME to match against $regex
   echo "  - Discovered media files:"
-  # for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS] *.[dD][iI][vV][xX]; do
-  # trying out a new file discovery method
-  for i in `find . -type f -size +100M -iname "*.avi" -o -type f -size +100M -iname "*.divx" -o -type f -size +100M -iname "*.img" -o -type f -size +100M -iname "*.iso" -o -type f -size +100M -iname "*.m4v" -o -type f -size +100M -name "*.mkv" -o -type f -size +100M -iname "*.mp4" -o -type f -size +100M -iname "*.ts" -o -type f -size +100M -iname "*.wmv"`;do
+  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS] *.[dD][iI][vV][xX]; do
     NAME=${i%.*}
     EXT=${i##*.}
     ISIZE=`ls -lh "$i"  | awk '{print $5}'`
@@ -216,8 +214,7 @@ if [[ $CATEGORY = "movies" ]]; then
   fi
 
   # find media files to convert
-  # trying out a new file discovery method
-  for i in `find . -type f -size +100M -iname "*.avi" -o -type f -size +100M -iname "*.divx" -o -type f -size +100M -iname "*.img" -o -type f -size +100M -iname "*.iso" -o -type f -size +100M -iname "*.m4v" -o -type f -size +100M -name "*.mkv" -o -type f -size +100M -iname "*.mp4" -o -type f -size +100M -iname "*.ts" -o -type f -size +100M -iname "*.wmv"`;do
+  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS] *.[dD][iI][vV][xX]; do
   echo "  - Discovered media files:"
     NAME=${i%.*}
     EXT=${i##*.}
@@ -413,8 +410,7 @@ if [[ $CATEGORY = "tv" ]]; then
   # improve this
   # populate $NAME to match against $regex
   echo "  - Discovered media files:"
-  # trying out a new file discovery method
-  for i in `find . -type f -size +100M -iname "*.avi" -o -type f -size +100M -iname "*.divx" -o -type f -size +100M -iname "*.img" -o -type f -size +100M -iname "*.iso" -o -type f -size +100M -iname "*.m4v" -o -type f -size +100M -name "*.mkv" -o -type f -size +100M -iname "*.mp4" -o -type f -size +100M -iname "*.ts" -o -type f -size +100M -iname "*.wmv"`;do
+  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS] *.[dD][iI][vV][xX]; do
     NAME=${i%.*}
     EXT=${i##*.}
     ISIZE=`ls -lh "$i"  | awk '{print $5}'`
