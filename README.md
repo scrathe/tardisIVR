@@ -6,7 +6,7 @@
 * blueprints for a box that holds Movies and TV shows
   * a Windows host (front-end) for file management and sharing
   * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
-  * a BASH post-processing script (tardisIVRvideo.sh) that encodes and tags for iTunes/AppleTV using HandBrake and AtomicParsley
+  * a BASH post-processing script (tardisIVRvideo.sh) that encodes and tags using HandBrake and AtomicParsley for many media sharing environments; iTunes/AppleTV, Plex, DLNA 
 
 ## what does it require?
 * a Windows 8 machine with plenty of redundant storage
