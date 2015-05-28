@@ -115,6 +115,8 @@ if [[ $CATEGORY = "movies" ]]; then
     title=$NAME # NAME = "Movie (2013)"
     # strip CD1 from $title
     title=$(echo $title | sed -r 's/[- ][cC][dD][12].*//g' | sed 's/ *$//g')
+    # captialize first character of words
+    title=$(echo $title | sed -e 's/\b\(.\)/\u\1/g')
 
   else
     echo "!!! REGEX error,"
@@ -126,7 +128,7 @@ if [[ $CATEGORY = "movies" ]]; then
   fi
 
   # find existing artwork and store
-  find . -maxdepth 1 -type f -name '*.jpg' -exec mv '{}' "$movieartwork/$NAME.jpg" \;
+  find . -type f -name '*.jpg' -exec mv '{}' "$movieartwork/$NAME.jpg" \;
 
   # move all video files into the main processing folder
   # find and move files larger than 300MB to parent folder for processing
@@ -292,7 +294,7 @@ if [[ $CATEGORY = "movies" ]]; then
 ########################################
 
     # if artwork is available locally then tag.
-    if [[ -e $(find "$movieartwork" -maxdepth 1 -name "$NAME.jpg") ]]; then
+    if [[ -e $(find "$movieartwork" -name "$NAME.jpg") ]]; then
       echo "  - AtomicParsley!!!  tagging w/local artwork."
       echo atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
       atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
@@ -418,7 +420,7 @@ if [[ $CATEGORY = "tv" ]]; then
   done
 
   # find existing artwork and store
-  find . -type f -maxdepth 1 -name '*.jpg' -exec mv '{}' "$tvartwork/$NAME.jpg" \;
+  find . -type f -name '*.jpg' -exec mv '{}' "$tvartwork/$NAME.jpg" \;
 
 ########################################
 # Run tvrenamer.pl if SxxExx is detected.
@@ -463,6 +465,8 @@ if [[ $CATEGORY = "tv" ]]; then
 
       # convert double space to single
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
+      # captialize first character of words
+      show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
       episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
       # strip leading characters
       episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
@@ -503,6 +507,8 @@ if [[ $CATEGORY = "tv" ]]; then
 
       # convert double space to single
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
+      # captialize first character of words
+      show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
       episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
       # strip leading characters
       episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
@@ -538,6 +544,8 @@ if [[ $CATEGORY = "tv" ]]; then
 
       # convert double space to single
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
+      # captialize first character of words
+      show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
       episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
       # strip leading characters
       episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
@@ -618,7 +626,7 @@ if [[ $CATEGORY = "tv" ]]; then
     echo "  - Retrieved Artwork from http://epguides.com"
 
     # if artwork is available locally then tag.
-    if [[ -e $(find "$tvartwork" -maxdepth 1 -name "$show_name.jpg") ]]; then
+    if [[ -e $(find "$tvartwork" -name "$show_name.jpg") ]]; then
       echo "  - AtomicParsley!!!  tagging w/local artwork."
       atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "$tvartwork$show_name.jpg" --overWrite > /dev/null 2>&1
 
