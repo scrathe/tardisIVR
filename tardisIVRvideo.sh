@@ -485,6 +485,9 @@ if [[ $CATEGORY = "tv" ]]; then
       # strip ending characters
       episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
 
+      # captialize first character of words
+      episode_name=$(echo $episode_name | sed -e 's/\b\(.\)/\u\1/g')
+
       # destination filename
       tv_dest_file=$show_name" - "$year-$month-$day".m4v"
 
@@ -527,6 +530,9 @@ if [[ $CATEGORY = "tv" ]]; then
       # strip ending characters
       episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
 
+      # captialize first character of words
+      episode_name=$(echo $episode_name | sed -e 's/\b\(.\)/\u\1/g')
+
       # destination filename
       tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
 
@@ -563,6 +569,9 @@ if [[ $CATEGORY = "tv" ]]; then
 
       # strip ending characters
       episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
+
+      # captialize first character of words
+      episode_name=$(echo $episode_name | sed -e 's/\b\(.\)/\u\1/g')
 
       # destination filename
       tv_dest_file=$show_name" - S"$season"E"$episode" - "$episode_name".m4v"
