@@ -502,11 +502,12 @@ if [[ $CATEGORY = "tv" ]]; then
       show_name=${BASH_REMATCH[1]}
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
-      month2=$(echo $month | sed -r 's/^0//g')
+      # strip leading 0 from month
+      month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
       season=$year
-      episode=$month2$day
+      episode=$month$day
 
       # convert double space to single
       show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
