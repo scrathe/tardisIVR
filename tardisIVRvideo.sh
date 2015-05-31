@@ -468,9 +468,8 @@ if [[ $CATEGORY = "movies" ]]; then
   EXT=${file##*.}
   ISIZE=$(ls -lh "${file}" | awk '{print $5}')
   echo "    $NAME.$EXT $ISIZE"
-  # TODO move this
-  # # populate variable if m4v is discovered
-  # dest_file="${file%.*}.m4v"
+  # destination filename
+  movie_dest_file="${file%.*}.m4v"
 
   if [[ $NAME =~ $regex ]]; then
     echo "  - REGEX detected Movie,"
@@ -532,9 +531,6 @@ if [[ $CATEGORY = "tv" ]]; then
       EXT=${file##*.}
       ISIZE=$(ls -lh "${file}"  | awk '{print $5}')
       echo "    $NAME.$EXT $ISIZE"
-      # TODO remove this
-      # # populate variable if m4v is discovered
-      # dest_file="${file%.*}.m4v"
   
     if [[ $NAME =~ $regex_soup ]]; then
       echo "  - REGEX detected The Soup,"
