@@ -30,7 +30,7 @@ unwatched_dest_folder="/media/tardis-x/downloads/epic/trash/"
 
 # Movie artwork location if you have it
 # files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
-movieartwork="/media/tardis-x/downloads/epic/artwork/movies/"
+movie_artwork="/media/tardis-x/downloads/epic/artwork/movies/"
 
 # Movie HandBrake preset
 movie_preset="AppleTV"
@@ -46,19 +46,19 @@ dest_false=" - SE.m4v"
 
 # TV Show artwork location if you have it
 # files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
-tvartwork="/media/tardis-x/downloads/epic/artwork/tv/"
+tv_artwork="/media/tardis-x/downloads/epic/artwork/tv/"
 
 # TV Show HandBrake preset
 tv_preset="AppleTV"
 
 # SABnzbd output parameters
-DIR=$1
-NZB_FILE=$2
-NAME=$3
-NZB_ID=$4
-CATEGORY=$5
-GROUP=$6
-STATUS=$7
+DIR="$1"
+NZB_FILE="$2"
+NAME="$3"
+NZB_ID="$4"
+CATEGORY="$5"
+GROUP="$6"
+STATUS="$7"
 
 # test SABnzbd parameters
 # DIR="/Volumes/Irulan/Movies/0, New/Movie (2009)/"
@@ -69,41 +69,410 @@ STATUS=$7
 # GROUP="alt.binaries.teevee"
 # STATUS="0"
 
-date
 # stops error printing in loop if there are no video files in the folder
 shopt -s nullglob
 
-########################################
-# /begin CATEGORY = Movie
-########################################
+encodeMovie(){
+  # detect .iso and mount, detect BlueRay, convert, umount
+  regex_iso="\.*[iI][sS][oO]$"
 
-if [[ $CATEGORY = "movies" ]]; then
-  echo "  - Processing as a Movie"
+  if [[ "${file}" =~ $regex_iso ]]; then
+    echo "  - REGEX detected ISO,"
+    iso_detected=1
+    echo "  - $regex_iso"
+    echo "  - $file"
+    echo
+
+    echo "  - mounting .iso,"
+    # need sudo access with NOPASSWD
+    sudo mount -o loop "${file}" /media/iso
+
+    if [[ $? -ne 0 ]]; then
+      echo "$?"
+      echo "!!! ERROR, mount .iso exit code"
+      date
+      exit 1
+    fi
+
+    # BlueRay
+    if [[ -d /media/iso/BDMV ]]; then
+      # find the largest .m2ts file
+      M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
+      echo "  - Transcoding!!! BlueRay,"
+      echo handbrake-cli -O -i ${M2TS} -o "atomicFile.m4v" --preset=${movie_preset}
+      echo
+      START=$(date +%s)
+      handbrake-cli -O -i ${M2TS} -o "atomicFile.m4v" --preset=${movie_preset} > /dev/null 2>&1
+
+      if [[ $? -ne 0 ]]; then
+        echo "$?"
+        echo "!!! ERROR, HandBrake exit code"
+        date
+        exit 1
+      fi
+
+      END=$(date +%s)
+      echo "  - Time Elapsed: "$((END-START)) | awk '{print int($1/60)":"int($1%60)}'
+    fi
+
+  # if not BlueRay just transcode
+  else
+    echo "  - Transcoding!!!"
+    echo handbrake-cli -O -i ${file} -o "atomicFile.m4v" --preset=${movie_preset}
+    echo
+    START=$(date +%s)
+    handbrake-cli -O -i "${file}" -o "atomicFile.m4v" --preset=${movie_preset} > /dev/null 2>&1
+
+    if [[ $? -ne 0 ]]; then
+      echo "$?"
+      echo "!!! ERROR, HandBrake exit code"
+      date
+      exit 1
+    fi
+
+    END=$(date +%s)
+    echo "  - Time Elapsed: "$((END-START)) | awk '{print int($1/60)":"int($1%60)}'
+  fi
+
+  if [[ $iso_detected -eq 1 ]]; then
+    echo "  - un-mounting .iso"
+    sudo umount /media/iso
+    echo
+  fi
+
+  # check output file created by handbrake
+  ls -l "atomicFile.m4v" > /dev/null 2>&1
+  if [[ $? -ne 0 ]]; then
+    echo "!!! ERROR, HandBrake atomicFile.m4v missing"
+    date
+    exit 1
+  fi
+}
+
+encodeTv(){
+  # convert using handbrake
+  echo "  - Transcoding!!!"
+  echo handbrake-cli -O -i ${file} -o "atomicFile.m4v" --preset=${tv_preset}
   echo
-  
-  cd "$DIR"
-  if [ $? -ne 0 ]; then
+  START=$(date +%s)
+  handbrake-cli -O -i "${file}" -o "atomicFile.m4v" --preset=${tv_preset} > /dev/null 2>&1
+  # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
+
+  if [[ $? != 0 ]]; then
     echo "$?"
-    echo "!!! ERROR, cd '$DIR'"
+    echo "!!! ERROR, HandBrake exit code"
     date
     exit 1
   fi
 
-  # improve this
-  # populate $NAME to match against $regex
-  echo "  - Discovered media files:"
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS] *.[dD][iI][vV][xX]; do
-    NAME=${i%.*}
-    EXT=${i##*.}
-    ISIZE=`ls -lh "$i"  | awk '{print $5}'`
-    echo "    $NAME.$EXT $ISIZE"
-  done
+  END=$(date +%s)
+  echo "  - Time Elapsed: "$((END-START)) | awk '{print int($1/60)":"int($1%60)}'
+}
 
+printMovieDetails(){
+  OSIZE=$(ls -lh "${movie_dest_folder}/${movie_dest_file}"  | awk '{print $5}')
+
+  echo "  - Details:"
+  echo "    DIR:          $DIR"
+  echo "    NZB_FILE:     $NZB_FILE"
+  echo "    NAME:         $NAME"
+  echo "    NZB_ID:       $NZB_ID"
+  echo "    CATEGORY:     $CATEGORY"
+  echo "    GROUP:        $GROUP"
+  echo "    STATUS:       $STATUS"
+  echo "    Dest Folder:  $movie_dest_folder"
+  echo "    Dest File:    $movie_dest_file"
+  echo "    Title:        $title"
+  echo "    Year:         $year"
+  echo "    Input File:   $file $ISIZE"
+  echo
+  date
+  echo "  - COMPLETED!    $movie_dest_file $OSIZE"
+}
+
+printTvDetails(){
+  OSIZE=$(ls -lh "${tv_dest_folder}/${tv_dest_file}"  | awk '{print $5}')
+
+  echo "  - Details:"
+  echo "    DIR:          $DIR"
+  echo "    NZB_FILE:     $NZB_FILE"
+  echo "    NAME:         $NAME"
+  echo "    NZB_ID:       $NZB_ID"
+  echo "    CATEGORY:     $CATEGORY"
+  echo "    GROUP:        $GROUP"
+  echo "    STATUS:       $STATUS"
+  echo "    Dest Folder:  $tv_dest_folder"
+  echo "    Dest File:    $tv_dest_file"
+  echo "    Show Name:    $show_name"
+  echo "    Season:       $season"
+  echo "    Episode:      $episode"
+  echo "    Episode Name: $episode_name"
+  echo "    Year:         $year"
+  echo "    Month:        $month"
+  echo "    Day:          $day"
+  echo "    Input File:   $file $ISIZE"
+  echo
+  date
+  echo "  - COMPLETED!    $tv_dest_file $OSIZE"
+}
+
+tagMovie(){
+  # remove existing metadata
+  echo "  - Removing Existing Metadata"
+  atomicparsley "atomicFile.m4v" --metaEnema --overWrite
+  # if artwork is available locally then tag.
+  if [[ -e $(find "${movie_artwork}" -name "${NAME}.jpg") ]]; then
+    echo "  - AtomicParsley!!!  tagging w/local artwork."
+    echo "atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title=${title} --year=${year} --artwork ${movieartwork}${NAME}.jpg --overWrite > /dev/null 2>&1"
+    atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title=${title} --year=${year} --artwork "${movieartwork}${NAME}.jpg" --overWrite > /dev/null 2>&1
+  else
+    # just tag
+    echo "  - AtomicParsley!!!  tagging w/o artwork."
+    echo "atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title=${title} --year=${year} --overWrite > /dev/null 2>&1"
+    atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title=${title} --year=${year} --overWrite > /dev/null 2>&1
+  fi
+
+  # this broke one time so i'm disabling it :)
+  # if [ $? != 0 ]; then
+  #  echo "$?"
+  #  echo "!!! ERROR, AtomicParsley exit code"
+  #  date
+  #  exit 1
+  # fi
+}
+
+tagTv(){
+  # remove existing metadata
+  echo "  - Removing Existing Metadata"
+  atomicparsley "atomicFile.m4v" --metaEnema --overWrite
+
+  show_name=${1}
+  episode_name=${2}
+  episode=${3}
+  season=${4}
+  # get artwork from epguides.com
+  epguidesartwork=$(echo ${show_name}|sed 's/ *//g')
+  wget -N http://epguides.com/${epguidesartwork}/cast.jpg > /dev/null 2>&1
+  echo "  - Retrieved Artwork from http://epguides.com"
+  
+  # if artwork is available locally then tag.
+  if [[ -e $(find "${tv_artwork}" -name "${show_name}.jpg") ]]; then
+    echo "  - AtomicParsley!!!  tagging w/local artwork."
+    atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName ${show_name} --TVEpisode ${episode_name} --description ${episode_name} --TVEpisodeNum ${episode} --TVSeason ${season} --title ${show_name} --artwork "${tv_artwork}${show_name}.jpg" --overWrite > /dev/null 2>&1
+  
+  # else get artwork if available from epguides.com and tag.
+  elif [[ -e $(find . -name "cast.jpg") ]]; then
+    echo "  - AtomicParsley!!!  tagging w/epguides.com artwork."
+    atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName ${show_name} --TVEpisode ${episode_name} --description ${episode_name} --TVEpisodeNum ${episode} --TVSeason ${season} --title ${show_name} --artwork "cast.jpg" --overWrite > /dev/null 2>&1
+  
+  # otherwise tag without artwork.
+  else
+    echo "  - AtomicParsley!!!  tagging w/o artwork."
+    atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName ${show_name} --TVEpisode ${episode_name} --description ${episode_name} --TVEpisodeNum ${episode} --TVSeason ${season} --title ${show_name} --overWrite > /dev/null 2>&1
+  fi
+
+  if [[ $? != 0 ]]; then
+    echo "$?"
+    echo "!!! ERROR, AtomicParsley exit code"
+    date
+    exit 1
+  fi
+
+  # sleep a bit
+  sleep 3
+}
+
+moveTranscoded(){
+  dest_file=${1}
+  dest_folder=${2}
+  echo "  - Moving transcoded file to folder."
+  echo "  - mv $dest_file $dest_folder"
+
+  mv "atomicFile.m4v" "${dest_folder}${dest_file}"
+
+  if [[ $? -ne 0 ]]; then
+    echo "$?"
+    echo "!!! ERROR, mv exit code"
+    date
+    exit 1
+  fi
+
+  # sleep a bit
+  sleep 3
+}
+
+moveOriginal(){
+  # move the original downloaded file to a folder.
+  # don't fail if none is found.  i.e. re-encoding (moved) existing .m4v
+  echo "  - Moving original downloaded file to folder."
+  echo "  - mv $file $postproc_dest_folder$file"
+  mv "${file}" "${postproc_dest_folder}${file}"
+
+  if [[ $? -ne 0 ]]; then
+    echo "  - mv errors above are ok."
+    echo
+  fi
+
+  # sleep a bit
+  sleep 3
+}
+
+findArtwork(){
+  # $1 = $movie_artwork
+  # find existing artwork and store
+  # TODO add more media types
+  find . -type f -name '*.jpg' -exec mv '{}' "${1}/${NAME}.jpg" \;
+}
+
+consolidateFiles(){
+  # consolidate all files into the main processing folder
+  echo "  - Consolidating files in $DIR"
+  find "$DIR" -mindepth 2 -type f -exec mv -i '{}' "$DIR" ';'
+
+  # TODO this may no longer be relevant
+  if [[ $? -ne 0 ]]; then
+    echo "  - mv errors above are ok."
+    echo
+  fi
+}
+
+tvRenamer(){
+  # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
+  if [[ $CATEGORY = "tv" && $NAME =~ $regex  ]]; then
+    echo "  - Renaming the file with tvrenamer.pl"
+    rm *.[uU][rR][lL]
+    # tvrenamer.pl sometimes hangs. background the cmd and kill it after X seconds.
+    /usr/local/bin/tvrenamer.pl --debug --noANSI --nogroup --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series &
+    TASK_PID=$!
+    sleep 10
+    kill -9 $TASK_PID
+    echo
+  fi
+}
+
+mkIsofs(){
+  # TODO QA this
+  # find VIDEO_TS folder and files
+  if [[ -e $(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO") ]]; then
+    echo "VIDEO_TS Found, converting to an ISO"
+    IFO=$(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO")
+    echo "  - folder/file: \"$IFO\""
+    VIDEOTS=$(echo ${IFO} | sed -r 's/[vV][iI][dD][eE][oO][_][tT][sS][.][iI][fF][oO].*//g')
+    VIDEOTSROOT=$(echo ${VIDEOTS} | sed -r 's/[vV][iI][dD][eE][oO][_][tT][sS].*//g')
+    mkisofs -input-charset iso8859-1 -dvd-video -o "${DIR}/atomicFile.iso" ${VIDEOTSROOT} > /dev/null 2>&1
+    
+    if [[ $? -ne 0 ]]; then
+      echo "$?"
+      echo "!!! ERROR, mkisofs exit code"
+      date
+      exit 1
+    fi
+
+    echo "  - Conversion to ISO complete"
+    # TODO QA this
+    # rm -R ${VIDEOTSROOT}
+    echo "  - Deleted VIDEO_TS folder"
+    echo
+  fi
+}
+
+checkSplitAvi(){
+  # find split .avi files
+  # avimerge works!
+  # mencoder untested
+  # TODO improve this
+  # -print -quit = return one result
+  if [[ -f $(find . -maxdepth 1 -type f -regextype "posix-extended" -iregex '.*(cd1|cd2)\.(avi)' -print -quit) ]]; then
+    echo "  - 2 CD files found"
+    file=$(find . -maxdepth 1 -type f -regextype "posix-extended" -iregex '.*(cd1|cd2)\.(avi)' -print -quit)
+    NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+    NAME=$(echo ${NAME} | sed -r 's/[cC][dD][12].*//g' | sed -r 's/[- .]{1,}$//g') # strip CDx and trailing characters from $NAME
+    # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
+    # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
+    avimerge -o "${NAME}.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
+
+    if [[ $? -ne 0 ]]; then
+      echo "$?"
+      echo "!!! ERROR, avimerge exit code"
+      date
+      exit 1
+    fi
+
+    echo "  - AVImerge!!! complete"
+    # TODO QA this
+    find . -maxdepth 1 -type f -regextype "posix-extended" -iregex '.*(cd1|cd2)\.(avi)' -exec mv '{}' "${unwatched_dest_folder}" ';'
+    echo
+  fi
+}
+
+cleanupFilename(){
+  show_name=${1}
+  episode_name=${2}
+  # convert double space to single
+  show_name=$(echo ${show_name} | sed -r 's/\s\s/\s/g')
+  episode_name=$(echo ${episode_name} | sed -r 's/\s\s/\s/g')
+  # captialize first character of words
+  show_name=$(echo ${show_name} | sed -e 's/\b\(.\)/\u\1/g')
+  # strip leading characters
+  episode_name=$(echo ${episode_name} | sed -r 's/^[- .]{1,3}//g')
+  # strip everything after " - HDTV"
+  episode_name=$(echo ${episode_name} | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
+  # strip WEBRIP
+  episode_name=$(echo ${episode_name} | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
+  # strip 1080P
+  episode_name=$(echo ${episode_name} | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
+  # strip 720P
+  episode_name=$(echo ${episode_name} | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
+  # strip PROPER
+  episode_name=$(echo ${episode_name} | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
+  # strip ending characters
+  episode_name=$(echo ${episode_name} | sed -r 's/[- .]{1,}$//g')
+  # captialize first character of words
+  episode_name=$(echo ${episode_name} | sed -e 's/\b\(.\)/\u\1/g')
+}
+
+# above are all functions
+# below is execution
+
+cd "${DIR}"
+if [[ $? -ne 0 ]]; then
+  echo "$?"
+  echo "!!! ERROR, cd '$DIR'"
+  date
+  exit 1
+fi
+
+  echo "START! `date`"
+
+# BEGIN movies
+
+if [[ $CATEGORY = "movies" ]]; then
   # matches: movie name (2013).xyz
   regex="(.*) \(([0-9]{4})\).*"
 
-  # detect movie
-  if [[ $CATEGORY = "movies" && $NAME =~ $regex ]]; then
+  mkIsofs
+  consolidateFiles
+
+  # find media file larger than 100MB
+  file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)')
+
+  # exit if no media files found
+  if [[ ! -f $file ]]; then
+    echo "!!! NO media file found"
+    date
+    exit 1
+  fi
+
+  echo "  - Discovered Media File:"
+  NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+  EXT=${file##*.}
+  ISIZE=$(ls -lh "${file}" | awk '{print $5}')
+  echo "    $NAME.$EXT $ISIZE"
+  # TODO move this
+  # # populate variable if m4v is discovered
+  # dest_file="${file%.*}.m4v"
+
+  if [[ $NAME =~ $regex ]]; then
     echo "  - REGEX detected Movie,"
     echo "  - $regex"
     echo
@@ -112,275 +481,36 @@ if [[ $CATEGORY = "movies" ]]; then
     year=${BASH_REMATCH[2]}
     # customize movie title tag for atomicparsley
     # title =${BASH_REMATCH[1]} # = "Movie"
-    title=$NAME # NAME = "Movie (2013)"
+    title=${NAME} # NAME = "Movie (2013)"
     # strip CD1 from $title
-    title=$(echo $title | sed -r 's/[- ][cC][dD][12].*//g' | sed 's/ *$//g')
+    title=$(echo ${title} | sed -r 's/[- ][cC][dD][12].*//g' | sed 's/ *$//g')
     # captialize first character of words
-    title=$(echo $title | sed -e 's/\b\(.\)/\u\1/g')
+    title=$(echo ${title} | sed -e 's/\b\(.\)/\u\1/g')
 
   else
-    echo "!!! REGEX error,"
+    echo "!!! regex ERROR,"
     echo "  - $regex"
-    echo "  - $i"
-    date
-    # exit if no media files found
-    exit 1
-  fi
-
-  # find existing artwork and store
-  find . -type f -name '*.jpg' -exec mv '{}' "$movieartwork/$NAME.jpg" \;
-
-  # move all video files into the main processing folder
-  # find and move files larger than 300MB to parent folder for processing
-  find "$DIR" -size +307200k -exec mv {} "$DIR" \;
-  echo "  - mv errors above are ok."
-
-  # improve this
-  # find and delete files smaller than 30MB
-  # move this cleanup to end of routine.  otherwise it potentially deletes wanted files.
-  # find "$DIR" -size -30720k -type f -exec rm -f {} \;
-
-########################################
-# mkisofs
-########################################
-
-  # untested
-  # find VIDEO_TS folder and files
-  if [[ -e $(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO") ]]; then
-    IFO=$(find . \( ! -regex '.*/\..*' \) -type f -name "VIDEO_TS.IFO")
-    echo "folder/file: $IFO"
-    VIDEOTS=$(echo $IFO | sed -r 's/[vV][iI][dD][eE][oO][_][tT][sS][.][iI][fF][oO].*//g')
-    VIDEOTSROOT=$(echo $VIDEOTS | sed -r 's/[vV][iI][dD][eE][oO][_][tT][sS].*//g')
-    echo
-    echo "VIDEO_TS Found, converting to an ISO"
-    mkisofs -input-charset iso8859-1 -dvd-video -o "$DIR/atomicFile.iso" "$VIDEOTSROOT"  > /dev/null 2>&1
-    echo
-    echo "  - Conversion to ISO complete"
-    echo
-    rm -R "$VIDEOTSROOT"
-    echo "  - Deleted VIDEO_TS folder"
-    echo
-  fi
-  
-########################################
-# Join AVIs using avimerge or mencoder
-########################################
-
-  # if there are 2 AVI's join them
-  cd "$DIR"
-  if [ $? -ne 0 ]; then
-    echo "$?"
-    echo "!!! ERROR, cd '$DIR'"
+    echo "  - $file"
     date
     exit 1
   fi
 
-  # avimerge works!
-  # mencoder untested
-  # improve this
-  # find .AVI files  
-  for i in *{CD2,cd2}.avi; do
-    NAME=${i%.*}
-    echo "  - 2 AVI files found"
-    # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
-    # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
+  checkSplitAvi
+  findArtwork ${movie_artwork}
+  encodeMovie
+  tagMovie
+  moveTranscoded ${movie_dest_file} ${movie_dest_folder}
+  moveOriginal
+  printMovieDetails
+  echo "FINISH `date`"
 
-    # strip CD1 and trailing characters from $NAME
-    NAME=$(echo $NAME | sed -r 's/[cC][dD][12].*//g' | sed -r 's/[- .]{1,}$//g')
-    avimerge -o "$NAME.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-      echo "$?"
-      echo "!!! ERROR, avimerge exit code"
-      date
-      exit 1
-    fi
-
-    echo "  - AVImerge!!! complete"
-    mkdir -p "Unjoined AVIs"
-    # improve this, spits out errors but works
-    mv *[cD][12].avi "Unjoined AVIs/."
-    echo "  - Moved original AVIs to folder 'Unjoined AVIs'"
-    echo
-  done
-
-########################################
-# Loop thru media files. Transcode and Tag.
-########################################
-
-  cd "$DIR"
-  if [ $? -ne 0 ]; then
-    echo "$?"
-    echo "!!! ERROR, cd '$DIR'"
-    date
-    exit 1
-  fi
-
-  # find media files to convert
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[iI][sS][oO] *.[iI][mM][gG] *.[tT][sS] *.[dD][iI][vV][xX]; do
-  echo "  - Discovered media files:"
-    NAME=${i%.*}
-    EXT=${i##*.}
-    ISIZE=`ls -lh "$i"  | awk '{print $5}'`
-    echo "    $NAME.$EXT $ISIZE"
-    
-    # destination filename
-    movie_dest_file="${i%.*}"".m4v"
-      
-########################################
-# HandBrake
-########################################
-
-    # if .iso, mount, convert, umount
-    regex_iso="\.*[iI][sS][oO]$"
-    if [[ $i =~ $regex_iso ]]; then
-      echo "  - REGEX detected ISO,"
-      echo "  - $regex_iso"
-      echo "  - $i"
-      echo
-
-      echo "  - mounting .iso,"
-      # need sudo access with NOPASSWD
-      sudo mount -o loop "$i" /media/iso
-
-      if [ $? != 0 ]; then
-        echo "$?"
-        echo "!!! ERROR, mount .iso exit code"
-        date
-        exit 1
-      fi
-
-      # BDMV works!
-      # non-BlueRay untested
-      if [[ -d /media/iso/BDMV ]]; then
-        # find the largest .m2ts file
-        M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
-        echo "  - Transcoding!!! BlueRay,"
-        echo handbrake-cli -O -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset"
-        echo
-        handbrake-cli -O -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
-        echo "  - un-mounting .iso"
-        sudo umount /media/iso
-        echo
-      fi
-
-    else
-      # if not .iso then just transcode
-      echo "  - Transcoding!!!"
-      echo handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$movie_preset"
-      echo
-      handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
-
-    fi
-
-    if [ $? != 0 ]; then
-      echo "$?"
-      echo "!!! ERROR, HandBrake exit code"
-      date
-      exit 1
-    fi
-
-    # check output file created by handbrake
-    ls -l "atomicFile.m4v" > /dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
-      echo "$i"
-      echo "!!! ERROR, HandBrake atomicFile.m4v missing"
-      date
-      exit 1
-      continue
-    fi
-
-########################################
-# AtomicParsley
-########################################
-
-    # if artwork is available locally then tag.
-    if [[ -e $(find "$movieartwork" -name "$NAME.jpg") ]]; then
-      echo "  - AtomicParsley!!!  tagging w/local artwork."
-      echo atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
-      atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "$movieartwork$NAME.jpg" --overWrite > /dev/null 2>&1
-    else
-      # just tag
-      echo "  - AtomicParsley!!!  tagging w/o artwork."
-      echo atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
-      atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
-    fi
-
-    # this broke one time so i'm disabling it :)
-    # if [ $? != 0 ]; then
-    #  echo "$?"
-    #  echo "!!! ERROR, AtomicParsley exit code"
-    #  date
-    #  exit 1
-    # fi
-
-    # move the transcoded file to a folder.
-    echo "  - Moved transcoded file to folder."
-    echo "  - mv "$movie_dest_file" "$movie_dest_folder""
-    # improve this
-    mv "atomicFile.m4v" "$movie_dest_file"
-    mv "$movie_dest_file" "$movie_dest_folder"
-
-    if [ $? -ne 0 ]; then
-      echo "$?"
-      echo "!!! ERROR, mv exit code"
-      date
-      exit 1
-    fi
-    echo
-  
-    # move the original downloaded file to a folder.
-    # don't fail if none is found.  i.e. re-encoding (moved) existing .m4v
-    echo "  - Moved original downloaded file to folder."
-    echo "  - mv "$i" "$postproc_dest_folder$i""
-    mv "$i" "$postproc_dest_folder$i"
-
-    if [ $? -ne 0 ]; then
-      echo "  - mv errors above are ok."
-      echo
-    fi
-
-    # untested
-    # delete extraneous files and VIDEO_TS folder 
-    # rm -R "$DIR"
-    # echo "  - Original files moved to Movie Library"
-    # echo
-
-########################################
-# Cleanup, Move, and print details to log.
-########################################
-
-    OSIZE=`ls -lh "$movie_dest_folder/$movie_dest_file"  | awk '{print $5}'`
-
-    echo "  - Details:"
-    echo "    DIR:         $1"
-    echo "    NZB_FILE:    $2"
-    echo "    NAME:        $3"
-    echo "    NZB_ID:      $4"
-    echo "    CATEGORY:    $5"
-    echo "    GROUP:       $6"
-    echo "    STATUS:      $7"
-    echo "    Input File:  $i $ISIZE"
-    echo "    Dest Folder: $movie_dest_folder"
-    echo "    Dest File:   $movie_dest_file"
-    echo "    Title:       $title"
-    echo "    Year:        $year"
-    echo
-    date
-    echo "  - COMPLETED!  $movie_dest_file $OSIZE"
-
-  done
 fi
 
-########################################
-# /end CATEGORY = Movie
-########################################
+# END movies
 
-########################################
-# /begin CATEGORY = TV
-########################################
+# BEGIN tv
 
 if [[ $CATEGORY = "tv" ]]; then
-
   # regex matches: show name - s01e02 - episode name.xyz
   regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
 
@@ -391,335 +521,132 @@ if [[ $CATEGORY = "tv" ]]; then
   # regex matches: the soup - 2013-08-01 - episode name.xyz
   regex_soup="([tT][hH][eE] [sS][oO][uU][pP]) - ([0-9]{4})-([0-9]{2})-([0-9]{2}) - (.*)\..*"
 
-  cd "$DIR"
-  if [ $? -ne 0 ]; then
-    echo "$?"
-    echo "!!! ERROR, cd '$DIR'"
-    date
-    exit 1
-  fi
+  tvRenamer
 
-  # Finding files and deleting any smaller than 30MB
-  # this helps remove sample files that Sabnzbd accidentally downloads
-  # echo "  - Deleting extraneous files."
-  # find "$DIR" -size -30720k -type f -exec rm {} \;
-  # echo
-
-########################################
-# Detect season vs dated naming.  i.e.  S01E02 vs 2013-08-01
-########################################
-
-  # improve this
-  # populate $NAME to match against $regex
-  echo "  - Discovered media files:"
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS] *.[dD][iI][vV][xX]; do
-    NAME=${i%.*}
-    EXT=${i##*.}
-    ISIZE=`ls -lh "$i"  | awk '{print $5}'`
-    echo "    $NAME.$EXT $ISIZE"
-  done
-
-  # find existing artwork and store
-  find . -type f -name '*.jpg' -exec mv '{}' "$tvartwork/$NAME.jpg" \;
-
-########################################
-# Run tvrenamer.pl if SxxExx is detected.
-########################################
-
-  # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
-  if [[ $CATEGORY = "tv" && $NAME =~ $regex  ]]; then
-    echo "  - Renaming the file with tvrenamer.pl"
-    rm *.[uU][rR][lL]
-    # tvrenamer.pl hangs a LOT.  here we background the cmd and kill it after X seconds.
-    /usr/local/bin/tvrenamer.pl --debug --noANSI --nogroup --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series &
-    TASK_PID=$!
-    sleep 10
-    kill -9 $TASK_PID
-    echo
-  fi
-
-########################################
-# Loop thru media files.  Transcode and Tag.
-########################################
-
-  for i in *.[mM][kK][vV] *.[aA][vV][iI] *.[mM][4][vV] *.[mM][pP][4] *.[wW][mM][vV] *.[tT][sS] *.[dD][iI][vV][xX]; do
-    NAME=${i%.*}
-
-    # the soup requires custom processing
-    if [[ $CATEGORY = "tv" && $NAME =~ $regex_soup ]]; then
-
+  echo "  - Discovered media file:"
+  COUNTER=0
+  find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' -print0 | while IFS= read -r -d '' file; do
+      let COUNTER=COUNTER+1
+      echo "  - Loop Count = $COUNTER"
+      NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+      EXT=${file##*.}
+      ISIZE=$(ls -lh "${file}"  | awk '{print $5}')
+      echo "    $NAME.$EXT $ISIZE"
+      # TODO remove this
+      # # populate variable if m4v is discovered
+      # dest_file="${file%.*}.m4v"
+  
+    if [[ $NAME =~ $regex_soup ]]; then
       echo "  - REGEX detected The Soup,"
       echo "  - $regex_soup"
-      echo "  - $i"
-      echo
-
-      # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
-      show_name=${BASH_REMATCH[1]}
-      year=${BASH_REMATCH[2]}
-      month=${BASH_REMATCH[3]}
-      month2=$(echo $month | sed -r 's/^0//g')
-      day=${BASH_REMATCH[4]}
-      # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
-      season=$year
-      episode=$month2$day
-
-      # convert double space to single
-      show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
-      # captialize first character of words
-      show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
-      episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
-      # strip leading characters
-      episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
-
-      # strip everything after " - HDTV"
-      episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
-      # strip WEBRIP
-      episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
-      # strip 1080P
-      episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
-      # strip 720P
-      episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
-      # strip PROPER
-      episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
-
-      # strip ending characters
-      episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
-
-      # captialize first character of words
-      episode_name=$(echo $episode_name | sed -e 's/\b\(.\)/\u\1/g')
-
-      # destination filename
-      tv_dest_file=$show_name" - "$year-$month-$day".m4v"
-
-    elif [[ $CATEGORY = "tv" && $NAME =~ $regex_dated ]]; then
-
-      echo "  - REGEX detected Dated TV Show,"
-      echo "  - $regex_dated"
-      echo "  - $i"
-      echo
-
+      echo "  - $file"
+  
       # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
       show_name=${BASH_REMATCH[1]}
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
       # strip leading 0 from month
-      month=$(echo $month | sed -r 's/^0//g')
+      month=$(echo ${month} | sed -r 's/^0//g')
+      day=${BASH_REMATCH[4]}
+      # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
+      season=${year}
+      episode=${month}${day}
+      echo "  - \$show_name    = $show_name"
+      echo "  - \$year         = $year"
+      echo "  - \$month        = $month"
+      echo "  - \$day          = $day"
+      echo
+  
+      cleanupFilename ${show_name} x # function expects two variables
+  
+      # destination filename
+      tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"
+  
+    elif [[ $CATEGORY = "tv" && $NAME =~ $regex_dated ]]; then
+      echo "  - REGEX detected Dated TV Show,"
+      echo "  - $regex_dated"
+      echo "  - $file"
+      # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
+      show_name=${BASH_REMATCH[1]}
+      year=${BASH_REMATCH[2]}
+      month=${BASH_REMATCH[3]}
+      # strip leading 0 from month
+      month=$(echo ${month} | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
-      season=$year
-      episode=$month$day
-
-      # convert double space to single
-      show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
-      # captialize first character of words
-      show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
-      episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
-      # strip leading characters
-      episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
-
-      # strip everything after " - HDTV"
-      episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
-      # strip WEBRIP
-      episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
-      # strip 1080P
-      episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
-      # strip 720P
-      episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
-      # strip PROPER
-      episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
-
-      # strip ending characters
-      episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
-
-      # captialize first character of words
-      episode_name=$(echo $episode_name | sed -e 's/\b\(.\)/\u\1/g')
-
+      season=${year}
+      episode=${month}${day}
+      echo "  - \$show_name    = $show_name"
+      echo "  - \$year         = $year"
+      echo "  - \$month        = $month"
+      echo "  - \$day          = $day"
+      echo "  - \$episode_name = $episode_name"
+      echo
+  
+      cleanupFilename ${show_name} ${episode_name}
+  
       # destination filename
-      tv_dest_file=$show_name" - "$year-$month-$day" - "$episode_name".m4v"
-
+      tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"
+  
     elif [[ $CATEGORY = "tv" && $NAME =~ $regex ]]; then
       echo "  - REGEX detected TV Show,"
       echo "  - $regex"
-      echo "  - $i"
-      echo
-
+      echo "  - $file"
       # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
       show_name=${BASH_REMATCH[1]}
       season=${BASH_REMATCH[2]}
       episode=${BASH_REMATCH[3]}
       episode_name=${BASH_REMATCH[4]}
-
-      # convert double space to single
-      show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
-      # captialize first character of words
-      show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
-      episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
-      # strip leading characters
-      episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
-
-      # strip everything after " - HDTV"
-      episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
-      # strip WEBRIP
-      episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
-      # strip 1080P
-      episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
-      # strip 720P
-      episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
-      # strip PROPER
-      episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
-
-      # strip ending characters
-      episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
-
-      # captialize first character of words
-      episode_name=$(echo $episode_name | sed -e 's/\b\(.\)/\u\1/g')
-
+      echo "  - \$show_name    = $show_name"
+      echo "  - \$season       = $season"
+      echo "  - \$episode      = $episode"
+      echo "  - \$episode_name = $episode_name"
+      echo
+  
+      cleanupFilename ${show_name} ${episode_name}
+      
       # destination filename
-      tv_dest_file=$show_name" - S"$season"E"$episode" - "$episode_name".m4v"
-
+      tv_dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
+  
     else
       echo "!!! REGEX error,"
-      echo "!!! skipping $i"
+      echo "!!! skipping $file"
       continue
     fi
 
-    # improve this
+    # TODO improve this
     # if there is already an M4V file stop
-    if [[ -e "$tv_dest_folder$tv_dest_file" ]]; then
+    if [[ -e "${tv_dest_folder}${tv_dest_file}" ]]; then
       echo "!!! An M4V with the same name already exists,"
-      echo "!!! skipping $i"
+      echo "!!! skipping $file"
       continue
     fi
-
-########################################
-# HandBrake
-########################################
 
     # when running via shell check for tag switch
-    if [[ $8 != "tag" ]]; then 
-      # convert using handbrake
-      echo "  - Transcoding!!!"
-      echo handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$tv_preset"
-      echo
-      handbrake-cli -O -i "$i" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
-      # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
-    
-      if [ $? != 0 ]; then
-        echo "$?"
-        echo "!!! ERROR, HandBrake exit code"
-        date
-        exit 1
-      fi
-
+    if [[ $8 != "tag" ]]; then
+      encodeTv
     elif [[ $8 == "tag" ]]; then
-      mv "$i" "atomicFile.m4v"
+      mv "${file}" "atomicFile.m4v"
+      # sleep a bit
+      sleep 3
     fi
-
-    # check output file created by handbrake
+    
     ls -l "atomicFile.m4v" > /dev/null 2>&1
-
+    
     if [[ $? != 0 ]]; then
-      echo "$i"
+      echo "$file"
       echo "!!! ERROR, atomicFile.m4v missing"
       date
       exit 1
       continue
     fi
 
-########################################
-# AtomicParsley
-########################################
-
-    # get artwork from epguides.com
-    epguidesartwork=$(echo $show_name|sed 's/ *//g')
-    wget -N http://epguides.com/$epguidesartwork/cast.jpg > /dev/null 2>&1
-    echo "  - Retrieved Artwork from http://epguides.com"
-
-    # if artwork is available locally then tag.
-    if [[ -e $(find "$tvartwork" -name "$show_name.jpg") ]]; then
-      echo "  - AtomicParsley!!!  tagging w/local artwork."
-      atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "$tvartwork$show_name.jpg" --overWrite > /dev/null 2>&1
-
-    # else get artwork if available from epguides.com and tag.
-    elif [[ -e $(find . -name "cast.jpg") ]]; then
-      echo "  - AtomicParsley!!!  tagging w/epguides.com artwork."
-      atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "cast.jpg" --overWrite > /dev/null 2>&1
-
-    # otherwise tag without artwork.
-    else
-      echo "  - AtomicParsley!!!  tagging w/o artwork."
-      atomicparsley "atomicFile.m4v" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --overWrite > /dev/null 2>&1
-      echo "  - Tag and rename completed."
-    fi
-
-    if [ $? != 0 ]; then
-      echo "$?"
-      echo "!!! ERROR, AtomicParsley exit code"
-      date
-      exit 1
-    fi
-
-########################################
-# Cleanup, Move, and print details to log.
-########################################
-
-    # Finding files and deleting any smaller than 30MB
-    echo "  - Deleting extraneous files."
-    find "$DIR" -size -30720k -type f -exec rm {} \;
-    echo
-
-    # move the transcoded file to a folder.
-    echo "  - Moved transcoded file to folder."
-    echo "mv "atomicFile.m4v" "$tv_dest_folder$tv_dest_file""
-    mv "atomicFile.m4v" "$tv_dest_folder$tv_dest_file"
-
-    if [ $? != 0 ]; then
-      echo "$?"
-      echo "!!! ERROR, mv exit code"
-      date
-      exit 1
-    fi
-    echo
-    
-    # move the original downloaded file to a folder.
-    # don't fail if none is found.  i.e. re-encoding (moved) existing .m4v
-    echo "  - Moved original downloaded file to folder."
-    echo "  - mv "$i" "$postproc_dest_folder$i""
-    mv "$i" "$postproc_dest_folder$i"
-
-    if [ $? -ne 0 ]; then
-      echo "  - mv errors above are ok."
-      echo
-    fi
-
-    OSIZE=`ls -lh "$tv_dest_folder/$tv_dest_file"  | awk '{print $5}'`
-
-    echo "  - Details:"
-    echo "    DIR:          $1"
-    echo "    NZB_FILE:     $2"
-    echo "    NAME:         $3"
-    echo "    NZB_ID:       $4"
-    echo "    CATEGORY:     $5"
-    echo "    GROUP:        $6"
-    echo "    STATUS:       $7"
-    echo "    Input File:   $i $ISIZE"
-    echo "    Dest Folder:  $tv_dest_folder"
-    echo "    Dest File:    $tv_dest_file"
-    echo "    Show Name:    $show_name"
-    echo "    Season:       $season"
-    echo "    Episode:      $episode"
-    echo "    Episode Name: $episode_name"
-    echo "    Year:         $year"
-    echo "    Month:        $month"
-    echo "    Day:          $day"
-    echo
-    date
-    echo "  - COMPLETED!    $tv_dest_file $OSIZE"
-    echo
+    tagTv ${show_name} ${episode_name} ${episode} ${season}
+    moveTranscoded ${tv_dest_file} ${tv_dest_folder}
+    moveOriginal
+    printTvDetails
+    echo "FINISH! `date`"
 
   done
+# END tv
 fi
-
-########################################
-# /end CATEGORY = TV
-########################################
