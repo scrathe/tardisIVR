@@ -3,20 +3,18 @@
 # Home; https://github.com/scrathe/tardisIVR
 # Documentation; https://github.com/scrathe/tardisIVR/blob/master/README.md
 # Settings; https://github.com/scrathe/tardisIVR/blob/master/SETTINGS.md
-#
+
 # BIG thanks to the original author(s), especially the BASH/OSX community who helped me achieve my goals.
 # author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
 # author 2+) ??? (the scores of unnamed authors)
-#
-# some applications you need:
-# HandbrakeCLI (transcodes video) http://handbrake.fr/
-# AtomicParsley (tags video files with info and cover art) http://atomicparsley.sourceforge.net
-# avimerge (join .avi files) http://manpages.ubuntu.com/manpages/dapper/man1/avimerge.1.html
-# MEncoder (alternative method to join .avi files) https://help.ubuntu.com/community/MEncoder
-# mkisofs (convert VIDEO_TS folders to .iso format) http://manpages.ubuntu.com/manpages/gutsy/man8/mkisofs.8.html
-# tvrenamer.pl (fetches episode names for SxxExx TV Shows) http://www.robmeerman.co.uk/coding/file_rename
 
-# sample option 'Ignore Samples' in Sabnzbd | Config | Switches, must be set to 'Do not download'
+# Dependencies:
+# Working SABnzbd, Sickbeard, CouchPotato stack. See installation guide for help; https://github.com/scrathe/tardisIVR/blob/master/INSTALL.md
+# HandbrakeCLI; http://handbrake.fr/
+# AtomicParsley; http://atomicparsley.sourceforge.net
+# avimerge; http://manpages.ubuntu.com/manpages/dapper/man1/avimerge.1.html
+# mkisofs; http://manpages.ubuntu.com/manpages/gutsy/man8/mkisofs.8.html
+# .iso support requires sudo nopasswd for the mount/unmount commands.
 
 # user definable locations
 # ensure ALL directories end with '/'
