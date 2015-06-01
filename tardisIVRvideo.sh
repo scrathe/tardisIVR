@@ -285,10 +285,6 @@ tagTv(){
 moveTranscoded(){
   dest_file="$1"
   dest_folder="$2"
-  echo $1
-  echo $2
-  echo $dest_file
-  echo $dest_folder
   echo "  - Moving transcoded file to folder."
   echo "  - mv ${dest_file} ${dest_folder}"
 
@@ -342,16 +338,14 @@ consolidateFiles(){
 
 tvRenamer(){
   # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
-  if [[ $CATEGORY = "tv" && $NAME =~ $regex  ]]; then
-    echo "  - Renaming the file with tvrenamer.pl"
-    rm *.[uU][rR][lL]
-    # tvrenamer.pl sometimes hangs. background the cmd and kill it after X seconds.
-    /usr/local/bin/tvrenamer.pl --debug --noANSI --nogroup --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series &
-    TASK_PID=$!
-    sleep 10
-    kill -9 $TASK_PID
-    echo
-  fi
+  echo "  - Renaming the file with tvrenamer.pl"
+  rm *.[uU][rR][lL]
+  # tvrenamer.pl sometimes hangs. background the cmd and kill it after X seconds.
+  /usr/local/bin/tvrenamer.pl --debug --noANSI --nogroup --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series &
+  TASK_PID=$!
+  sleep 10
+  kill -9 $TASK_PID
+  echo
 }
 
 mkIsofs(){
@@ -459,7 +453,6 @@ if [[ $CATEGORY = "movies" ]]; then
 
   # find media file larger than 100MB
   file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name atomicFile*.m4v)
-echo $file
   # exit if no media files found
   if [[ ! -f "$file" ]]; then
     echo "!!! NO media file found"
@@ -524,16 +517,16 @@ if [[ $CATEGORY = "tv" ]]; then
   # regex matches: the soup - 2013-08-01 - episode name.xyz
   regex_soup="([tT][hH][eE] [sS][oO][uU][pP]) - ([0-9]{4})-([0-9]{2})-([0-9]{2}) - (.*)\..*"
 
-  tvRenamer
+  # tvRenamer
 
-  echo "  - Discovered media file:"
   COUNTER=0
-  find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)'  ! -name atomicFile*.m4v -print0 | while IFS= read -r -d '' file; do
+  find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0 | while IFS= read -r -d '' file; do
       let COUNTER=COUNTER+1
       echo "  - Loop Count = $COUNTER"
       NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
       EXT=${file##*.}
       ISIZE=$(ls -lh "$file"  | awk '{print $5}')
+      echo "  - Discovered media file:"
       echo "    $NAME.$EXT $ISIZE"
   
     if [[ $NAME =~ $regex_soup ]]; then
@@ -546,7 +539,7 @@ if [[ $CATEGORY = "tv" ]]; then
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
       # strip leading 0 from month
-      month=$(echo ${month} | sed -r 's/^0//g')
+      month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
       season=$year
@@ -571,7 +564,7 @@ if [[ $CATEGORY = "tv" ]]; then
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
       # strip leading 0 from month
-      month=$(echo ${month} | sed -r 's/^0//g')
+      month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
       season=$year
@@ -625,8 +618,8 @@ if [[ $CATEGORY = "tv" ]]; then
     # when running via shell check for tag switch
     if [[ $8 != "tag" ]]; then
       encodeTv
-    elif [[ $8 == "tag" ]]; then
-      mv "${file}" "atomicFile.m4v"
+    elif [[ $8 -eq "tag" ]]; then
+      mv "$file" "atomicFile.m4v"
       # sleep a bit
       sleep 3
     fi
