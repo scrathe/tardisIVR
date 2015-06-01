@@ -110,7 +110,8 @@ encodeMovie(){
       fi
 
       END=$(date +%s)
-      echo "  - Time Elapsed: "$((END-START)) | awk '{print int($1/60)":"int($1%60)}'
+      ELAPSED=$(($END-$START)) | awk '{print int($1/60)":"int($1%60)}'
+      echo "  - Time Elapsed: $ELAPSED"
     fi
 
   # if not BlueRay just transcode
@@ -129,7 +130,8 @@ encodeMovie(){
     fi
 
     END=$(date +%s)
-    echo "  - Time Elapsed: "$((END-START)) | awk '{print int($1/60)":"int($1%60)}'
+    ELAPSED=$(($END-$START)) | awk '{print int($1/60)":"int($1%60)}'
+    echo "  - Time Elapsed: $ELAPSED"
   fi
 
   if [[ $iso_detected -eq 1 ]]; then
@@ -164,7 +166,8 @@ encodeTv(){
   fi
 
   END=$(date +%s)
-  echo "  - Time Elapsed: "$((END-START)) | awk '{print int($1/60)":"int($1%60)}'
+  ELAPSED=$(($END-$START)) | awk '{print int($1/60)":"int($1%60)}'
+  echo "  - Time Elapsed: $ELAPSED"
 }
 
 printMovieDetails(){
@@ -184,7 +187,7 @@ printMovieDetails(){
   echo "    Year:         $year"
   echo "    Input File:   $file $ISIZE"
   echo
-  date
+  echo "  - FINISHED:     `date`"
   echo "  - COMPLETED!    $movie_dest_file $OSIZE"
 }
 
@@ -210,7 +213,7 @@ printTvDetails(){
   echo "    Day:          $day"
   echo "    Input File:   $file $ISIZE"
   echo
-  date
+  echo "  - FINISHED:     `date`"
   echo "  - COMPLETED!    $tv_dest_file $OSIZE"
 }
 
@@ -284,7 +287,7 @@ moveTranscoded(){
   dest_file="$1"
   dest_folder="$2"
   echo "  - Moving transcoded file to folder."
-  echo "  - mv ${dest_file} ${dest_folder}"
+  echo "  - mv atomicFile.m4v \"${dest_folder}${dest_file}\""
 
   mv "atomicFile.m4v" "${dest_folder}${dest_file}"
 
@@ -375,17 +378,13 @@ mkIsofs(){
 
 checkSplitAvi(){
   # find split .avi files
-  # avimerge works!
-  # mencoder untested
-  # TODO improve this
+  # TODO QA this
   # -print -quit = return one result
   if [[ -f $(find . -maxdepth 1 -type f -regextype "posix-extended" -iregex '.*(cd1|cd2)\.(avi)' -print -quit) ]]; then
     echo "  - 2 CD files found"
     file=$(find . -maxdepth 1 -type f -regextype "posix-extended" -iregex '.*(cd1|cd2)\.(avi)' -print -quit)
     NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
     NAME=$(echo $NAME | sed -r 's/[cC][dD][12].*//g' | sed -r 's/[- .]{1,}$//g') # strip CDx and trailing characters from $NAME
-    # mencoder on linux requires a lot of dependencies.  let's try other methods more suitable for a headless server.
-    # mencoder -forceidx -ovc copy -oac copy *{CD1,cd1}.avi *{CD2,cd2}.avi -o "$NAME.avi" > /dev/null 2>&1
     avimerge -o "${NAME}.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
 
     if [[ $? -ne 0 ]]; then
@@ -451,7 +450,7 @@ if [[ $CATEGORY = "movies" ]]; then
   consolidateFiles
 
   # find media file larger than 100MB
-  file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name atomicFile*.m4v)
+  file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v")
   # exit if no media files found
   if [[ ! -f "$file" ]]; then
     echo "!!! NO media file found"
@@ -497,7 +496,6 @@ if [[ $CATEGORY = "movies" ]]; then
   moveTranscoded "$movie_dest_file" "$movie_dest_folder"
   moveOriginal
   printMovieDetails
-  echo "FINISH `date`"
 
 fi
 
@@ -519,7 +517,10 @@ if [[ $CATEGORY = "tv" ]]; then
   # tvRenamer
 
   COUNTER=0
-  find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0 | while IFS= read -r -d '' file; do
+  # CAN'T GET THIS TO LOOP
+  # https://stackoverflow.com/questions/7039130/bash-iterate-over-list-of-files-with-spaces
+  find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0 | while IFS= read -d $'\0' -r file
+  do
       let COUNTER=COUNTER+1
       echo "  - Loop Count = $COUNTER"
       NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
@@ -607,9 +608,9 @@ if [[ $CATEGORY = "tv" ]]; then
     fi
 
     # TODO improve this
-    # if there is already an M4V file stop
+    # skip file if it exists in the destination folder
     if [[ -e "${tv_dest_folder}${tv_dest_file}" ]]; then
-      echo "!!! An M4V with the same name already exists,"
+      echo "!!! a M4V with the same name already exists,"
       echo "!!! skipping $file"
       continue
     fi
@@ -637,8 +638,6 @@ if [[ $CATEGORY = "tv" ]]; then
     moveTranscoded "$tv_dest_file" "$tv_dest_folder"
     moveOriginal
     printTvDetails
-    echo "FINISH! `date`"
-
   done
 # END tv
 fi
