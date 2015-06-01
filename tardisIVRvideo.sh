@@ -336,6 +336,7 @@ consolidateFiles(){
   fi
 }
 
+# TODO remove dependency on tvrenamer.pl
 tvRenamer(){
   # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
   echo "  - Renaming the file with tvrenamer.pl"
