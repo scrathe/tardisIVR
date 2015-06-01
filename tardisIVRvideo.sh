@@ -109,9 +109,8 @@ encodeMovie(){
         exit 1
       fi
 
-      END=$(date +%s)
-      ELAPSED=$(($END-$START)) | awk '{print int($1/60)":"int($1%60)}'
-      echo "  - Time Elapsed: $ELAPSED"
+      END=$(date +%s%N)
+      echo "  - Minutes Elapsed: `echo "scale=8; ($END - $START) / 1000000000 / 60" | bc`"
     fi
 
   # if not BlueRay just transcode
@@ -119,7 +118,7 @@ encodeMovie(){
     echo "  - Transcoding!!!"
     echo handbrake-cli -O -i \"$file\" -o "atomicFile.m4v" --preset="$movie_preset"
     echo
-    START=$(date +%s)
+    START=$(date +%s%N)
     handbrake-cli -O -i "$file" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
 
     if [[ $? -ne 0 ]]; then
@@ -129,9 +128,8 @@ encodeMovie(){
       exit 1
     fi
 
-    END=$(date +%s)
-    ELAPSED=$(($END-$START)) | awk '{print int($1/60)":"int($1%60)}'
-    echo "  - Time Elapsed: $ELAPSED"
+    END=$(date +%s%N)
+    echo "  - Minutes Elapsed: `echo "scale=8; ($END - $START) / 1000000000 / 60" | bc`"
   fi
 
   if [[ $iso_detected -eq 1 ]]; then
@@ -154,7 +152,7 @@ encodeTv(){
   echo "  - Transcoding!!!"
   echo handbrake-cli -O -i \"$file\" -o "atomicFile.m4v" --preset="$tv_preset"
   echo
-  START=$(date +%s)
+  START=$(date +%s%N)
   handbrake-cli -O -i "$file" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
   # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
 
@@ -165,9 +163,8 @@ encodeTv(){
     exit 1
   fi
 
-  END=$(date +%s)
-  ELAPSED=$(($END-$START)) | awk '{print int($1/60)":"int($1%60)}'
-  echo "  - Time Elapsed: $ELAPSED"
+  END=$(date +%s%N)
+  echo "  - Minutes Elapsed: `echo "scale=8; ($END - $START) / 1000000000 / 60" | bc`"
 }
 
 printMovieDetails(){
