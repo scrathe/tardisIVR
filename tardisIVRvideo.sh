@@ -67,8 +67,8 @@ STATUS="$7"
 # GROUP="alt.binaries.teevee"
 # STATUS="0"
 
-# stops error printing in loop if there are no video files in the folder
-shopt -s nullglob
+# TODO is this still required?
+# shopt -s nullglob
 
 encodeMovie(){
   # detect .iso and mount, detect BlueRay, convert, umount
@@ -96,8 +96,8 @@ encodeMovie(){
     if [[ -d /media/iso/BDMV ]]; then
       # find the largest .m2ts file
       M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
-      echo "  - Transcoding!!! BlueRay,"
-      echo handbrake-cli -O -i \"$M2TS\" -o "atomicFile.m4v" --preset="$movie_preset"
+      echo "  * Transcoding!!! BlueRay"
+      echo "handbrake-cli -O -i \"$M2TS\" -o atomicFile.m4v --preset=$movie_preset"
       echo
       START=$(date +%s)
       handbrake-cli -O -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
@@ -110,13 +110,13 @@ encodeMovie(){
       fi
 
       END=$(date +%s%N)
-      echo "  - Minutes Elapsed: `echo "scale=8; ($END - $START) / 1000000000 / 60" | bc`"
+      echo "  - Encoding Speed: `echo "scale=2; ($END - $START) / 1000000000 / 60" | bc` minutes"
     fi
 
   # if not BlueRay just transcode
   else
-    echo "  - Transcoding!!!"
-    echo handbrake-cli -O -i \"$file\" -o "atomicFile.m4v" --preset="$movie_preset"
+    echo "  * Transcoding!!!"
+    echo "handbrake-cli -O -i \"$file\" -o atomicFile.m4v --preset=$movie_preset"
     echo
     START=$(date +%s%N)
     handbrake-cli -O -i "$file" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
@@ -129,7 +129,7 @@ encodeMovie(){
     fi
 
     END=$(date +%s%N)
-    echo "  - Minutes Elapsed: `echo "scale=8; ($END - $START) / 1000000000 / 60" | bc`"
+    echo "  - Encoding Speed: `echo "scale=2; ($END - $START) / 1000000000 / 60" | bc` minutes"
   fi
 
   if [[ $iso_detected -eq 1 ]]; then
@@ -149,11 +149,12 @@ encodeMovie(){
 
 encodeTv(){
   # convert using handbrake
-  echo "  - Transcoding!!!"
-  echo handbrake-cli -O -i \"$file\" -o "atomicFile.m4v" --preset="$tv_preset"
+  echo "  * Transcoding!!!"
+  echo "handbrake-cli -O -i \"$file\" -o atomicFile.m4v --preset=$tv_preset"
   echo
   START=$(date +%s%N)
-  handbrake-cli -O -i "$file" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
+  # echo "" | handbrake-cli; https://stackoverflow.com/questions/5549405/shell-script-while-read-loop-executes-only-once
+  echo "" | handbrake-cli -O -i "$file" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
   # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
 
   if [[ $? != 0 ]]; then
@@ -164,7 +165,7 @@ encodeTv(){
   fi
 
   END=$(date +%s%N)
-  echo "  - Minutes Elapsed: `echo "scale=8; ($END - $START) / 1000000000 / 60" | bc`"
+  echo "  - Encoding Speed: `echo "scale=2; ($END - $START) / 1000000000 / 60" | bc` minutes"
 }
 
 printMovieDetails(){
@@ -183,9 +184,9 @@ printMovieDetails(){
   echo "    Title:        $title"
   echo "    Year:         $year"
   echo "    Input File:   $file $ISIZE"
+  echo "  - Finished:     `date`"
   echo
-  echo "  - FINISHED:     `date`"
-  echo "  - COMPLETED!    $movie_dest_file $OSIZE"
+  echo "  * COMPLETED!    $movie_dest_file $OSIZE"
 }
 
 printTvDetails(){
@@ -209,24 +210,25 @@ printTvDetails(){
   echo "    Month:        $month"
   echo "    Day:          $day"
   echo "    Input File:   $file $ISIZE"
+  echo "  - Finished:     `date`"
   echo
-  echo "  - FINISHED:     `date`"
-  echo "  - COMPLETED!    $tv_dest_file $OSIZE"
+  echo "  * COMPLETED!    $tv_dest_file $OSIZE"
 }
 
 tagMovie(){
+  echo "  * Tagging!!!"
   # remove existing metadata
   echo "  - Removing Existing Metadata"
   atomicparsley "atomicFile.m4v" --metaEnema --overWrite
   # if artwork is available locally then tag.
   if [[ -e $(find "$movie_artwork" -name "${NAME}.jpg") ]]; then
     echo "  - AtomicParsley!!!  tagging w/local artwork."
-    echo "atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "${movie_artwork}${NAME}.jpg" --overWrite > /dev/null 2>&1"
+    echo "atomicparsley atomicFile.m4v --genre Movie --stik Movie --title=$title --year=$year --artwork ${movie_artwork}${NAME}.jpg --overWrite > /dev/null 2>&1"
     atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "${movie_artwork}${NAME}.jpg" --overWrite > /dev/null 2>&1
   else
     # just tag
     echo "  - AtomicParsley!!!  tagging w/o artwork."
-    echo "atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1"
+    echo "atomicparsley atomicFile.m4v --genre Movie --stik Movie --title=$title --year=$year --overWrite > /dev/null 2>&1"
     atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
   fi
 
@@ -237,9 +239,13 @@ tagMovie(){
   #  date
   #  exit 1
   # fi
+
+  # sleep a bit
+  sleep 3
 }
 
 tagTv(){
+  echo "TAGGING!!!"
   # remove existing metadata
   echo "  - Removing Existing Metadata"
   atomicparsley "atomicFile.m4v" --metaEnema --overWrite
@@ -283,7 +289,7 @@ tagTv(){
 moveTranscoded(){
   dest_file="$1"
   dest_folder="$2"
-  echo "  - Moving transcoded file to folder."
+  echo "  * Moving transcoded file to folder."
   echo "  - mv atomicFile.m4v \"${dest_folder}${dest_file}\""
 
   mv "atomicFile.m4v" "${dest_folder}${dest_file}"
@@ -302,7 +308,7 @@ moveTranscoded(){
 moveOriginal(){
   # move the original downloaded file to a folder.
   # don't fail if none is found.  e.g. re-encoding (moved) existing .m4v
-  echo "  - Moving original downloaded file to folder."
+  echo "  * Moving original downloaded file to folder."
   echo "  - mv $file $postproc_dest_folder$file"
   mv "$file" "${postproc_dest_folder}${file}"
 
@@ -337,7 +343,7 @@ consolidateFiles(){
 # TODO remove dependency on tvrenamer.pl
 tvRenamer(){
   # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
-  echo "  - Renaming the file with tvrenamer.pl"
+  echo "RENAMING the file with tvrenamer.pl"
   rm *.[uU][rR][lL]
   # tvrenamer.pl sometimes hangs. background the cmd and kill it after X seconds.
   /usr/local/bin/tvrenamer.pl --debug --noANSI --nogroup --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series &
@@ -511,20 +517,16 @@ if [[ $CATEGORY = "tv" ]]; then
   # regex matches: the soup - 2013-08-01 - episode name.xyz
   regex_soup="([tT][hH][eE] [sS][oO][uU][pP]) - ([0-9]{4})-([0-9]{2})-([0-9]{2}) - (.*)\..*"
 
-  # tvRenamer
+  tvRenamer
 
   COUNTER=0
-  # CAN'T GET THIS TO LOOP
-  # https://stackoverflow.com/questions/7039130/bash-iterate-over-list-of-files-with-spaces
-  find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0 | while IFS= read -d $'\0' -r file
-  do
-      let COUNTER=COUNTER+1
-      echo "  - Loop Count = $COUNTER"
-      NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
-      EXT=${file##*.}
-      ISIZE=$(ls -lh "$file"  | awk '{print $5}')
-      echo "  - Discovered media file:"
-      echo "    $NAME.$EXT $ISIZE"
+  while IFS= read -r -d '' file; do
+    let COUNTER=COUNTER+1
+    NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+    EXT=${file##*.}
+    ISIZE=$(ls -lh "$file"  | awk '{print $5}')
+    echo "  $COUNTER Discovered media file:"
+    echo "    $NAME.$EXT $ISIZE"
   
     if [[ $NAME =~ $regex_soup ]]; then
       echo "  - REGEX detected The Soup,"
@@ -624,17 +626,16 @@ if [[ $CATEGORY = "tv" ]]; then
     ls -l "atomicFile.m4v" > /dev/null 2>&1
     
     if [[ $? != 0 ]]; then
-      echo "$file"
       echo "!!! ERROR, atomicFile.m4v missing"
       date
       exit 1
-      continue
     fi
 
     tagTv "$show_name" "$episode_name" "$episode" "$season"
     moveTranscoded "$tv_dest_file" "$tv_dest_folder"
     moveOriginal
     printTvDetails
-  done
+  done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0)
 # END tv
+
 fi
