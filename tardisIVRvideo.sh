@@ -67,8 +67,8 @@ STATUS="$7"
 # GROUP="alt.binaries.teevee"
 # STATUS="0"
 
-# TODO is this still required?
-# shopt -s nullglob
+# this fixes some problems; https://stackoverflow.com/questions/12729784/mv-cannot-stat-error-no-such-file-or-directory-error
+shopt -s nullglob
 
 encodeMovie(){
   # detect .iso and mount, detect BlueRay, convert, umount
@@ -220,6 +220,7 @@ tagMovie(){
   # remove existing metadata
   echo "  - Removing Existing Metadata"
   atomicparsley "atomicFile.m4v" --metaEnema --overWrite
+  sleep 2
   # if artwork is available locally then tag.
   if [[ -e $(find "$movie_artwork" -name "${NAME}.jpg") ]]; then
     echo "  - AtomicParsley!!!  tagging w/local artwork."
@@ -239,9 +240,6 @@ tagMovie(){
   #  date
   #  exit 1
   # fi
-
-  # sleep a bit
-  sleep 3
 }
 
 tagTv(){
@@ -249,6 +247,7 @@ tagTv(){
   # remove existing metadata
   echo "  - Removing Existing Metadata"
   atomicparsley "atomicFile.m4v" --metaEnema --overWrite
+  sleep 2
 
   show_name="$1"
   episode_name="$2"
@@ -281,18 +280,16 @@ tagTv(){
     date
     exit 1
   fi
-
-  # sleep a bit
-  sleep 3
 }
 
 moveTranscoded(){
   dest_file="$1"
   dest_folder="$2"
   echo "  * Moving transcoded file to folder."
-  echo "  - mv atomicFile.m4v \"${dest_folder}${dest_file}\""
+  echo "  - mv atomicFile.m4v \"$dest_folder$dest_file\""
 
-  mv "atomicFile.m4v" "${dest_folder}${dest_file}"
+  # curly braces breaks mv
+  mv atomicFile.m4v "$dest_folder$dest_file"
 
   if [[ $? -ne 0 ]]; then
     echo "$?"
@@ -300,25 +297,22 @@ moveTranscoded(){
     date
     exit 1
   fi
-
-  # sleep a bit
-  sleep 3
 }
 
 moveOriginal(){
   # move the original downloaded file to a folder.
   # don't fail if none is found.  e.g. re-encoding (moved) existing .m4v
   echo "  * Moving original downloaded file to folder."
-  echo "  - mv $file $postproc_dest_folder$file"
-  mv "$file" "${postproc_dest_folder}${file}"
+  echo "  - mv \"$file\" \"$postproc_dest_folder$original\""
+  # curly braces breaks mv
+  mv "$file" "$postproc_dest_folder$file"
 
   if [[ $? -ne 0 ]]; then
-    echo "  - mv errors above are ok."
-    echo
+    echo "$?"
+    echo "!!! ERROR, mv exit code"
+    date
+    exit 1
   fi
-
-  # sleep a bit
-  sleep 3
 }
 
 findArtwork(){
@@ -350,6 +344,7 @@ tvRenamer(){
   TASK_PID=$!
   sleep 10
   kill -9 $TASK_PID
+  echo "  - sometimes we kill tvRenamer.pl on purpose"
   echo
 }
 
@@ -386,7 +381,8 @@ checkSplitAvi(){
   if [[ -f $(find . -maxdepth 1 -type f -regextype "posix-extended" -iregex '.*(cd1|cd2)\.(avi)' -print -quit) ]]; then
     echo "  - 2 CD files found"
     file=$(find . -maxdepth 1 -type f -regextype "posix-extended" -iregex '.*(cd1|cd2)\.(avi)' -print -quit)
-    NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+    file=$(echo $file | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+    NAME=$(echo ${file%.*})
     NAME=$(echo $NAME | sed -r 's/[cC][dD][12].*//g' | sed -r 's/[- .]{1,}$//g') # strip CDx and trailing characters from $NAME
     avimerge -o "${NAME}.avi" -i *{CD1,cd1}.avi *{CD2,cd2}.avi > /dev/null 2>&1
 
@@ -462,7 +458,8 @@ if [[ $CATEGORY = "movies" ]]; then
   fi
 
   echo "  - Discovered Media File:"
-  NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+  file=$(echo $file | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+  NAME=$(echo ${file%.*})
   EXT=${file##*.}
   ISIZE=$(ls -lh "$file" | awk '{print $5}')
   echo "    $NAME.$EXT $ISIZE"
@@ -522,10 +519,11 @@ if [[ $CATEGORY = "tv" ]]; then
   COUNTER=0
   while IFS= read -r -d '' file; do
     let COUNTER=COUNTER+1
-    NAME=$(echo ${file%.*} | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+    file=$(echo $file | sed -r 's/^\.\///g') # strip the leading "./" from the find results
+    NAME=$(echo ${file%.*})
     EXT=${file##*.}
     ISIZE=$(ls -lh "$file"  | awk '{print $5}')
-    echo "  $COUNTER Discovered media file:"
+    echo "  - Discovered media file # $COUNTER"
     echo "    $NAME.$EXT $ISIZE"
   
     if [[ $NAME =~ $regex_soup ]]; then
@@ -617,10 +615,10 @@ if [[ $CATEGORY = "tv" ]]; then
     # when running via shell check for tag switch
     if [[ $8 != "tag" ]]; then
       encodeTv
+      sleep 2
     elif [[ $8 -eq "tag" ]]; then
       mv "$file" "atomicFile.m4v"
-      # sleep a bit
-      sleep 3
+      sleep 2
     fi
     
     ls -l "atomicFile.m4v" > /dev/null 2>&1
@@ -632,8 +630,11 @@ if [[ $CATEGORY = "tv" ]]; then
     fi
 
     tagTv "$show_name" "$episode_name" "$episode" "$season"
+    sleep 2
     moveTranscoded "$tv_dest_file" "$tv_dest_folder"
+    sleep 2
     moveOriginal
+    sleep 2
     printTvDetails
   done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0)
 # END tv
