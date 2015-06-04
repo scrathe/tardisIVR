@@ -446,8 +446,8 @@ if [[ $CATEGORY = "movies" ]]; then
   # matches: movie name (2013).xyz
   regex="(.*) \(([0-9]{4})\).*"
 
-  consolidateFiles
   mkIsofs
+  consolidateFiles
 
   # find media file larger than 100MB
   file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v")
