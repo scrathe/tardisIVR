@@ -216,10 +216,11 @@ printTvDetails(){
 }
 
 tagMovie(){
-  echo "  * Tagging!!!"
+  echo "  * TAGGING file with metadata" 
   # remove existing metadata
   echo "  - Removing Existing Metadata"
   atomicparsley "atomicFile.m4v" --metaEnema --overWrite
+  echo
   sleep 2
   # if artwork is available locally then tag.
   if [[ -e $(find "$movie_artwork" -name "${NAME}.jpg") ]]; then
@@ -243,10 +244,11 @@ tagMovie(){
 }
 
 tagTv(){
-  echo "TAGGING!!!"
+  echo "  * TAGGING file with metadata" 
   # remove existing metadata
   echo "  - Removing Existing Metadata"
   atomicparsley "atomicFile.m4v" --metaEnema --overWrite
+  echo
   sleep 2
 
   show_name="$1"
@@ -338,7 +340,7 @@ consolidateFiles(){
 # TODO remove dependency on tvrenamer.pl
 tvRenamer(){
   # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
-  echo "RENAMING the file with tvrenamer.pl"
+  echo "  * RENAMING the file with tvrenamer.pl"
   rm *.[uU][rR][lL]
   # tvrenamer.pl sometimes hangs. background the cmd and kill it after X seconds.
   /usr/local/bin/tvrenamer.pl --debug --noANSI --nogroup --unattended --gap=" - " --separator=" - " --pad=2 --scheme=SXXEYY --include_series &
@@ -347,6 +349,11 @@ tvRenamer(){
   kill -9 $TASK_PID
   echo "  - sometimes we kill tvRenamer.pl on purpose"
   echo
+}
+
+tvNamer(){
+  echo "  * RENAMING the file with tvnamer"
+  /usr/local/bin/tvnamer *
 }
 
 mkIsofs(){
@@ -521,7 +528,7 @@ if [[ $CATEGORY = "tv" ]]; then
   # regex matches: the soup - 2013-08-01 - episode name.xyz
   regex_soup="([tT][hH][eE] [sS][oO][uU][pP]) - ([0-9]{4})-([0-9]{2})-([0-9]{2}) - (.*)\..*"
 
-  tvRenamer
+  tvNamer
 
   COUNTER=0
   while IFS= read -r -d '' file; do
