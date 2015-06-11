@@ -1,6 +1,6 @@
 # tardisIVR
 ### a box that's bigger on the inside to put the internet in.
-![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png?raw=true "tardisIVR Blueprint")
+![alt text](https://www.gliffy.com/go/publish/image/8327655/L.png "tardisIVR Blueprint")
 
 ## what is this?
 * blueprints for a box that holds Movies and TV shows
