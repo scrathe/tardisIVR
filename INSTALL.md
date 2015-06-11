@@ -1,4 +1,4 @@
-### This guide is specific to a Win8 host with an Ubuntu 12.04 Hyper-V guest.
+### This guide is specific to a Win8 host with an Ubuntu 12.04 Hyper-V guest```‎(/.__.)/ \(.__.\)```
 
 ### Windows Host (Win8/Hyper-V)
 * share your storage...
