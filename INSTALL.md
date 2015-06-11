@@ -1,9 +1,8 @@
 ### This guide is specific to a Win8 host with an Ubuntu 12.04 Hyper-V guest```‎(/.__.)/ \(.__.\)```
 
-### Windows Host (Win8/Hyper-V)
-* share your storage...
-* Windows share: \\\servername\sharename
-* setup your Linux guest;  1-2GB RAM, 4-8GB HD, numerous-cores, bridged networking to your host's internet connection
+### Windows Host (Win8.x Pro/Ultimate w/ Hyper-V)
+* share your storage... \\\servername\sharename
+* setup your Linux guest;  1-2GB RAM, 8-12GB HD, numerous-cores, bridged networking to your host's internet connection
  
 ### Linux Guest (ubuntu-12.04.2-server-amd64.iso)
 * Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
