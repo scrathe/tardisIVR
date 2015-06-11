@@ -49,8 +49,7 @@ domain=tardis
 chmod 600 ~/.smbcredentials
 ```
 ##### /etc/fstab "noauto" setting
-* use /etc/rc.local to delay mounting volumes until network is up
-
+use /etc/rc.local to delay mounting volumes until network is up
 ```
 sudo vi /etc/rc.local
 mount /media/tardis-c
@@ -74,7 +73,7 @@ none            2.0G     0  2.0G   0% /run/shm
 ```
 
 ### handbrake install
-* project page; https://handbrake.fr
+project page; https://handbrake.fr
 ```
 sudo apt-get install ubuntu-restricted-extras
 sudo apt-get install libdvdread4
@@ -87,14 +86,14 @@ sudo ln -s /usr/bin/HandBrakeCLI /usr/bin/handbrake-cli
 ```
 
 ### atomicparsley install
-* project page; http://atomicparsley.sourceforge.net
+project page; http://atomicparsley.sourceforge.net
 ```
 sudo apt-get install -y atomicparsley
 sudo ln -s /usr/bin/AtomicParsley /usr/bin/atomicparsley
 ```
 
 ### tvnamer install
-* project page; https://github.com/dbr/tvnamer
+project page; https://github.com/dbr/tvnamer
 ```
 sudo apt-get install python-setuptools
 sudo easy_install tvnamer
@@ -160,7 +159,7 @@ vi ~/.tvnamer.json
 ```
 
 ### sabnzbd:8080 install
-* project page; http://wiki.sabnzbd.org/start
+project page; http://wiki.sabnzbd.org/start
 ```
 echo "deb http://ppa.launchpad.net/jcfp/ppa/ubuntu $(lsb_release -c -s) main" | sudo tee -a /etc/apt/sources.list && sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-keys 0x98703123E0F52B2BE16D586EF13930B14BB9F05F
 sudo apt-get update
@@ -170,6 +169,7 @@ sudo update-rc.d sabnzbdplus defaults
 ```
 
 ### sickbeard:8081 install
+project page; http://sickbeard.com
 ```
 cd ~
 git clone https://github.com/midgetspy/Sick-Beard.git .sickbeard
@@ -197,8 +197,8 @@ SB_PORT="8081"
 ```
 
 ### couchpotato:5050 install
-* note:  do not use ~/.couchpotato.  app reserves this folder for your settings.
-
+project page; https://couchpota.to
+note: do not use ~/.couchpotato. app reserves this folder for your settings.
 ```
 cd ~
 git clone https://github.com/RuudBurger/CouchPotatoServer.git .couchpotato_v2
@@ -216,9 +216,10 @@ sudo vi /etc/default/couchpotato
 RUN_AS=elvie
 APP_PATH=/home/$RUN_AS/.couchpotato_v2
 ```
-* bug:  may need to restart couchpotato a few times after initial run
+bug:  may need to restart couchpotato a few times after initial run
 
 ### headphones:8084 install
+project page; https://github.com/rembo10/headphones
 ```
 cd ~
 git clone https://github.com/rembo10/headphones.git .headphones
