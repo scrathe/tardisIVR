@@ -38,15 +38,13 @@ sudo vi /etc/fstab
 //tardis/c /media/tardis-c cifs noauto,rw,uid=elvie,credentials=/home/elvie/.smbcredentials,iocharset=utf8,file_mode=0770,dir_mode=0770,sec=ntlm 0 0
 ```
 
-##### smb credentials file
+##### create and secure the .smbcredentials file
 ```
 vi ~/.smbcredentials
 username=elvie
 password=********
 domain=tardis
 ```
-
-##### secure smb credentials file
 ```
 chmod 600 ~/.smbcredentials
 ```
