@@ -91,7 +91,8 @@ sudo apt-get install -y atomicparsley
 sudo ln -s /usr/bin/AtomicParsley /usr/bin/atomicparsley
 ```
 
-### tvnamer install; https://github.com/dbr/tvnamer
+### tvnamer install
+* project page; https://github.com/dbr/tvnamer
 ```
 sudo apt-get install python-setuptools
 sudo easy_install tvnamer
