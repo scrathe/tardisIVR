@@ -1,3 +1,5 @@
+### This guide is specific to a Win8 host with an Ubuntu 12.04 Hyper-V guest.
+
 ### Windows Host (Win8/Hyper-V)
 * share your storage...
 * Windows share: \\\servername\sharename
