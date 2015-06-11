@@ -10,10 +10,11 @@
 
 ## what does it require?
 * a baremetal host with plenty of redundant storage
-* a Linux virtual machine
+* a Linux virtual or baremetal machine
   * e.g. ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
 * a usenet account and nzb index account
+* patience and/or love of a challenge ;)
 
 ## files
 **HARDWARE.md**
