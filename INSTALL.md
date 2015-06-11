@@ -198,6 +198,7 @@ SB_PORT="8081"
 
 ### couchpotato:5050 install
 project page; https://couchpota.to
+
 note: do not use ~/.couchpotato. app reserves this folder for your settings.
 ```
 cd ~
