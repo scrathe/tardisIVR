@@ -74,6 +74,7 @@ none            2.0G     0  2.0G   0% /run/shm
 ```
 
 ### handbrake install
+* project page; https://handbrake.fr
 ```
 sudo apt-get install ubuntu-restricted-extras
 sudo apt-get install libdvdread4
@@ -86,6 +87,7 @@ sudo ln -s /usr/bin/HandBrakeCLI /usr/bin/handbrake-cli
 ```
 
 ### atomicparsley install
+* project page; http://atomicparsley.sourceforge.net
 ```
 sudo apt-get install -y atomicparsley
 sudo ln -s /usr/bin/AtomicParsley /usr/bin/atomicparsley
@@ -158,6 +160,7 @@ vi ~/.tvnamer.json
 ```
 
 ### sabnzbd:8080 install
+* project page; http://wiki.sabnzbd.org/start
 ```
 echo "deb http://ppa.launchpad.net/jcfp/ppa/ubuntu $(lsb_release -c -s) main" | sudo tee -a /etc/apt/sources.list && sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-keys 0x98703123E0F52B2BE16D586EF13930B14BB9F05F
 sudo apt-get update
