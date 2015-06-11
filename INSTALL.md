@@ -6,11 +6,11 @@
  
 ### Linux Guest (ubuntu-12.04.2-server-amd64.iso)
 * Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
-* first things first, create and use sudo enabled user e.g. elvie
+##### first things first, create/use a sudo enabled user e.g. elvie
 ```
 sudo usermod -a -G sudo elvie
 ```
-* check group membership (you may need to logout/in for new group membership)
+##### check group membership (you may need to logout/in for new group membership)
 ```
 sudo groups elvie
 ```
