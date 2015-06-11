@@ -3,7 +3,7 @@
 ![alt text](https://www.gliffy.com/go/publish/image/8327655/L.png "tardisIVR Blueprint")
 
 ## what is this?
-* blueprints for a system that automates the download, encoding, naming of Movies and TV shows. comprised of:
+* blueprints for a system that automates the download, encoding, naming and metadata tagging of Movies and TV shows. comprised of:
   * a baremetal host (front-end) for file management and sharing
   * a Linux VM or Metal (back-end) for search and download (SickBeard, CouchPotato, HeadPhones, SABnzbd)
   * a BASH post-processing script (tardisIVRvideo.sh) that renames, encodes and tags (HandBrake and AtomicParsley) with the agnostic compatibility of many media sharing environments; iTunes/AppleTV, Plex, DLNA, FireTV, Roku, anything...
