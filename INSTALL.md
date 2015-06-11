@@ -1,13 +1,13 @@
-### This guide is specific to a Win8 host with an Ubuntu 12.04 Hyper-V guest```‎(/.__.)/ \(.__.\)```
+### This guide is specific to a```‎(/.__.)/```Win8 host with an Ubuntu 12.04```\(.__.\)```Hyper-V guest
 
-### Windows Host (Win8.x Pro/Ultimate w/ Hyper-V)
+### Windows front-end (Win8.x Pro/Ultimate w/ Hyper-V)
 * share your storage... \\\servername\sharename
 * setup your Linux guest;  1-2GB RAM, 8-12GB HD, numerous-cores, bridged networking to your host's internet connection
  
-### Linux Guest (ubuntu-12.04.2-server-amd64.iso)
+### Linux back-end (ubuntu-12.04.2-server-amd64.iso)
 * Ubuntu 12.04 installation guide for SABnzbd, SickBeard, CouchPotato, HeadPhones
 
-##### first things first, create/use a sudo enabled user e.g. elvie
+##### first things first, on your Linux back-end, create/use a sudo enabled user e.g. elvie
 ```
 sudo usermod -a -G sudo elvie
 ```
