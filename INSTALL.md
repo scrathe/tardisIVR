@@ -240,3 +240,8 @@ HP_HOME="/home/$HP_USER/.headphones"
 HP_DATA="/home/$HP_USER/.headphones"
 HP_PORT="8084"
 ```
+### SABstack service startup/shutdown oneliner
+```
+SERVICES="sabnzbdplus sickbeard couchpotato headphones" ; for i in $SERVICES ; do sudo service $i start ; done
+SERVICES="sabnzbdplus sickbeard couchpotato headphones" ; for i in $SERVICES ; do sudo service $i stop ; done
+```
