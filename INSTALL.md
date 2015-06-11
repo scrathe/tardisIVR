@@ -22,7 +22,7 @@ sudo apt-get install -y avimerge genisoimage git openssh-server wget
 ```
 
 ##### download tardisIVRvideo.sh to SABnzbd's script directory
-you won't be using sudo when installing. we wants these apps to run-as non-root.
+note: you won't be using sudo when installing. we wants these apps to run-as non-root.
 ```
 git clone https://github.com/scrathe/tardisIVR.git ~/.sabnzbd/scripts/tardisIVR
 ```
