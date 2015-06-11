@@ -1,4 +1,4 @@
-### This guide is specific to a```‎(/.__.)/```Win8 host with an Ubuntu 12.04```\(.__.\)```Hyper-V guest
+### This guide is specific to a Win8 front-end/host with an Ubuntu 12.04 Hyper-V back-end/guest
 
 ### Windows front-end (Win8.x Pro/Ultimate w/ Hyper-V)
 * share your storage... \\\servername\sharename
