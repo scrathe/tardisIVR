@@ -10,10 +10,11 @@
 
 ## what does it require?
 * a baremetal host with plenty of redundant storage
-* a Linux virtual or baremetal machine
-  * e.g. ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking
+  * e.g. Win8.x Pro w/ Hyper-V, Linux w/ Proxmox, Apple w/ Virtualbox
+* a Linux virtual guest or standalone baremetal machine
+  * e.g. ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 8-12GB, CPU 2+ cores, Bridged networking
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
-* a usenet account and nzb index account
+* a usenet and nzb index account
 * patience and/or love of a challenge```(づ｡◕‿‿◕｡)づ```
 
 ## files
@@ -21,7 +22,7 @@
   * an example mini-itx tardis build
 
 **INSTALL.md**
-  * An installation guide for Ubuntu 12.04; SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
+  * an installation guide for an Ubuntu 12.04 back-end; SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
 **PLINK.md**
   * optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
