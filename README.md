@@ -3,25 +3,24 @@
 ![alt text](https://www.gliffy.com/go/publish/image/8327655/L.png "tardisIVR Blueprint")
 
 ## what is this?
-* blueprints for a box that holds Movies and TV shows
-  * a Windows host (front-end) for file management and sharing
-  * a Linux guest (back-end) for download, rename, transcode, and tag (SABnzbd, SickBeard, CouchPotato, HeadPhones)
-  * a BASH post-processing script (tardisIVRvideo.sh) that encodes and tags using HandBrake and AtomicParsley, compatible with many media sharing environments; iTunes/AppleTV, Plex, DLNA 
+* blueprints for a system that automates the download, encoding, naming of Movies and TV shows. comprised of:
+  * a baremetal host (front-end) for file management and sharing
+  * a Linux VM or Metal (back-end) for search and download (SickBeard, CouchPotato, HeadPhones, SABnzbd)
+  * a BASH post-processing script (tardisIVRvideo.sh) that renames, encodes and tags (HandBrake and AtomicParsley) with the agnostic compatibility of many media sharing environments; iTunes/AppleTV, Plex, DLNA, FireTV, Roku, anything...
 
 ## what does it require?
-* a Windows 8 machine with plenty of redundant storage
-  * Q: ewwww, do i have to use Win8?  A: absolutely not -- use any Hypervisor or bare-metal.
+* a baremetal host with plenty of redundant storage
 * a Linux virtual machine
-  * ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking
+  * e.g. ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 4-8GB, CPU 2+ cores, Bridged networking
 * a strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
 * a usenet account and nzb index account
 
 ## files
 **HARDWARE.md**
-  * an example mini-itx tardis build (the files are inside? the computer?)
+  * an example mini-itx tardis build
 
 **INSTALL.md**
-  * Ubuntu 12.04 installation guide for SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
+  * An installation guide for Ubuntu 12.04; SABnzbd/apt-get, SickBeard/git, CouchPotato/git, HeadPhones/git
 
 **PLINK.md**
   * optional installation and configuration guide for remote execution (plink.exe) from Windows -> Linux
