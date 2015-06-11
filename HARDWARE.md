@@ -15,7 +15,7 @@
 * 3 x 4TB HDD Seagate ST4000DM000 SATA 6Gb/s w/ Windows Storage Spaces
 * 2 x (open) 3.5" SATA HD bays
 * 1 x 256GB SDD ADATA MLC SATA 6Gb/s
-  * bottom plate supports additional 2.5/3.5" mounts
+  * Lian-Li PC-Q25B bottom plate supports additional 2.5/3.5" mounts
 
 #### pic below w/o power and cooler
 ![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisITX01.png?raw=true "tardisITX")
