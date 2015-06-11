@@ -91,13 +91,69 @@ sudo apt-get install -y atomicparsley
 sudo ln -s /usr/bin/AtomicParsley /usr/bin/atomicparsley
 ```
 
-### tvrenamer.pl install
+### tvnamer install; https://github.com/dbr/tvnamer
 ```
-cd ~
-wget https://github.com/meermanr/TVSeriesRenamer/raw/master/tvrenamer.pl
-sudo mv tvrenamer.pl /usr/local/bin/
-sudo chmod +x /usr/local/bin/tvrenamer.pl
-sudo apt-get install -y libterm-readkey-perl libwww-perl
+sudo apt-get install python-setuptools
+sudo easy_install tvnamer
+```
+
+#### tvnamer config
+```
+vi ~/.tvnamer.json
+```
+```
+{
+    "always_rename": false, 
+    "batch": true, 
+    "custom_filename_character_blacklist": "", 
+    "episode_separator": "-", 
+    "episode_single": "%d", 
+    "filename_patterns": [
+        "^\\[.+?\\][ ]? # group name\n        (?P<seriesname>.*?)[ ]?[-_][ ]?          # show name, padding, spaces?\n        (?P<episodenumberstart>\\d+)              # first episode number\n        ([-_]\\d+)*                               # optional repeating episodes\n        [-_](?P<episodenumberend>\\d+)            # last episode number\n        [^\\/]*$", 
+        "^\\[.+?\\][ ]? # group name\n        (?P<seriesname>.*) # show name\n        [ ]?[-_][ ]?(?P<episodenumber>\\d+)\n        [^\\/]*$", 
+        "\n        ^((?P<seriesname>.+?)[ \\._\\-])?          # show name\n        [Ss](?P<seasonnumber>[0-9]+)             # s01\n        [\\.\\- ]?                                 # separator\n        [Ee](?P<episodenumberstart>[0-9]+)       # first e23\n        ([\\.\\- ]+                                # separator\n        [Ss](?P=seasonnumber)                    # s01\n        [\\.\\- ]?                                 # separator\n        [Ee][0-9]+)*                             # e24 etc (middle groups)\n        ([\\.\\- ]+                                # separator\n        [Ss](?P=seasonnumber)                    # last s01\n        [\\.\\- ]?                                 # separator\n        [Ee](?P<episodenumberend>[0-9]+))        # final episode number\n        [^\\/]*$", 
+        "\n        ^((?P<seriesname>.+?)[ \\._\\-])?          # show name\n        [Ss](?P<seasonnumber>[0-9]+)             # s01\n        [\\.\\- ]?                                 # separator\n        [Ee](?P<episodenumberstart>[0-9]+)       # first e23\n        ([\\.\\- ]?                                # separator\n        [Ee][0-9]+)*                             # e24e25 etc\n        [\\.\\- ]?[Ee](?P<episodenumberend>[0-9]+) # final episode num\n        [^\\/]*$", 
+        "\n        ^((?P<seriesname>.+?)[ \\._\\-])?          # show name\n        (?P<seasonnumber>[0-9]+)                 # first season number (1)\n        [xX](?P<episodenumberstart>[0-9]+)       # first episode (x23)\n        ([ \\._\\-]+                               # separator\n        (?P=seasonnumber)                        # more season numbers (1)\n        [xX][0-9]+)*                             # more episode numbers (x24)\n        ([ \\._\\-]+                               # separator\n        (?P=seasonnumber)                        # last season number (1)\n        [xX](?P<episodenumberend>[0-9]+))        # last episode number (x25)\n        [^\\/]*$", 
+        "\n        ^((?P<seriesname>.+?)[ \\._\\-])?          # show name\n        (?P<seasonnumber>[0-9]+)                 # 1\n        [xX](?P<episodenumberstart>[0-9]+)       # first x23\n        ([xX][0-9]+)*                            # x24x25 etc\n        [xX](?P<episodenumberend>[0-9]+)         # final episode num\n        [^\\/]*$", 
+        "\n        ^((?P<seriesname>.+?)[ \\._\\-])?          # show name\n        [Ss](?P<seasonnumber>[0-9]+)             # s01\n        [\\.\\- ]?                                 # separator\n        [Ee](?P<episodenumberstart>[0-9]+)       # first e23\n        (                                        # -24 etc\n             [\\-]\n             [Ee]?[0-9]+\n        )*\n             [\\-]                                # separator\n             [Ee]?(?P<episodenumberend>[0-9]+)   # final episode num\n        [\\.\\- ]                                  # must have a separator (prevents s01e01-720p from being 720 episodes)\n        [^\\/]*$", 
+        "\n        ^((?P<seriesname>.+?)[ \\._\\-])?          # show name\n        (?P<seasonnumber>[0-9]+)                 # 1\n        [xX](?P<episodenumberstart>[0-9]+)       # first x23\n        (                                        # -24 etc\n             [\\-][0-9]+\n        )*\n             [\\-]                                # separator\n             (?P<episodenumberend>[0-9]+)        # final episode num\n        ([\\.\\- ].*                               # must have a separator (prevents 1x01-720p from being 720 episodes)\n        |\n        $)", 
+        "^(?P<seriesname>.+?)[ \\._\\-]          # show name and padding\n        \\[                                       # [\n            ?(?P<seasonnumber>[0-9]+)            # season\n        [xX]                                     # x\n            (?P<episodenumberstart>[0-9]+)       # episode\n            (- [0-9]+)*\n        -                                        # -\n            (?P<episodenumberend>[0-9]+)         # episode\n        \\]                                       # \\]\n        [^\\/]*$", 
+        "^(?P<seriesname>.+?)[ \\._\\-]\n        [Ss](?P<seasonnumber>[0-9]{2})\n        [\\.\\- ]?\n        (?P<episodenumber>[0-9]{2})\n        [^0-9]*$", 
+        "^((?P<seriesname>.+?)[ \\._\\-])?       # show name and padding\n        \\[?                                      # [ optional\n        (?P<seasonnumber>[0-9]+)                 # season\n        [xX]                                     # x\n        (?P<episodenumber>[0-9]+)                # episode\n        \\]?                                      # ] optional\n        [^\\/]*$", 
+        "^((?P<seriesname>.+?)[ \\._\\-])?\n        \\[?\n        [Ss](?P<seasonnumber>[0-9]+)[\\.\\- ]?\n        [Ee]?(?P<episodenumber>[0-9]+)\n        \\]?\n        [^\\/]*$", 
+        "\n        ^((?P<seriesname>.+?)[ \\._\\-])?          # show name\n        (?P<year>\\d{4})                          # year\n        [ \\._\\-]                                 # separator\n        (?P<month>\\d{2})                         # month\n        [ \\._\\-]                                 # separator\n        (?P<day>\\d{2})                           # day\n        [^\\/]*$", 
+        "^(?P<seriesname>.+?)[ ]?[ \\._\\-][ ]?\n        [Ss](?P<seasonnumber>[0-9]+)[\\.\\- ]?\n        [Ee]?[ ]?(?P<episodenumber>[0-9]+)\n        [^\\/]*$", 
+        "\n        (?P<seriesname>.+)                       # Showname\n        [ ]-[ ]                                  # -\n        [Ee]pisode[ ]\\d+                         # Episode 1234 (ignored)\n        [ ]\n        \\[                                       # [\n        [sS][ ]?(?P<seasonnumber>\\d+)            # s 12\n        ([ ]|[ ]-[ ]|-)                          # space, or -\n        ([eE]|[eE]p)[ ]?(?P<episodenumber>\\d+)   # e or ep 12\n        \\]                                       # ]\n        .*$                                      # rest of file\n        ", 
+        "^(?P<seriesname>.+?)                  # Show name\n        [ \\._\\-]                                 # Padding\n        (?P<episodenumber>[0-9]+)                # 2\n        of                                       # of\n        [ \\._\\-]?                                # Padding\n        \\d+                                      # 6\n        ([\\._ -]|$|[^\\/]*$)                     # More padding, then anything\n        ", 
+        "^(?P<seriesname>.+)[ \\._\\-]\n        (?P<seasonnumber>[0-9]{1})\n        (?P<episodenumber>[0-9]{2})\n        [\\._ -][^\\/]*$", 
+        "^(?P<seriesname>.+)[ \\._\\-]\n        (?P<seasonnumber>[0-9]{2})\n        (?P<episodenumber>[0-9]{2,3})\n        [\\._ -][^\\/]*$", 
+        "^(?P<seriesname>.+?)                  # Show name\n        [ \\._\\-]                                 # Padding\n        [Ee](?P<episodenumber>[0-9]+)            # E123\n        [\\._ -][^\\/]*$                          # More padding, then anything\n        "
+    ], 
+    "filename_with_date_and_episode": "%(seriesname)s - %(episode)s - %(episodename)s%(ext)s", 
+    "filename_with_date_without_episode": "%(seriesname)s - %(episode)s%(ext)s", 
+    "filename_with_episode": "%(seriesname)s - %(seasonno)dx%(episode)s - %(episodename)s%(ext)s", 
+    "filename_with_episode_no_season": "%(seriesname)s - %(episode)s - %(episodename)s%(ext)s", 
+    "filename_without_episode": "%(seriesname)s - %(seasonno)dx%(episode)s%(ext)s", 
+    "filename_without_episode_no_season": "%(seriesname)s - %(episode)s%(ext)s", 
+    "input_filename_replacements": [], 
+    "language": "en", 
+    "lowercase_filename": false, 
+    "move_files_confirmation": true, 
+    "move_files_destination": ".", 
+    "move_files_enable": false, 
+    "move_files_fullpath_replacements": [], 
+    "multiep_join_name_with": ", ", 
+    "normalize_unicode_filenames": false, 
+    "output_filename_replacements": [], 
+    "recursive": false, 
+    "replace_invalid_characters_with": "_", 
+    "search_all_languages": true, 
+    "select_first": false, 
+    "skip_file_on_error": true, 
+    "valid_extensions": [], 
+    "verbose": false, 
+    "windows_safe_filenames": false
+}
 ```
 
 ### sabnzbd:8080 install
