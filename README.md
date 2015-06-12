@@ -30,7 +30,8 @@
   * Attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
 #### plink-tardisIVR
-  * See the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Plink-(Remote-Execution)) for installation and configuration of the remote execution (plink.exe) from Windows -> Linux
+  * See the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Plink-(Remote-Execution)) for installation and configuration of the remote execution.
+  (plink.exe) from Windows -> Linux
   * **plink-tardisIVR.bat** -- Windows script
   * **plink-tardisIVR.sh** -- Linux script
 
