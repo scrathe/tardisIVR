@@ -98,8 +98,11 @@ project page; https://github.com/dbr/tvnamer
 sudo apt-get install python-setuptools
 sudo easy_install tvnamer
 ```
-
-#### tvnamer config
+create template config
+```
+tvnamer --save=~/.tvnamer.json
+```
+example tvnamer config for naming syntax "show - SxxExx - episode name"
 ```
 vi ~/.tvnamer.json
 ```
