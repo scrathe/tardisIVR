@@ -24,13 +24,13 @@
     * locally via shell
     * recursive via shell -- i.e. process all Season subfolders
     * remotely via Windows/plink.exe
-    * check out the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Shell-Usage) for examples.
+    * see the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Shell-Usage) for examples.
   * Uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
   * Supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
   * Attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
 #### plink-tardisIVR
-  * See the [Wiki page]() for installation and configuration of the remote execution (plink.exe) from Windows -> Linux
+  * See the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Plink-(Remote-Execution)) for installation and configuration of the remote execution (plink.exe) from Windows -> Linux
   * **plink-tardisIVR.bat** -- Windows script
   * **plink-tardisIVR.sh** -- Linux script
 
