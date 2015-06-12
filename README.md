@@ -43,6 +43,7 @@
   * Attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
 ## Sources (thank you!)
+* https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
 * https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/
 * http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
 * https://wiki.ubuntu.com/MountWindowsSharesPermanently
