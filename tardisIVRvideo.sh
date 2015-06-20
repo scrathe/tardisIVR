@@ -550,7 +550,7 @@ if [[ $CATEGORY = "tv" ]]; then
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
       # strip leading 0 from month
-      month=$(echo $month | sed -r 's/^0//g')
+      # month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
       season=$year
@@ -575,7 +575,7 @@ if [[ $CATEGORY = "tv" ]]; then
       year=${BASH_REMATCH[2]}
       month=${BASH_REMATCH[3]}
       # strip leading 0 from month
-      month=$(echo $month | sed -r 's/^0//g')
+      # month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
       season=$year
