@@ -452,6 +452,7 @@ printError(){
   if [ ${#logArray[@]} -ne 0 ]; then
     echo "!!! ERRORS tagging files:"
     ( IFS=$'\n'; echo "${logArray[*]}" )
+    echo "!!! ERRORS tagging"
   fi
 }
 
