@@ -49,6 +49,9 @@ tv_artwork="/media/tardis-x/downloads/epic/artwork/tv/"
 # TV Show HandBrake preset
 tv_preset="AppleTV"
 
+# initialize array to log errors
+logArray=()
+
 # SABnzbd output parameters
 DIR="$1"
 NZB_FILE="$2"
@@ -172,47 +175,47 @@ printMovieDetails(){
   OSIZE=$(ls -lh "${movie_dest_folder}${movie_dest_file}" | awk '{print $5}')
 
   echo "  - Details:"
-  echo "    DIR:          $DIR"
-  echo "    NZB_FILE:     $NZB_FILE"
-  echo "    NAME:         $NAME"
-  echo "    NZB_ID:       $NZB_ID"
-  echo "    CATEGORY:     $CATEGORY"
-  echo "    GROUP:        $GROUP"
-  echo "    STATUS:       $STATUS"
-  echo "    Dest Folder:  $movie_dest_folder"
-  echo "    Dest File:    $movie_dest_file"
-  echo "    Title:        $title"
-  echo "    Year:         $year"
-  echo "    Input File:   $file $ISIZE"
-  echo "  - Finished:     `date`"
+  echo "    DIR:              $DIR"
+  echo "    NZB_FILE:         $NZB_FILE"
+  echo "    NAME:             $NAME"
+  echo "    NZB_ID:           $NZB_ID"
+  echo "    CATEGORY:         $CATEGORY"
+  echo "    GROUP:            $GROUP"
+  echo "    STATUS:           $STATUS"
+  echo "    Dest Folder:      $movie_dest_folder"
+  echo "    Dest File:        $movie_dest_file"
+  echo "    Title:            $title"
+  echo "    Year:             $year"
+  echo "    Input File:       $file $ISIZE"
+  echo "  - Finished:         `date`"
   echo
-  echo "  * COMPLETED!    $movie_dest_file $OSIZE"
+  echo "  * COMPLETED!        $movie_dest_file $OSIZE"
 }
 
 printTvDetails(){
   OSIZE=$(ls -lh "${tv_dest_folder}${tv_dest_file}" | awk '{print $5}')
 
   echo "  - Details:"
-  echo "    DIR:          $DIR"
-  echo "    NZB_FILE:     $NZB_FILE"
-  echo "    NAME:         $NAME"
-  echo "    NZB_ID:       $NZB_ID"
-  echo "    CATEGORY:     $CATEGORY"
-  echo "    GROUP:        $GROUP"
-  echo "    STATUS:       $STATUS"
-  echo "    Dest Folder:  $tv_dest_folder"
-  echo "    Dest File:    $tv_dest_file"
-  echo "    Show Name:    $show_name"
-  echo "    Season:       $season"
-  echo "    Episode:      $episode"
-  echo "    Episode Name: $episode_name"
-  echo "    Year:         $year"
-  echo "    Month:        $month"
-  echo "    Day:          $day"
-  echo "    Input File:   $file $ISIZE"
-  echo "  - Finished:     `date`"
+  echo "    DIR:              $DIR"
+  echo "    NZB_FILE:         $NZB_FILE"
+  echo "    NAME:             $NAME"
+  echo "    NZB_ID:           $NZB_ID"
+  echo "    CATEGORY:         $CATEGORY"
+  echo "    GROUP:            $GROUP"
+  echo "    STATUS:           $STATUS"
+  echo "    Dest Folder:      $tv_dest_folder"
+  echo "    Dest File:        $tv_dest_file"
+  echo "    Show Name:        $show_name"
+  echo "    Season:           $season"
+  echo "    Episode:          $episode"
+  echo "    Episode Name:     $episode_name"
+  echo "    Year:             $year"
+  echo "    Month:            $month"
+  echo "    Day:              $day"
+  echo "    Input File:       $file $ISIZE"
+  echo "  - Finished:         `date`"
   echo
-  echo "  * COMPLETED!    $tv_dest_file $OSIZE"
+  echo "  * COMPLETED!        $tv_dest_file $OSIZE"
 }
 
 tagMovie(){
@@ -234,13 +237,10 @@ tagMovie(){
     atomicparsley "atomicFile.m4v" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
   fi
 
-  # this broke one time so i'm disabling it :)
-  # if [ $? != 0 ]; then
-  #  echo "$?"
-  #  echo "!!! ERROR, AtomicParsley exit code"
-  #  date
-  #  exit 1
-  # fi
+  if [[ $? != 0 ]]; then
+    echo "!!! LOGGING ERROR while tagging"
+    logError $movie_dest_file
+  fi
 }
 
 tagTv(){
@@ -278,10 +278,8 @@ tagTv(){
   fi
 
   if [[ $? != 0 ]]; then
-    echo "$?"
-    echo "!!! ERROR, AtomicParsley exit code"
-    date
-    exit 1
+    echo "!!! LOGGING ERROR while tagging"
+    logError $tv_dest_file
   fi
 }
 
@@ -434,6 +432,28 @@ cleanupFilename(){
   episode_name=$(echo $episode_name | sed -e 's/\b\(.\)/\u\1/g')
 }
 
+checkIfOpen(){
+  check_file="$1"
+  while :
+  do
+    if ! [[ `lsof -- "$1" ` ]]
+    then
+      break
+    fi
+    sleep 1
+  done
+}
+
+logError(){
+  logArray+=($1)
+}
+
+printError(){
+  if [ ${#logArray[@]} -ne 0 ]; then
+    ( IFS=$'\n'; echo "${logArray[*]}" )
+  fi
+}
+
 # above are all functions
 # below is execution
 
@@ -465,6 +485,7 @@ if [[ $CATEGORY = "movies" ]]; then
     exit 1
   fi
 
+  echo
   echo "  - Discovered Media File:"
   file=$(echo $file | sed -r 's/^\.\///g') # strip the leading "./" from the find results
   NAME=$(echo ${file%.*})
@@ -502,14 +523,14 @@ if [[ $CATEGORY = "movies" ]]; then
   findArtwork "$movie_artwork"
   sleep 2
   encodeMovie
-  sleep 2
+  checkIfOpen "atomicFile.m4v"
   tagMovie
-  sleep 2
+  checkIfOpen "atomicFile.m4v"
   moveTranscoded "$movie_dest_file" "$movie_dest_folder"
-  sleep 2
+  checkIfOpen "$file"
   moveOriginal
-  sleep 2
   printMovieDetails
+  printError
 
 fi
 
@@ -537,7 +558,8 @@ if [[ $CATEGORY = "tv" ]]; then
     NAME=$(echo ${file%.*})
     EXT=${file##*.}
     ISIZE=$(ls -lh "$file"  | awk '{print $5}')
-    echo "  - Discovered media file # $COUNTER"
+    echo
+    echo "  - Discovered media file # $COUNTER @ `date +"%T %Y-%m-%d"`"
     echo "    $NAME.$EXT $ISIZE"
   
     if [[ $NAME =~ $regex_soup ]]; then
@@ -554,11 +576,12 @@ if [[ $CATEGORY = "tv" ]]; then
       day=${BASH_REMATCH[4]}
       # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
       season=$year
-      episode=${month}${day}
-      echo "  - \$show_name    = $show_name"
-      echo "  - \$year         = $year"
-      echo "  - \$month        = $month"
-      echo "  - \$day          = $day"
+      episode=${year}${month}${day}
+      echo "  - \$show_name     = $show_name"
+      echo "  - \$year/\$season  = $year"
+      echo "  - \$month         = $month"
+      echo "  - \$day           = $day"
+      echo "  - \$episode       = $episode"
       echo
   
       cleanupFilename "$show_name" x # function expects two variables
@@ -579,12 +602,13 @@ if [[ $CATEGORY = "tv" ]]; then
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
       season=$year
-      episode=${month}${day}
-      echo "  - \$show_name    = $show_name"
-      echo "  - \$year         = $year"
-      echo "  - \$month        = $month"
-      echo "  - \$day          = $day"
-      echo "  - \$episode_name = $episode_name"
+      episode=${year}${month}${day}
+      echo "  - \$show_name     = $show_name"
+      echo "  - \$year/\$season  = $year"
+      echo "  - \$month         = $month"
+      echo "  - \$day           = $day"
+      echo "  - \$episode       = $episode"
+      echo "  - \$episode_name  = $episode_name"
       echo
   
       cleanupFilename "$show_name" "$episode_name"
@@ -601,10 +625,10 @@ if [[ $CATEGORY = "tv" ]]; then
       season=${BASH_REMATCH[2]}
       episode=${BASH_REMATCH[3]}
       episode_name=${BASH_REMATCH[4]}
-      echo "  - \$show_name    = $show_name"
-      echo "  - \$season       = $season"
-      echo "  - \$episode      = $episode"
-      echo "  - \$episode_name = $episode_name"
+      echo "  - \$show_name     = $show_name"
+      echo "  - \$season        = $season"
+      echo "  - \$episode       = $episode"
+      echo "  - \$episode_name  = $episode_name"
       echo
   
       cleanupFilename "$show_name" "$episode_name"
@@ -643,14 +667,17 @@ if [[ $CATEGORY = "tv" ]]; then
       exit 1
     fi
 
+    checkIfOpen "atomicFile.m4v"
     tagTv "$show_name" "$episode_name" "$episode" "$season"
-    sleep 2
+    checkIfOpen "atomicFile.m4v"
     moveTranscoded "$tv_dest_file" "$tv_dest_folder"
-    sleep 2
+    checkIfOpen "$file"
     moveOriginal
-    sleep 2
     printTvDetails
   done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0)
+
+  printError
+
 # END tv
 
 fi
