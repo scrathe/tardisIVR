@@ -2,7 +2,7 @@
 ### A box that's bigger on the inside to put the internet in.
 ![alt text](https://www.gliffy.com/go/publish/image/8327655/L.png "tardisIVR Blueprint")
 
-[![Github Releases](https://img.shields.io/github/downloads/atom/atom/latest/total.svg)](https://raw.githubusercontent.com/scrathe/tardisIVR/master/tardisIVRvideo.sh)
+[![GitHub stars](https://img.shields.io/github/stars/badges/shields.svg)](https://github.com/scrathe/tardisIVR)
 
 ## What is this?
 * Blueprints for a system that automates the download, encoding, naming and metadata tagging of Movies and TV shows. Comprised of:
