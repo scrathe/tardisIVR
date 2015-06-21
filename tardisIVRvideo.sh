@@ -351,7 +351,7 @@ tvRenamer(){
 
 tvNamer(){
   echo "  * RENAMING the file with tvnamer"
-  /usr/local/bin/tvnamer --batch *
+  /usr/local/bin/tvnamer --batch -q *
 }
 
 mkIsofs(){
