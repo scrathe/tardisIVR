@@ -445,11 +445,12 @@ checkIfOpen(){
 }
 
 logError(){
-  logArray+=($1)
+  logArray+=("$1")
 }
 
 printError(){
   if [ ${#logArray[@]} -ne 0 ]; then
+    echo "!!! ERRORS tagging files:"
     ( IFS=$'\n'; echo "${logArray[*]}" )
   fi
 }
