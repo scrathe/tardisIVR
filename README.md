@@ -17,8 +17,8 @@
 * Usenet and nzb index account
 * Patience and/or love of a challenge```(づ｡◕‿‿◕｡)づ```
 
-### Files
-#### ```tardisIVRvideo.sh```
+### SABnzbd Post-Processing Script
+```tardisIVRvideo.sh```
   * BASH script supports run scenarios:
     * via SABnzbd categories post-processing
     * locally via shell
@@ -29,13 +29,13 @@
   * Supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
   * Attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
 
-#### plink-tardisIVR
+### Remote Execution Scripts
   * See the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Plink-(Remote-Execution)) for installation and configuration of the remote execution. (plink.exe) from Windows -> Linux
   * ```plink-tardisIVR.bat``` -- Windows script
   * ```plink-tardisIVR.sh``` -- Linux script
 
-## Sources
-thank you!
+#### Sources
+Thank You!
 * https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
 * https://lefoxdufue.wordpress.com/2013/01/12/install-sabnzbd-sickbeard-transmission-on-ubuntu-12-04/
 * http://www.visualnomads.com/2012/08/09/install-sabnzbd-sickbeard-and-couchpotato-on-ubuntu-12-04-lts/
