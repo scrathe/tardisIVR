@@ -18,11 +18,7 @@
 * Patience and/or love of a challenge```(づ｡◕‿‿◕｡)づ```
 
 ### SABnzbd Post-Processing Script
-```
-tardisIVRvideo.sh
-```
-
-  * BASH script supports run scenarios:
+  * ```tardisIVRvideo.sh``` BASH script supports run scenarios:
     * via SABnzbd categories post-processing
     * locally via shell
     * recursive via shell -- i.e. process all Season subfolders
