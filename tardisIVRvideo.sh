@@ -673,8 +673,10 @@ if [[ $CATEGORY = "tv" ]]; then
     tagTv "$show_name" "$episode_name" "$episode" "$season"
     checkIfOpen "atomicFile.m4v"
     moveTranscoded "$tv_dest_file" "$tv_dest_folder"
-    checkIfOpen "$file"
-    moveOriginal
+    if [[ $8 -ne "tag" ]]; then
+      checkIfOpen "$file"
+      moveOriginal
+    fi
     printTvDetails
   done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0)
 
