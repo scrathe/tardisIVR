@@ -31,7 +31,7 @@ unwatched_dest_folder="/media/tardis-x/downloads/epic/trash/"
 movie_artwork="/media/tardis-x/downloads/epic/artwork/movies/"
 
 # Movie HandBrake preset
-movie_preset="AppleTV"
+movie_preset="AppleTV3"
 
 # TV Show transcoded file destination
 tv_dest_folder="/media/tardis-x/downloads/epic/postprocessing/sickbeard/"
@@ -186,6 +186,8 @@ printMovieDetails(){
   echo "    Dest File:       $movie_dest_file"
   echo "    Title:           $title"
   echo "    Year:            $year"
+  # add some mediainfo
+  # mediainfo $file | grep -i channel\( | awk '{print $3}' | tr '\n' ',' | sed 's/.$//'
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
@@ -673,7 +675,7 @@ if [[ $CATEGORY = "tv" ]]; then
     tagTv "$show_name" "$episode_name" "$episode" "$season"
     checkIfOpen "atomicFile.m4v"
     moveTranscoded "$tv_dest_file" "$tv_dest_folder"
-    if [[ $8 -ne "tag" ]]; then
+    if [[ -z $8 ]] || [[ $8 -ne "tag" ]]; then
       checkIfOpen "$file"
       moveOriginal
     fi
