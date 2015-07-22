@@ -191,7 +191,7 @@ printMovieDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * COMPLETED!       $movie_dest_file $OSIZE"
+  echo "  * MOVIE COMPLETE!       $movie_dest_file $OSIZE"
 }
 
 printTvDetails(){
@@ -217,7 +217,7 @@ printTvDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * COMPLETED!       $tv_dest_file $OSIZE"
+  echo "  * TV COMPLETE!       $tv_dest_file $OSIZE"
 }
 
 tagMovie(){
