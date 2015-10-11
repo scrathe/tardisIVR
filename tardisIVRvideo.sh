@@ -463,10 +463,17 @@ printError(){
 
 cd "$DIR"
 if [[ $? -ne 0 ]]; then
-  echo "$?"
   echo "!!! ERROR, cd '$DIR'"
-  date
-  exit 1
+  # sometimes SABNZBD leaves _UNPACK_$DIR
+  LDIR=$(echo $DIR | grep -Eo '[^/]+/?$')
+  NDIR=$(echo $DIR | sed -e "s%$LDIR%%")
+  cd "$NDIR/_UNPACK_$LDIR"
+  if [[ $? -ne 0 ]]; then
+    echo "$?"
+    echo "!!! ERROR, cd '$NDIR/_UNPACK_$LDIR'"
+    date
+    exit 1
+  fi
 fi
 
   echo "START! `date`"
