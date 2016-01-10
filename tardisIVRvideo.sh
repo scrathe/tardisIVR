@@ -467,7 +467,9 @@ if [[ $? -ne 0 ]]; then
   # sometimes SABNZBD leaves _UNPACK_$DIR
   LDIR=$(echo $DIR | grep -Eo '[^/]+/?$')
   NDIR=$(echo $DIR | sed -e "s%$LDIR%%")
-  cd "$NDIR/_UNPACK_$LDIR"
+  DIR="$NDIR/_UNPACK_$LDIR"
+  echo "!!! TRYING, cd '$NDIR/_UNPACK_$LDIR'"
+  cd "DIR"
   if [[ $? -ne 0 ]]; then
     echo "$?"
     echo "!!! ERROR, cd '$NDIR/_UNPACK_$LDIR'"
