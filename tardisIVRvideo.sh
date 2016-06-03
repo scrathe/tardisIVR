@@ -31,7 +31,7 @@ unwatched_dest_folder="/media/tardis-x/downloads/epic/trash/"
 movie_artwork="/media/tardis-x/downloads/epic/artwork/movies/"
 
 # Movie HandBrake preset
-movie_preset="AppleTV3"
+movie_preset="-O -e x264 -E faac --audio-copy-mask aac,ac3,dtshd,dts,mp3 -q 20 --cfr --encoder-preset=faster --all-audio --all-subtitles --verbose"
 
 # TV Show transcoded file destination
 tv_dest_folder="/media/tardis-x/downloads/epic/postprocessing/sickbeard/"
@@ -47,7 +47,7 @@ dest_false=" - SE.m4v"
 tv_artwork="/media/tardis-x/downloads/epic/artwork/tv/"
 
 # TV Show HandBrake preset
-tv_preset="AppleTV"
+tv_preset="-O -e x264 -E faac --audio-copy-mask aac,ac3,dtshd,dts,mp3 -q 20 --cfr --encoder-preset=faster --all-audio --all-subtitles --verbose"
 
 # initialize array to log errors
 logArray=()
@@ -100,10 +100,11 @@ encodeMovie(){
       # find the largest .m2ts file
       M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
       echo "  * Transcoding!!! BlueRay"
-      echo "handbrake-cli -O -i \"$M2TS\" -o atomicFile.m4v --preset=$movie_preset"
+      echo "handbrake-cli -i \"$M2TS\" -o atomicFile.m4v $movie_preset"
       echo
       START=$(date +%s)
-      handbrake-cli -O -i "$M2TS" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
+      # do not put quotes around $movie_preset
+      handbrake-cli -i "$M2TS" -o "atomicFile.m4v" $movie_preset > /dev/null 2>&1
 
       if [[ $? -ne 0 ]]; then
         echo "$?"
@@ -119,10 +120,11 @@ encodeMovie(){
   # if not BlueRay just transcode
   else
     echo "  * Transcoding!!!"
-    echo "handbrake-cli -O -i \"$file\" -o atomicFile.m4v --preset=$movie_preset"
+    echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $movie_preset"
     echo
     START=$(date +%s%N)
-    handbrake-cli -O -i "$file" -o "atomicFile.m4v" --preset="$movie_preset" > /dev/null 2>&1
+    # do not put quotes around $movie_preset
+    handbrake-cli -i "$file" -o "atomicFile.m4v" $movie_preset > /dev/null 2>&1
 
     if [[ $? -ne 0 ]]; then
       echo "$?"
@@ -153,11 +155,12 @@ encodeMovie(){
 encodeTv(){
   # convert using handbrake
   echo "  * Transcoding!!!"
-  echo "handbrake-cli -O -i \"$file\" -o atomicFile.m4v --preset=$tv_preset"
+  echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $tv_preset"
   echo
   START=$(date +%s%N)
   # echo "" | handbrake-cli; https://stackoverflow.com/questions/5549405/shell-script-while-read-loop-executes-only-once
-  echo "" | handbrake-cli -O -i "$file" -o "atomicFile.m4v" --preset="$tv_preset" > /dev/null 2>&1
+  # do not put quotes around $tv_preset
+  echo "" | handbrake-cli -i "$file" -o "atomicFile.m4v" $tv_preset > /dev/null 2>&1
   # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
 
   if [[ $? != 0 ]]; then
