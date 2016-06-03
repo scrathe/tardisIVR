@@ -30,9 +30,6 @@ unwatched_dest_folder="/media/tardis-x/downloads/epic/trash/"
 # files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
 movie_artwork="/media/tardis-x/downloads/epic/artwork/movies/"
 
-# Movie HandBrake preset
-movie_preset="-O -e x264 -E faac --audio-copy-mask aac,ac3,dtshd,dts,mp3 -q 20 --cfr --encoder-preset=faster --all-audio --all-subtitles --verbose"
-
 # TV Show transcoded file destination
 tv_dest_folder="/media/tardis-x/downloads/epic/postprocessing/sickbeard/"
 
@@ -46,8 +43,8 @@ dest_false=" - SE.m4v"
 # files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
 tv_artwork="/media/tardis-x/downloads/epic/artwork/tv/"
 
-# TV Show HandBrake preset
-tv_preset="-O -e x264 -E faac --audio-copy-mask aac,ac3,dtshd,dts,mp3 -q 20 --cfr --encoder-preset=faster --all-audio --all-subtitles --verbose"
+# HandBrake options
+handbrake_options="-O -e x264 -q 20 --cfr --encoder-preset=faster --all-audio --all-subtitles --verbose"
 
 # initialize array to log errors
 logArray=()
@@ -99,12 +96,18 @@ encodeMovie(){
     if [[ -d /media/iso/BDMV ]]; then
       # find the largest .m2ts file
       M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
+      # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
+      channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+      if (($channels > 2)); then
+        handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
+      elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$M2TS" | sed 's| /.*||')" == 'AAC' ]; then
+        handbrake_options="$handbrake_options --aencoder copy:aac"
+      fi
       echo "  * Transcoding!!! BlueRay"
-      echo "handbrake-cli -i \"$M2TS\" -o atomicFile.m4v $movie_preset"
+      echo "handbrake-cli -i \"$M2TS\" -o atomicFile.m4v $handbrake_options"
       echo
       START=$(date +%s)
-      # do not put quotes around $movie_preset
-      handbrake-cli -i "$M2TS" -o "atomicFile.m4v" $movie_preset > /dev/null 2>&1
+      handbrake-cli -i "$M2TS" -o "atomicFile.m4v" $handbrake_options > /dev/null 2>&1
 
       if [[ $? -ne 0 ]]; then
         echo "$?"
@@ -119,12 +122,18 @@ encodeMovie(){
 
   # if not BlueRay just transcode
   else
+    # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
+    channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+    if (($channels > 2)); then
+      handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
+    elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+      handbrake_options="$handbrake_options --aencoder copy:aac"
+    fi
     echo "  * Transcoding!!!"
-    echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $movie_preset"
+    echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $handbrake_options"
     echo
     START=$(date +%s%N)
-    # do not put quotes around $movie_preset
-    handbrake-cli -i "$file" -o "atomicFile.m4v" $movie_preset > /dev/null 2>&1
+    handbrake-cli -i "$file" -o "atomicFile.m4v" $handbrake_options> /dev/null 2>&1
 
     if [[ $? -ne 0 ]]; then
       echo "$?"
@@ -154,13 +163,19 @@ encodeMovie(){
 
 encodeTv(){
   # convert using handbrake
+  # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
+  channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+  if (($channels > 2)); then
+    handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
+  elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+    handbrake_options="$handbrake_options --aencoder copy:aac"
+  fi
   echo "  * Transcoding!!!"
-  echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $tv_preset"
+  echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $handbrake_options"
   echo
   START=$(date +%s%N)
   # echo "" | handbrake-cli; https://stackoverflow.com/questions/5549405/shell-script-while-read-loop-executes-only-once
-  # do not put quotes around $tv_preset
-  echo "" | handbrake-cli -i "$file" -o "atomicFile.m4v" $tv_preset > /dev/null 2>&1
+  echo "" | handbrake-cli -i "$file" -o "atomicFile.m4v" $handbrake_options > /dev/null 2>&1
   # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
 
   if [[ $? != 0 ]]; then
