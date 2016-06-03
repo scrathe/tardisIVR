@@ -43,3 +43,4 @@ Thank You!
 * http://tldp.org/LDP/abs/html/bashver3.html#REGEXMATCHREF
 * http://gskinner.com/RegExr/
 * http://www.mindtwist.de/main/linux/3-linux-tipps/9-how-to-mass-convert-dvd-folders-to-iso-files.html
+* https://gist.github.com/donmelton/5734177
