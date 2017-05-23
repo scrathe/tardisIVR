@@ -10,11 +10,6 @@
 script="/home/elvie/.sabnzbd/scripts/tardisIVR/tardisIVRvideo.sh"
 
 if [[ "$2" == "movies" ]]; then
-    # Movies
-    # setup your windows/source to linux/mount storage paths
-    win_path="X:\\\media\\\Movies"
-    lnx_path="/media/tardis-x/media/Movies"
-    
     # tag / atomicparsley only
     if [[ "$3" == "tag" ]]; then
         options="x x x movies x x tag"
@@ -23,10 +18,6 @@ if [[ "$2" == "movies" ]]; then
         options="x x x movies x x"
     fi
 elif [[ "$2" == "tv" ]]; then
-    # TV
-    win_path="X:\\\media\\\TV"
-    lnx_path="/media/tardis-x/media/TV"
-    
     if [[ "$3" == "tag" ]]; then
         options="x x x tv x x tag"
     else
@@ -39,10 +30,7 @@ fi
 
 # remap your windows to linux storage paths
 # $1 = argument passed from windows/plink-tardisIVR.bat script
-dir=$(sed "s|"$win_path"|"$lnx_path"|g" <<< $1)
-
-# convert windows \ slashes to linux / slashes
-dir=$(sed 's|\\|\/|g' <<< $dir)
+dir="$(sed 's|^X:|/media/tardis-x|; s|\\|/|g' <<< "$1")"
 
 # send command to tardisIVRvideo.sh
 echo "'$script' '$dir' '$options'"
