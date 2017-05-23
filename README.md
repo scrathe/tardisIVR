@@ -1,6 +1,6 @@
 # tardisIVR
 ### A box that's bigger on the inside to put the internet in.
-![alt text](https://www.gliffy.com/go/publish/image/8327655/L.png "tardisIVR Blueprint")
+![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png "tardisIVR Blueprint")
 
 ## What is this?
 * Blueprints for a system that automates the download, encoding, naming and metadata tagging of Movies and TV shows. Comprised of:
