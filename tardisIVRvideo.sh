@@ -460,7 +460,7 @@ checkIfOpen(){
     then
       break
     fi
-    sleep 1
+    sleep 3
   done
 }
 
@@ -571,7 +571,8 @@ fi
 
 if [[ $CATEGORY = "tv" ]]; then
   # regex matches: show name - s01e02 - episode name.xyz
-  regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
+  # regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
+  regex="(.*)[ .-]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[ .-]{1,3}(.*)"
 
   # regex matches: the daily show - 2013-08-01 - episode name.xyz
   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
@@ -669,6 +670,7 @@ if [[ $CATEGORY = "tv" ]]; then
   
     else
       echo "!!! REGEX error,"
+      echo "  - $regex"
       echo "!!! skipping $file"
       continue
     fi
