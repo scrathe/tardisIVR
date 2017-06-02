@@ -43,8 +43,13 @@ dest_false=" - SE.m4v"
 # files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
 tv_artwork="/media/tardis-x/downloads/epic/artwork/tv/"
 
+# HandBrake alias
+handbrake_cli=$(which HandBrakeCLI)
+
 # HandBrake options
-handbrake_options="-O -e x264 -q 20 --cfr --encoder-preset=faster --all-audio --all-subtitles --verbose"
+# handbrake_options="-O -e x264 -q 20 --cfr --encoder-preset=faster --all-audio --all-subtitles --verbose"
+# handbrake_options="-O -e x264 -q 20 --cfr --encoder-preset=faster --verbose"
+handbrake_options="-O -e x264_10bit -q 20 --encoder-preset=faster --all-audio --all-subtitles"
 
 # initialize array to log errors
 logArray=()
@@ -104,10 +109,10 @@ encodeMovie(){
         handbrake_options="$handbrake_options --aencoder copy:aac"
       fi
       echo "  * Transcoding!!! BlueRay"
-      echo "handbrake-cli -i \"$M2TS\" -o atomicFile.m4v $handbrake_options"
+      echo "$handbrake_cli -i \"$M2TS\" -o atomicFile.m4v $handbrake_options"
       echo
       START=$(date +%s)
-      handbrake-cli -i "$M2TS" -o "atomicFile.m4v" $handbrake_options > /dev/null 2>&1
+      $handbrake_cli -i "$M2TS" -o "atomicFile.m4v" $handbrake_options > /dev/null 2>&1
 
       if [[ $? -ne 0 ]]; then
         echo "$?"
@@ -130,10 +135,10 @@ encodeMovie(){
       handbrake_options="$handbrake_options --aencoder copy:aac"
     fi
     echo "  * Transcoding!!!"
-    echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $handbrake_options"
+    echo "$handbrake_cli -i \"$file\" -o atomicFile.m4v $handbrake_options"
     echo
     START=$(date +%s%N)
-    handbrake-cli -i "$file" -o "atomicFile.m4v" $handbrake_options> /dev/null 2>&1
+    $handbrake_cli -i "$file" -o "atomicFile.m4v" $handbrake_options> /dev/null 2>&1
 
     if [[ $? -ne 0 ]]; then
       echo "$?"
@@ -163,23 +168,23 @@ encodeMovie(){
 
 encodeTv(){
   # convert using handbrake
+  # TODO fix this
   # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-  channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
-  if (($channels > 2)); then
-    handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
-  elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
-    handbrake_options="$handbrake_options --aencoder copy:aac"
-  fi
+  # channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+  # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
+  #   handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
+  # elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+  #   handbrake_options="$handbrake_options --aencoder copy:aac"
+  # fi
   echo "  * Transcoding!!!"
-  echo "handbrake-cli -i \"$file\" -o atomicFile.m4v $handbrake_options"
+  echo "$handbrake_cli -i \"$file\" -o atomicFile.m4v $handbrake_options"
   echo
   START=$(date +%s%N)
-  # echo "" | handbrake-cli; https://stackoverflow.com/questions/5549405/shell-script-while-read-loop-executes-only-once
-  echo "" | handbrake-cli -i "$file" -o "atomicFile.m4v" $handbrake_options > /dev/null 2>&1
+  # echo "" | $handbrake_cli; https://stackoverflow.com/questions/5549405/shell-script-while-read-loop-executes-only-once
+  echo "" | $handbrake_cli -i "$file" -o "atomicFile.m4v" $handbrake_options > /dev/null 2>&1
   # " > /dev/null 2>&1" at the end of the line directs output from HandBrake away from the script log
 
   if [[ $? != 0 ]]; then
-    echo "$?"
     echo "!!! ERROR, HandBrake exit code"
     date
     exit 1
@@ -209,7 +214,7 @@ printMovieDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * MOVIE COMPLETE!  $movie_dest_file $OSIZE"
+  echo "  * MOVIE COMPLETE!       $movie_dest_file $OSIZE"
 }
 
 printTvDetails(){
@@ -235,7 +240,7 @@ printTvDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * TV COMPLETE!     $tv_dest_file $OSIZE"
+  echo "  * TV COMPLETE!       $tv_dest_file $OSIZE"
 }
 
 tagMovie(){
@@ -431,8 +436,6 @@ cleanupFilename(){
   episode_name="$2"
   # convert double space to single
   show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
-  # strip trailing " -"
-  show_name=$(echo $show_name | sed -r 's/[- .]{1,}$//g')
   episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
   # captialize first character of words
   show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
@@ -481,20 +484,22 @@ printError(){
 # above are all functions
 # below is execution
 
-cd "$DIR"
-if [[ $? -ne 0 ]]; then
-  echo "!!! ERROR, cd '$DIR'"
-  # sometimes SABNZBD leaves _UNPACK_$DIR
-  LDIR=$(echo $DIR | grep -Eo '[^/]+/?$')
-  NDIR=$(echo $DIR | sed -e "s%$LDIR%%")
-  DIR="$NDIR/_UNPACK_$LDIR"
-  echo "!!! TRYING, cd '$NDIR/_UNPACK_$LDIR'"
-  cd "DIR"
+if [[ $CATEGORY != "sonarr" ]]; then
+  cd "$DIR"
   if [[ $? -ne 0 ]]; then
-    echo "$?"
-    echo "!!! ERROR, cd '$NDIR/_UNPACK_$LDIR'"
-    date
-    exit 1
+    echo "!!! ERROR, cd '$DIR'"
+    # sometimes SABNZBD leaves _UNPACK_$DIR
+    LDIR=$(echo $DIR | grep -Eo '[^/]+/?$')
+    NDIR=$(echo $DIR | sed -e "s%$LDIR%%")
+    DIR="$NDIR/_UNPACK_$LDIR"
+    echo "!!! TRYING, cd '$NDIR/_UNPACK_$LDIR'"
+    cd "$DIR"
+    if [[ $? -ne 0 ]]; then
+      echo "$?"
+      echo "!!! ERROR, cd '$NDIR/_UNPACK_$LDIR'"
+      date
+      exit 1
+    fi
   fi
 fi
 
@@ -574,7 +579,7 @@ fi
 if [[ $CATEGORY = "tv" ]]; then
   # regex matches: show name - s01e02 - episode name.xyz
   # regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
-  regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{1,3}(.*)$"
+  regex="(.*)[ .-]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[ .-]{1,3}(.*)"
 
   # regex matches: the daily show - 2013-08-01 - episode name.xyz
   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
@@ -609,9 +614,9 @@ if [[ $CATEGORY = "tv" ]]; then
       # month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
+      # use the year as the season for dated shows
       season=$year
       episode=${year}${month}${day}
-      cleanupFilename "$show_name" "$episode_name"
       echo "  - \$show_name     = $show_name"
       echo "  - \$year/\$season  = $year"
       echo "  - \$month         = $month"
@@ -619,12 +624,10 @@ if [[ $CATEGORY = "tv" ]]; then
       echo "  - \$episode       = $episode"
       echo
   
+      cleanupFilename "$show_name" x # function expects two variables
+  
       # destination filename
-      if [[ ! -z "$episode_name" ]]; then
-        tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"
-      else
-        tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"
-      fi
+      tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"
   
     elif [[ $CATEGORY = "tv" && $NAME =~ $regex_dated ]]; then
       echo "  - REGEX detected Dated TV Show,"
@@ -638,9 +641,9 @@ if [[ $CATEGORY = "tv" ]]; then
       # month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
+      # use the year as the season for dated shows
       season=$year
       episode=${year}${month}${day}
-      cleanupFilename "$show_name" "$episode_name"
       echo "  - \$show_name     = $show_name"
       echo "  - \$year/\$season  = $year"
       echo "  - \$month         = $month"
@@ -649,36 +652,30 @@ if [[ $CATEGORY = "tv" ]]; then
       echo "  - \$episode_name  = $episode_name"
       echo
   
-      # destination filename
-      if [[ ! -z "$episode_name" ]]; then
-        tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"
-      else
-        tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"
-      fi
+      cleanupFilename "$show_name" "$episode_name"
   
+      # destination filename
+      tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"
   
     elif [[ $CATEGORY = "tv" && $NAME =~ $regex ]]; then
       echo "  - REGEX detected TV Show,"
-      echo "  - $regex | http://regexr.com/3g2ib"
+      echo "  - $regex"
       echo "  - $file"
       # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
       show_name=${BASH_REMATCH[1]}
       season=${BASH_REMATCH[2]}
       episode=${BASH_REMATCH[3]}
       episode_name=${BASH_REMATCH[4]}
-      cleanupFilename "$show_name" "$episode_name"
       echo "  - \$show_name     = $show_name"
       echo "  - \$season        = $season"
       echo "  - \$episode       = $episode"
       echo "  - \$episode_name  = $episode_name"
       echo
+  
+      cleanupFilename "$show_name" "$episode_name"
       
       # destination filename
-      if [[ ! -z "$episode_name" ]]; then
-        tv_dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
-      else
-        tv_dest_file="${show_name} - S${season}E${episode}.m4v"
-      fi
+      tv_dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
   
     else
       echo "!!! REGEX error,"
@@ -689,11 +686,11 @@ if [[ $CATEGORY = "tv" ]]; then
 
     # TODO improve this
     # skip file if it exists in the destination folder
-    # if [[ -e "${tv_dest_folder}${tv_dest_file}" ]]; then
-    #  echo "!!! a M4V with the same name already exists,"
-    #  echo "!!! skipping $file"
-    #  continue
-    # fi
+    if [[ -e "${tv_dest_folder}${tv_dest_file}" ]]; then
+      echo "!!! a M4V with the same name already exists,"
+      echo "!!! skipping $file"
+      continue
+    fi
 
     # when running via shell check for tag switch
     if [[ $8 != "tag" ]]; then
@@ -727,4 +724,69 @@ if [[ $CATEGORY = "tv" ]]; then
 
 # END tv
 
+fi
+
+if [[ $CATEGORY = "sonarr" ]]; then
+  file="$sonarr_episodefile_path" # /media/TV/Show Name (2017"/Season 01/Show Name (2017" - S01E01 - Episode 1.mkv
+  DIR=$(dirname "$file")
+  file=$(basename "$file")
+  series_path="$sonarr_series_path" # /media/TV/Show Name (2017"
+  series_type="$sonarr_series_type" # Anime, Daily, or Standard
+  show_name="$sonarr_series_title" # Show Name (2017"
+  season="$sonarr_episodefile_seasonnumber" # 1
+  episode="$sonarr_episodefile_episodenumbers" # 1
+  episode_name="$sonarr_episodefile_episodetitles" #
+  episode_date="$sonarr_episodefile_episodeairdates" # 2017-05-31
+  #
+  sceneName="$sonarr_episodefile_scenename" # "Show.Name.US.S01E01.720p.HDTV.x265-AMZN
+  airDate="$sonarr_episodefile_episodeairdatesutc" # 5/31/2017 5:00:00 PM
+  relativePath="$sonarr_episodefile_relativepath" # Season 01/Show Name (2017" - S01E01 - Episode 1.mkv
+  eventType="$sonarr_eventtype" # Download
+  seriesID="$sonarr_series_id" # 123
+  tvdbID="$sonarr_series_tvdbid" # 123
+  fileID="$sonarr_episodefile_id" # 123
+  releaseGroup="$sonarr_episodefile_releasegroup" # AMZN
+  quality="$sonarr_episodefile_quality" # HDTV-720p
+  qualityVersion="$sonarr_episodefile_qualityversion" # 1
+
+  cd "$DIR"
+  if [[ $series_type = "Standard" ]]; then
+    echo "  - Detected TV Show,"
+    echo "  - $file"
+    echo "  - \$show_name     = $show_name"
+    echo "  - \$season        = $season"
+    echo "  - \$episode       = $episode"
+    echo "  - \$episode_name  = $episode_name"
+    echo
+  elif [[ $series_type = "Daily" ]]; then
+    # use the year as the season for dated shows
+    season=$(echo $episode_date | sed -r 's/-[0-9]{2}-[0-9]{2}//g')
+    echo "  - Detected Dated TV Show,"
+    echo "  - $file"
+    echo "  - \$show_name     = $show_name"
+    echo "  - \$season        = $season"
+    echo "  - \$episode       = $episode"
+    echo "  - \$episode_name  = $episode_date"
+    echo
+  else
+    echo "!!! ERROR, \$series_type = $series_type"
+    echo "!!! skipping $file"
+    date
+    exit 1
+  fi
+
+  cd "$DIR"
+  if [[ $? -ne 0 ]]; then
+    echo "!!! ERROR, cd '$DIR'"
+    exit 1
+  fi
+
+  checkIfOpen "$file"
+  encodeTv
+  checkIfOpen "atomicFile.m4v"
+  tagTv "$show_name" "$episode_name" "$episode" "$season"
+  checkIfOpen "atomicFile.m4v"
+  mv atomicFile.m4v "$file"
+  printTvDetails
+  printError
 fi
