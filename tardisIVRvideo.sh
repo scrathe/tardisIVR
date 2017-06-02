@@ -209,7 +209,7 @@ printMovieDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * MOVIE COMPLETE!       $movie_dest_file $OSIZE"
+  echo "  * MOVIE COMPLETE!  $movie_dest_file $OSIZE"
 }
 
 printTvDetails(){
@@ -235,7 +235,7 @@ printTvDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * TV COMPLETE!       $tv_dest_file $OSIZE"
+  echo "  * TV COMPLETE!     $tv_dest_file $OSIZE"
 }
 
 tagMovie(){
@@ -431,6 +431,8 @@ cleanupFilename(){
   episode_name="$2"
   # convert double space to single
   show_name=$(echo $show_name | sed -r 's/\s\s/\s/g')
+  # strip trailing " -"
+  show_name=$(echo $show_name | sed -r 's/[- .]{1,}$//g')
   episode_name=$(echo $episode_name | sed -r 's/\s\s/\s/g')
   # captialize first character of words
   show_name=$(echo $show_name | sed -e 's/\b\(.\)/\u\1/g')
@@ -572,7 +574,7 @@ fi
 if [[ $CATEGORY = "tv" ]]; then
   # regex matches: show name - s01e02 - episode name.xyz
   # regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
-  regex="(.*)[ .-]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[ .-]{1,3}(.*)"
+  regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{1,3}(.*)$"
 
   # regex matches: the daily show - 2013-08-01 - episode name.xyz
   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
@@ -609,6 +611,7 @@ if [[ $CATEGORY = "tv" ]]; then
       # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
       season=$year
       episode=${year}${month}${day}
+      cleanupFilename "$show_name" "$episode_name"
       echo "  - \$show_name     = $show_name"
       echo "  - \$year/\$season  = $year"
       echo "  - \$month         = $month"
@@ -616,10 +619,12 @@ if [[ $CATEGORY = "tv" ]]; then
       echo "  - \$episode       = $episode"
       echo
   
-      cleanupFilename "$show_name" x # function expects two variables
-  
       # destination filename
-      tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"
+      if [[ ! -z "$episode_name" ]]; then
+        tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"
+      else
+        tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"
+      fi
   
     elif [[ $CATEGORY = "tv" && $NAME =~ $regex_dated ]]; then
       echo "  - REGEX detected Dated TV Show,"
@@ -635,6 +640,7 @@ if [[ $CATEGORY = "tv" ]]; then
       episode_name=${BASH_REMATCH[5]}
       season=$year
       episode=${year}${month}${day}
+      cleanupFilename "$show_name" "$episode_name"
       echo "  - \$show_name     = $show_name"
       echo "  - \$year/\$season  = $year"
       echo "  - \$month         = $month"
@@ -643,30 +649,36 @@ if [[ $CATEGORY = "tv" ]]; then
       echo "  - \$episode_name  = $episode_name"
       echo
   
-      cleanupFilename "$show_name" "$episode_name"
-  
       # destination filename
-      tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"
+      if [[ ! -z "$episode_name" ]]; then
+        tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"
+      else
+        tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"
+      fi
+  
   
     elif [[ $CATEGORY = "tv" && $NAME =~ $regex ]]; then
       echo "  - REGEX detected TV Show,"
-      echo "  - $regex"
+      echo "  - $regex | http://regexr.com/3g2ib"
       echo "  - $file"
       # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
       show_name=${BASH_REMATCH[1]}
       season=${BASH_REMATCH[2]}
       episode=${BASH_REMATCH[3]}
       episode_name=${BASH_REMATCH[4]}
+      cleanupFilename "$show_name" "$episode_name"
       echo "  - \$show_name     = $show_name"
       echo "  - \$season        = $season"
       echo "  - \$episode       = $episode"
       echo "  - \$episode_name  = $episode_name"
       echo
-  
-      cleanupFilename "$show_name" "$episode_name"
       
       # destination filename
-      tv_dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
+      if [[ ! -z "$episode_name" ]]; then
+        tv_dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
+      else
+        tv_dest_file="${show_name} - S${season}E${episode}.m4v"
+      fi
   
     else
       echo "!!! REGEX error,"
@@ -677,11 +689,11 @@ if [[ $CATEGORY = "tv" ]]; then
 
     # TODO improve this
     # skip file if it exists in the destination folder
-    if [[ -e "${tv_dest_folder}${tv_dest_file}" ]]; then
-      echo "!!! a M4V with the same name already exists,"
-      echo "!!! skipping $file"
-      continue
-    fi
+    # if [[ -e "${tv_dest_folder}${tv_dest_file}" ]]; then
+    #  echo "!!! a M4V with the same name already exists,"
+    #  echo "!!! skipping $file"
+    #  continue
+    # fi
 
     # when running via shell check for tag switch
     if [[ $8 != "tag" ]]; then
