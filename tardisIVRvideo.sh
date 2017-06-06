@@ -19,9 +19,6 @@
 # user definable locations
 # ensure ALL directories end with '/'
 
-# Media types that should be re-encoded
-media_types="avi|divx|img|iso|m4v|mkv|mp4|ts|wmv"
-
 # Movie transcoded file destination
 movie_dest_folder="/media/tardis-x/downloads/epic/postprocessing/couchpotato/"
 
@@ -103,12 +100,14 @@ encodeMovie(){
       # find the largest .m2ts file
       M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
       # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-      channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
-      if (($channels > 2)); then
-        handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
-      elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$M2TS" | sed 's| /.*||')" == 'AAC' ]; then
-        handbrake_options="$handbrake_options --aencoder copy:aac"
-      fi
+      # TODO fix this
+      # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
+      # channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+      # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
+      #   handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
+      # elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+      #   handbrake_options="$handbrake_options --aencoder copy:aac"
+      # fi
       echo "  * Transcoding!!! BlueRay"
       echo "$handbrake_cli -i \"$M2TS\" -o atomicFile.m4v $handbrake_options"
       echo
@@ -129,12 +128,14 @@ encodeMovie(){
   # if not BlueRay just transcode
   else
     # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-    channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
-    if (($channels > 2)); then
-      handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
-    elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
-      handbrake_options="$handbrake_options --aencoder copy:aac"
-    fi
+    # TODO fix this
+    # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
+    # channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+    # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
+    #   handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
+    # elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+    #   handbrake_options="$handbrake_options --aencoder copy:aac"
+    # fi
     echo "  * Transcoding!!!"
     echo "$handbrake_cli -i \"$file\" -o atomicFile.m4v $handbrake_options"
     echo
@@ -487,7 +488,8 @@ printError(){
 # above are all functions
 # below is execution
 
-if [[ $CATEGORY != "sonarr" ]]; then
+# if [[ "$CATEGORY" != "sonarr" ]]; then
+if [[ "$CATEGORY" != "sonarr" ]] && [[ "$CATEGORY" != "radarr" ]]; then
   cd "$DIR"
   if [[ $? -ne 0 ]]; then
     echo "!!! ERROR, cd '$DIR'"
@@ -510,7 +512,7 @@ fi
 
 # BEGIN movies
 
-if [[ $CATEGORY = "movies" ]]; then
+if [[ "$CATEGORY" = "movies" ]]; then
   # matches: movie name (2013).xyz
   regex="(.*) \(([0-9]{4})\).*"
 
@@ -518,7 +520,7 @@ if [[ $CATEGORY = "movies" ]]; then
   consolidateFiles
 
   # find media file larger than 100MB
-  file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex ".*\.($media_types)" ! -name "atomicFile*.m4v")
+  file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v")
   # exit if no media files found
   if [[ ! -f "$file" ]]; then
     echo "!!! NO media file found"
@@ -536,7 +538,7 @@ if [[ $CATEGORY = "movies" ]]; then
   # destination filename
   movie_dest_file="${file%.*}.m4v"
 
-  if [[ $file =~ $regex ]]; then
+  if [[ $NAME =~ $regex ]]; then
     echo "  - REGEX detected Movie,"
     echo "  - $regex"
     echo
@@ -579,12 +581,11 @@ fi
 
 # BEGIN tv
 
-if [[ $CATEGORY = "tv" ]]; then
+if [[ "$CATEGORY" = "tv" ]]; then
   # regex matches: show name - s01e02 - episode name.xyz
   # regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
   # regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{1,3}(.*)$"
-  # regex="(.*)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{0,3}(.*)(?=\.)"
-  regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{0,3}(.*?)\..*$"
+  regex = "(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{0,3}(.*?)\."
 
   # regex matches: the daily show - 2013-08-01 - episode name.xyz
   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
@@ -606,7 +607,7 @@ if [[ $CATEGORY = "tv" ]]; then
     echo "  - Discovered media file # $COUNTER @ `date +"%T %Y-%m-%d"`"
     echo "    $NAME.$EXT $ISIZE"
   
-    if [[ $file =~ $regex_soup ]]; then
+    if [[ $NAME =~ $regex_soup ]]; then
       echo "  - REGEX detected The Soup,"
       echo "  - $regex_soup"
       echo "  - $file"
@@ -637,7 +638,7 @@ if [[ $CATEGORY = "tv" ]]; then
         tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
       fi
   
-    elif [[ $CATEGORY = "tv" && $file =~ $regex_dated ]]; then
+    elif [[ $CATEGORY = "tv" && $NAME =~ $regex_dated ]]; then
       echo "  - REGEX detected Dated TV Show,"
       echo "  - $regex_dated"
       echo "  - $file"
@@ -668,7 +669,7 @@ if [[ $CATEGORY = "tv" ]]; then
         tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
       fi
   
-    elif [[ $CATEGORY = "tv" && $file =~ ${regex} ]]; then
+    elif [[ $CATEGORY = "tv" && $NAME =~ $regex ]]; then
       echo "  - REGEX detected TV Show,"
       echo "  - $regex | http://regexr.com/3g2ib"
       echo "  - $file"
@@ -732,7 +733,7 @@ if [[ $CATEGORY = "tv" ]]; then
       moveOriginal
     fi
     printTvDetails
-  done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex ".*\.($media_types)" ! -name "atomicFile*.m4v" -print0)
+  done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0)
 
   printError
 
@@ -740,30 +741,31 @@ if [[ $CATEGORY = "tv" ]]; then
 
 fi
 
-if [[ $CATEGORY = "sonarr" ]]; then
-  file="$sonarr_episodefile_path" # /media/TV/Show Name (2017"/Season 01/Show Name (2017" - S01E01 - Episode 1.mkv
+# BEGIN sonarr
+
+if [[ "$CATEGORY" = "sonarr" ]]; then
+  file="$sonarr_episodefile_path" # /media/TV/Show Name (2017"/Season 01/Show Name (2017) - S01E01 - Episode 1.mkv
   DIR=$(dirname "$file")
   file=$(basename "$file")
-  series_path="$sonarr_series_path" # /media/TV/Show Name (2017"
+  series_path="$sonarr_series_path" # /media/TV/Show Name (2017)
   series_type="$sonarr_series_type" # Anime, Daily, or Standard
-  show_name="$sonarr_series_title" # Show Name (2017"
+  show_name="$sonarr_series_title" # Show Name (2017)
   season="$sonarr_episodefile_seasonnumber" # 1
   episode="$sonarr_episodefile_episodenumbers" # 1
   episode_name="$sonarr_episodefile_episodetitles" #
   episode_date="$sonarr_episodefile_episodeairdates" # 2017-05-31
   #
-  sceneName="$sonarr_episodefile_scenename" # "Show.Name.US.S01E01.720p.HDTV.x265-AMZN
-  airDate="$sonarr_episodefile_episodeairdatesutc" # 5/31/2017 5:00:00 PM
-  relativePath="$sonarr_episodefile_relativepath" # Season 01/Show Name (2017" - S01E01 - Episode 1.mkv
-  eventType="$sonarr_eventtype" # Download
-  seriesID="$sonarr_series_id" # 123
-  tvdbID="$sonarr_series_tvdbid" # 123
-  fileID="$sonarr_episodefile_id" # 123
-  releaseGroup="$sonarr_episodefile_releasegroup" # AMZN
+  scene_name="$sonarr_episodefile_scenename" # "Show.Name.US.S01E01.720p.HDTV.x265-AMZN
+  air_date="$sonarr_episodefile_episodeairdatesutc" # 5/31/2017 5:00:00 PM
+  relative_path="$sonarr_episodefile_relativepath" # Season 01/Show Name (2017" - S01E01 - Episode 1.mkv
+  event_type="$sonarr_eventtype" # Download
+  series_id="$sonarr_series_id" # 123
+  tvdb_id="$sonarr_series_tvdbid" # 123
+  file_id="$sonarr_episodefile_id" # 123
+  release_group="$sonarr_episodefile_releasegroup" # AMZN
   quality="$sonarr_episodefile_quality" # HDTV-720p
-  qualityVersion="$sonarr_episodefile_qualityversion" # 1
+  quality_version="$sonarr_episodefile_qualityversion" # 1
 
-  cd "$DIR"
   if [[ $series_type = "Standard" ]]; then
     echo "  - Detected TV Show,"
     echo "  - $file"
@@ -800,7 +802,46 @@ if [[ $CATEGORY = "sonarr" ]]; then
   checkIfOpen "atomicFile.m4v"
   tagTv "$show_name" "$episode_name" "$episode" "$season"
   checkIfOpen "atomicFile.m4v"
-  mv atomicFile.m4v "$file"
+  dest_file=$(basename "$file" | sed 's/\.[^.]*$//')
+  mv atomicFile.m4v "$dest_file.m4v"
   printTvDetails
   printError
 fi
+
+# END sonarr
+
+# BEGIN radarr
+
+if [[ "$CATEGORY" = "radarr" ]]; then
+  file="$radarr_moviefile_path"
+  DIR=$(dirname "$file")
+  file=$(basename "$file")
+  movie_path="$radarr_movie_path"
+  movie_name="$radarr_movie_title"
+  scene_name="$radarr_moviefile_scenename"
+  relative_path="$radarr_moviefile_relativepath"
+  event_type="$radarr_eventtype"
+  series_id="$radarr_series_id"
+  file_id="$radarr_moviefile_id"
+  release_group="$radarr_moviefile_releasegroup"
+  quality="$radarr_moviefile_quality"
+  quality_version="$radarr_moviefile_qualityversion"
+
+  cd "$DIR"
+  if [[ $? -ne 0 ]]; then
+    echo "!!! ERROR, cd '$DIR'"
+    exit 1
+  fi
+
+  checkIfOpen "$file"
+  encodeMovie
+  checkIfOpen "atomicFile.m4v"
+  tagMovie
+  checkIfOpen "atomicFile.m4v"
+  dest_file=$(basename "$file" | sed 's/\.[^.]*$//')
+  mv atomicFile.m4v "$dest_file.m4v"
+  printMovieDetails
+  printError
+fi
+
+# END radarr
