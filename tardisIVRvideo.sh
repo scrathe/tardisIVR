@@ -19,6 +19,9 @@
 # user definable locations
 # ensure ALL directories end with '/'
 
+# Media types that should be re-encoded
+media_types="avi|divx|img|iso|m4v|mkv|mp4|ts|wmv"
+
 # Movie transcoded file destination
 movie_dest_folder="/media/tardis-x/downloads/epic/postprocessing/couchpotato/"
 
@@ -515,7 +518,7 @@ if [[ $CATEGORY = "movies" ]]; then
   consolidateFiles
 
   # find media file larger than 100MB
-  file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v")
+  file=$(find . -maxdepth 1 -type f -size +100000k -regextype "posix-extended" -iregex ".*\.($media_types)" ! -name "atomicFile*.m4v")
   # exit if no media files found
   if [[ ! -f "$file" ]]; then
     echo "!!! NO media file found"
@@ -533,7 +536,7 @@ if [[ $CATEGORY = "movies" ]]; then
   # destination filename
   movie_dest_file="${file%.*}.m4v"
 
-  if [[ $NAME =~ $regex ]]; then
+  if [[ $file =~ $regex ]]; then
     echo "  - REGEX detected Movie,"
     echo "  - $regex"
     echo
@@ -579,7 +582,9 @@ fi
 if [[ $CATEGORY = "tv" ]]; then
   # regex matches: show name - s01e02 - episode name.xyz
   # regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
-  regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{1,3}(.*)$"
+  # regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{1,3}(.*)$"
+  # regex="(.*)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{0,3}(.*)(?=\.)"
+  regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{0,3}(.*?)\..*$"
 
   # regex matches: the daily show - 2013-08-01 - episode name.xyz
   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
@@ -601,7 +606,7 @@ if [[ $CATEGORY = "tv" ]]; then
     echo "  - Discovered media file # $COUNTER @ `date +"%T %Y-%m-%d"`"
     echo "    $NAME.$EXT $ISIZE"
   
-    if [[ $NAME =~ $regex_soup ]]; then
+    if [[ $file =~ $regex_soup ]]; then
       echo "  - REGEX detected The Soup,"
       echo "  - $regex_soup"
       echo "  - $file"
@@ -632,7 +637,7 @@ if [[ $CATEGORY = "tv" ]]; then
         tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
       fi
   
-    elif [[ $CATEGORY = "tv" && $NAME =~ $regex_dated ]]; then
+    elif [[ $CATEGORY = "tv" && $file =~ $regex_dated ]]; then
       echo "  - REGEX detected Dated TV Show,"
       echo "  - $regex_dated"
       echo "  - $file"
@@ -663,7 +668,7 @@ if [[ $CATEGORY = "tv" ]]; then
         tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
       fi
   
-    elif [[ $CATEGORY = "tv" && $NAME =~ $regex ]]; then
+    elif [[ $CATEGORY = "tv" && $file =~ ${regex} ]]; then
       echo "  - REGEX detected TV Show,"
       echo "  - $regex | http://regexr.com/3g2ib"
       echo "  - $file"
@@ -727,7 +732,7 @@ if [[ $CATEGORY = "tv" ]]; then
       moveOriginal
     fi
     printTvDetails
-  done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex '.*\.(avi|divx|img|iso|m4v|mkv|mp4|ts|wmv)' ! -name "atomicFile*.m4v" -print0)
+  done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex ".*\.($media_types)" ! -name "atomicFile*.m4v" -print0)
 
   printError
 
