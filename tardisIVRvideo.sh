@@ -575,7 +575,22 @@ if [[ "$CATEGORY" = "movies" ]]; then
   sleep 2
   findArtwork "$movie_artwork"
   sleep 2
-  encodeMovie "atomicFile.m4v"
+  # when running via shell check for tag switch
+  if [[ $8 != "tag" ]]; then
+    encodeMovie "atomicFile.m4v"
+    sleep 2
+  elif [[ $8 -eq "tag" ]]; then
+    mv "$file" "atomicFile.m4v"
+    sleep 2
+  fi
+    
+  ls -l "atomicFile.m4v" > /dev/null 2>&1
+    
+  if [[ $? != 0 ]]; then
+    echo "!!! ERROR, atomicFile.m4v missing"
+    date
+    exit 1
+  fi
   checkIfOpen "atomicFile.m4v"
   tagMovie "atomicFile.m4v"
   checkIfOpen "atomicFile.m4v"
