@@ -258,19 +258,19 @@ tagMovie(){
   echo "  * TAGGING file with metadata" 
   # remove existing metadata
   echo "  - Removing Existing Metadata"
-  atomicparsley "$1" --metaEnema --overWrite
+  $atomicparsley "$1" --metaEnema --overWrite
   echo
   sleep 2
   # if artwork is available locally then tag.
   if [[ -e $(find "$movie_artwork" -name "${NAME}.jpg") ]]; then
     echo "  - AtomicParsley!!!  tagging w/local artwork."
     echo "atomicparsley $1 --genre Movie --stik Movie --title=$title --year=$year --artwork ${movie_artwork}${NAME}.jpg --overWrite > /dev/null 2>&1"
-    atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "${movie_artwork}${NAME}.jpg" --overWrite > /dev/null 2>&1
+    $atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "${movie_artwork}${NAME}.jpg" --overWrite > /dev/null 2>&1
   else
     # just tag
     echo "  - AtomicParsley!!!  tagging w/o artwork."
     echo "atomicparsley $1 --genre Movie --stik Movie --title=$title --year=$year --overWrite > /dev/null 2>&1"
-    atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
+    $atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
   fi
 
   if [[ $? != 0 ]]; then
@@ -284,7 +284,7 @@ tagTv(){
   echo "  * TAGGING file with metadata" 
   # remove existing metadata
   echo "  - Removing Existing Metadata"
-  atomicparsley "$1" --metaEnema --overWrite
+  $atomicparsley "$1" --metaEnema --overWrite
   echo
   sleep 2
 
@@ -301,17 +301,17 @@ tagTv(){
   # if artwork is available locally then tag.
   if [[ -e $(find "$tv_artwork" -name "${show_name}.jpg") ]]; then
     echo "  - AtomicParsley!!!  tagging w/local artwork."
-    atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "${tv_artwork}${show_name}.jpg" --overWrite > /dev/null 2>&1
+    $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "${tv_artwork}${show_name}.jpg" --overWrite > /dev/null 2>&1
   
   # else get artwork if available from epguides.com and tag.
   elif [[ -e $(find . -name "cast.jpg") ]]; then
     echo "  - AtomicParsley!!!  tagging w/epguides.com artwork."
-    atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "cast.jpg" --overWrite > /dev/null 2>&1
+    $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "cast.jpg" --overWrite > /dev/null 2>&1
   
   # otherwise tag without artwork.
   else
     echo "  - AtomicParsley!!!  tagging w/o artwork."
-    atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --overWrite > /dev/null 2>&1
+    $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --overWrite > /dev/null 2>&1
   fi
 
   if [[ $? != 0 ]]; then
