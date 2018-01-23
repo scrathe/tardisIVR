@@ -16,6 +16,8 @@
 # mkisofs; http://manpages.ubuntu.com/manpages/gutsy/man8/mkisofs.8.html
 # .iso support requires sudo nopasswd for the mount/unmount commands.
 
+# apt-get update && apt-get install handbrake-cli atomicparsley lsof bc -y
+
 # user definable locations
 # ensure ALL directories end with '/'
 
@@ -23,28 +25,28 @@
 media_types="avi|divx|img|iso|m4v|mkv|mp4|ts|wmv"
 
 # Movie transcoded file destination
-movie_dest_folder="/media/tardis-x/downloads/epic/postprocessing/couchpotato/"
+movie_dest_folder="/movies/postprocessing/movies/"
 
 # Movie original downloaded file destination
 # this script keeps the original files in case something goes wrong.  empty this dir regularly.
-unwatched_dest_folder="/media/tardis-x/downloads/epic/trash/"
+unwatched_dest_folder="/movies/postprocessing/trash/movies/"
 
 # Movie artwork location if you have it
-# files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
-movie_artwork="/media/tardis-x/downloads/epic/artwork/movies/"
+# files must be formatted to match the Show Name and have a jpg extension eg: "The Movie Name.jpg"
+movie_artwork="/movies/postprocessing/movies/artwork/"
 
 # TV Show transcoded file destination
-tv_dest_folder="/media/tardis-x/downloads/epic/postprocessing/sickbeard/"
+tv_dest_folder="/tv/postprocessing/tv/"
 
 # TV Show original downloaded file destination
-postproc_dest_folder="/media/tardis-x/downloads/epic/trash/"
+postproc_dest_folder="/tv/postprocessing/trash/tv/"
 
 # TV Show transcoded file destination when TV Show information is not found
 dest_false=" - SE.m4v"
 
 # TV Show artwork location if you have it
-# files must be formatted to match the Show Name and have a jpg extension eg: "The Show Name.jpg"
-tv_artwork="/media/tardis-x/downloads/epic/artwork/tv/"
+# files must be formatted to match the Show Name and have a jpg extension eg: "The TV Show Name.jpg"
+tv_artwork="/tv/postprocessing/tv/artwork/"
 
 # HandBrake alias
 handbrake_cli=$(which HandBrakeCLI)
@@ -53,7 +55,15 @@ handbrake_cli=$(which HandBrakeCLI)
 atomicparsley=$(which AtomicParsley)
 
 # HandBrake options
-handbrake_options="-O -e x264_10bit -q 20 --encoder-preset=faster --all-audio --all-subtitles"
+# x264_10bit, --all-audio, --all-subtitles options only work for more recent versions of handbrake
+# handbrake_options="-O -e x264_10bit -q 20 --encoder-preset=faster --all-audio --all-subtitles"
+handbrake_options="-e x264 -q 20 --optimize --srt-lang eng --native-language eng --native-dub -f mp4 --decomb --loose-anamorphic --modulus 2 -m --x264-preset medium --h264-profile high --h264-level 4.1"
+
+# options
+# 0 = disabled
+# 1 = enabled
+enable_atomicparsley="0"
+enable_tvrenamer="0"
 
 # initialize array to log errors
 logArray=()
@@ -77,7 +87,8 @@ STATUS="$7"
 # STATUS="0"
 
 # this fixes some problems; https://stackoverflow.com/questions/12729784/mv-cannot-stat-error-no-such-file-or-directory-error
-shopt -s nullglob
+# shopt -s nullglob
+shopt -s extglob
 
 encodeMovie(){
   # $1 = atomicFile_XXX.m4v
@@ -137,12 +148,13 @@ encodeMovie(){
     # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
     # TODO fix this
     # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-    # channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+    channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
     # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
-    #   handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
-    # elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
-    #   handbrake_options="$handbrake_options --aencoder copy:aac"
-    # fi
+    if [[ $channels > 2 ]]; then
+      handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3,copy:dts,copy:dtshd"
+    elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+      handbrake_options="$handbrake_options --aencoder copy:aac"
+    fi
     echo "  * Transcoding!!!"
     echo "$handbrake_cli -i \"$file\" -o $1 $handbrake_options"
     echo
@@ -180,12 +192,13 @@ encodeTv(){
   # convert using handbrake
   # TODO fix this
   # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-  # channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+  channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
   # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
-  #   handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
-  # elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
-  #   handbrake_options="$handbrake_options --aencoder copy:aac"
-  # fi
+  if [[ $channels > 2 ]]; then
+    handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3,copy:truehd,copy:dts,copy:dtshd"
+  elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+    handbrake_options="$handbrake_options --aencoder copy:aac"
+  fi
   echo "  * Transcoding!!!"
   echo "$handbrake_cli -i \"$file\" -o $1 $handbrake_options"
   echo
@@ -205,7 +218,8 @@ encodeTv(){
 }
 
 printMovieDetails(){
-  OSIZE=$(ls -lh "${movie_dest_folder}${movie_dest_file}" | awk '{print $5}')
+  ISIZE=$(ls -lh "$1" | awk '{print $5}')
+  OSIZE=$(ls -lh "$2" | awk '{print $5}')
 
   echo "  - Details:"
   echo "    DIR:             $DIR"
@@ -216,7 +230,7 @@ printMovieDetails(){
   echo "    GROUP:           $GROUP"
   echo "    STATUS:          $STATUS"
   echo "    Dest Folder:     $movie_dest_folder"
-  echo "    Dest File:       $movie_dest_file"
+  echo "    Dest File:       $dest_file"
   echo "    Title:           $title"
   echo "    Year:            $year"
   # add some mediainfo
@@ -224,11 +238,12 @@ printMovieDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * MOVIE COMPLETE!  $movie_dest_file $OSIZE"
+  echo "  * MOVIE COMPLETE!  $dest_file $OSIZE"
 }
 
 printTvDetails(){
-  OSIZE=$(ls -lh "${tv_dest_folder}${tv_dest_file}" | awk '{print $5}')
+  ISIZE=$(ls -lh "$1" | awk '{print $5}')
+  OSIZE=$(ls -lh "$2" | awk '{print $5}')
 
   echo "  - Details:"
   echo "    DIR:             $DIR"
@@ -239,7 +254,7 @@ printTvDetails(){
   echo "    GROUP:           $GROUP"
   echo "    STATUS:          $STATUS"
   echo "    Dest Folder:     $tv_dest_folder"
-  echo "    Dest File:       $tv_dest_file"
+  echo "    Dest File:       $dest_file"
   echo "    Show Name:       $show_name"
   echo "    Season:          $season"
   echo "    Episode:         $episode"
@@ -250,73 +265,77 @@ printTvDetails(){
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
-  echo "  * TV COMPLETE!     $tv_dest_file $OSIZE"
+  echo "  * TV COMPLETE!     $dest_file $OSIZE"
 }
 
 tagMovie(){
-  # $1 = atomicFile_XXX.m4v
-  echo "  * TAGGING file with metadata" 
-  # remove existing metadata
-  echo "  - Removing Existing Metadata"
-  $atomicparsley "$1" --metaEnema --overWrite
-  echo
-  sleep 2
-  # if artwork is available locally then tag.
-  if [[ -e $(find "$movie_artwork" -name "${NAME}.jpg") ]]; then
-    echo "  - AtomicParsley!!!  tagging w/local artwork."
-    echo "atomicparsley $1 --genre Movie --stik Movie --title=$title --year=$year --artwork ${movie_artwork}${NAME}.jpg --overWrite > /dev/null 2>&1"
-    $atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "${movie_artwork}${NAME}.jpg" --overWrite > /dev/null 2>&1
-  else
-    # just tag
-    echo "  - AtomicParsley!!!  tagging w/o artwork."
-    echo "atomicparsley $1 --genre Movie --stik Movie --title=$title --year=$year --overWrite > /dev/null 2>&1"
-    $atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
-  fi
+  if [[ $enable_atomicparsley -eq 1 ]]; then
+    # $1 = atomicFile_XXX.m4v
+    echo "  * TAGGING file with metadata" 
+    # remove existing metadata
+    echo "  - Removing Existing Metadata"
+    $atomicparsley "$1" --metaEnema --overWrite
+    echo
+    sleep 2
+    # if artwork is available locally then tag.
+    if [[ -e $(find "$movie_artwork" -name "${NAME}.jpg") ]]; then
+      echo "  - AtomicParsley!!!  tagging w/local artwork."
+      echo "atomicparsley $1 --genre Movie --stik Movie --title=$title --year=$year --artwork ${movie_artwork}${NAME}.jpg --overWrite > /dev/null 2>&1"
+      $atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --artwork "${movie_artwork}${NAME}.jpg" --overWrite > /dev/null 2>&1
+    else
+      # just tag
+      echo "  - AtomicParsley!!!  tagging w/o artwork."
+      echo "atomicparsley $1 --genre Movie --stik Movie --title=$title --year=$year --overWrite > /dev/null 2>&1"
+      $atomicparsley "$1" --genre "Movie" --stik "Movie" --title="$title" --year="$year" --overWrite > /dev/null 2>&1
+    fi
 
-  if [[ $? != 0 ]]; then
-    echo "!!! LOGGING ERROR while tagging"
-    logError $movie_dest_file
+    if [[ $? != 0 ]]; then
+      echo "!!! LOGGING ERROR while tagging"
+      logError $dest_file
+    fi    
   fi
 }
 
 tagTv(){
-  # $1 = atomicFile_XXX.m4v
-  echo "  * TAGGING file with metadata" 
-  # remove existing metadata
-  echo "  - Removing Existing Metadata"
-  $atomicparsley "$1" --metaEnema --overWrite
-  echo
-  sleep 2
+  if [[ $enable_atomicparsley -eq 1 ]]; then
+    # $1 = atomicFile_XXX.m4v
+    echo "  * TAGGING file with metadata" 
+    # remove existing metadata
+    echo "  - Removing Existing Metadata"
+    $atomicparsley "$1" --metaEnema --overWrite
+    echo
+    sleep 2
 
-  show_name="$2"
-  episode_name="$3"
-  episode="$4"
-  season="$5"
-  # get artwork from epguides.com
-  epguidesartwork=$(echo $show_name | sed 's/ *//g')
-  wget -N http://epguides.com/$epguidesartwork/cast.jpg > /dev/null 2>&1
-  echo
-  echo "  - Retrieved Artwork from http://epguides.com"
-  
-  # if artwork is available locally then tag.
-  if [[ -e $(find "$tv_artwork" -name "${show_name}.jpg") ]]; then
-    echo "  - AtomicParsley!!!  tagging w/local artwork."
-    $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "${tv_artwork}${show_name}.jpg" --overWrite > /dev/null 2>&1
-  
-  # else get artwork if available from epguides.com and tag.
-  elif [[ -e $(find . -name "cast.jpg") ]]; then
-    echo "  - AtomicParsley!!!  tagging w/epguides.com artwork."
-    $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "cast.jpg" --overWrite > /dev/null 2>&1
-  
-  # otherwise tag without artwork.
-  else
-    echo "  - AtomicParsley!!!  tagging w/o artwork."
-    $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --overWrite > /dev/null 2>&1
-  fi
+    show_name="$2"
+    episode_name="$3"
+    episode="$4"
+    season="$5"
+    # get artwork from epguides.com
+    epguidesartwork=$(echo $show_name | sed 's/ *//g')
+    wget -N http://epguides.com/$epguidesartwork/cast.jpg > /dev/null 2>&1
+    echo
+    echo "  - Retrieved Artwork from http://epguides.com"
+    
+    # if artwork is available locally then tag.
+    if [[ -e $(find "$tv_artwork" -name "${show_name}.jpg") ]]; then
+      echo "  - AtomicParsley!!!  tagging w/local artwork."
+      $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "${tv_artwork}${show_name}.jpg" --overWrite > /dev/null 2>&1
+    
+    # else get artwork if available from epguides.com and tag.
+    elif [[ -e $(find . -name "cast.jpg") ]]; then
+      echo "  - AtomicParsley!!!  tagging w/epguides.com artwork."
+      $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --artwork "cast.jpg" --overWrite > /dev/null 2>&1
+    
+    # otherwise tag without artwork.
+    else
+      echo "  - AtomicParsley!!!  tagging w/o artwork."
+      $atomicparsley "$1" --genre "TV Shows" --stik "TV Show" --TVShowName "$show_name" --TVEpisode "$episode_name" --description "$episode_name" --TVEpisodeNum "$episode" --TVSeason "$season" --title "$show_name" --overWrite > /dev/null 2>&1
+    fi
 
-  if [[ $? != 0 ]]; then
-    echo "!!! LOGGING ERROR while tagging"
-    logError $tv_dest_file
+    if [[ $? != 0 ]]; then
+      echo "!!! LOGGING ERROR while tagging"
+      logError $dest_file
+    fi  
   fi
 }
 
@@ -342,7 +361,7 @@ moveOriginal(){
   # move the original downloaded file to a folder.
   # don't fail if none is found.  e.g. re-encoding (moved) existing .m4v
   echo "  * Moving original downloaded file to folder."
-  echo "  - mv \"$file\" \"$postproc_dest_folder$original\""
+  echo "  - mv \"$file\" \"$postproc_dest_folder$file\""
   # curly braces breaks mv
   mv "$file" "$postproc_dest_folder$file"
 
@@ -375,6 +394,9 @@ consolidateFiles(){
 
 # TODO remove dependency on tvrenamer.pl
 tvRenamer(){
+  if [[ $enable_tvrenamer -eq 0 ]]; then
+      break
+  fi
   # if standard SxxExx episode format, improve SABnzbd renaming by using tvrenamer.pl
   echo "  * RENAMING the file with tvrenamer.pl"
   rm *.[uU][rR][lL]
@@ -388,8 +410,10 @@ tvRenamer(){
 }
 
 tvNamer(){
-  echo "  * RENAMING the file with tvnamer"
-  /usr/local/bin/tvnamer --batch -q *
+  if [[ $enable_tvrenamer -eq 1 ]]; then
+    echo "  * RENAMING the file with tvnamer"
+    /usr/local/bin/tvnamer --batch -q *
+  fi
 }
 
 mkIsofs(){
@@ -504,17 +528,17 @@ if [[ "$CATEGORY" != "sonarr" ]] && [[ "$CATEGORY" != "radarr" ]]; then
   if [[ $? -ne 0 ]]; then
     echo "!!! ERROR, cd '$DIR'"
     # sometimes SABNZBD leaves _UNPACK_$DIR
-    LDIR=$(echo $DIR | grep -Eo '[^/]+/?$')
-    NDIR=$(echo $DIR | sed -e "s%$LDIR%%")
-    DIR="$NDIR/_UNPACK_$LDIR"
-    echo "!!! TRYING, cd '$NDIR/_UNPACK_$LDIR'"
-    cd "$DIR"
-    if [[ $? -ne 0 ]]; then
-      echo "$?"
-      echo "!!! ERROR, cd '$NDIR/_UNPACK_$LDIR'"
-      date
-      exit 1
-    fi
+    # LDIR=$(echo $DIR | grep -Eo '[^/]+/?$')
+    # NDIR=$(echo $DIR | sed -e "s%$LDIR%%")
+    # DIR="$NDIR/_UNPACK_$LDIR"
+    # echo "!!! TRYING, cd '$NDIR/_UNPACK_$LDIR'"
+    # cd "$DIR"
+    # if [[ $? -ne 0 ]]; then
+    #   echo "$?"
+    #   echo "!!! ERROR, cd '$NDIR/_UNPACK_$LDIR'"
+    #   date
+    #   exit 1
+    # fi
   fi
 fi
 
@@ -546,7 +570,7 @@ if [[ "$CATEGORY" = "movies" ]]; then
   ISIZE=$(ls -lh "$file" | awk '{print $5}')
   echo "    $NAME.$EXT $ISIZE"
   # destination filename
-  movie_dest_file="${file%.*}.m4v"
+  dest_file="${file%.*}.m4v"
 
   if [[ $NAME =~ $regex ]]; then
     echo "  - REGEX detected Movie,"
@@ -593,11 +617,11 @@ if [[ "$CATEGORY" = "movies" ]]; then
   fi
   checkIfOpen "atomicFile.m4v"
   tagMovie "atomicFile.m4v"
+  printMovieDetails "$file" "$dest_file"
   checkIfOpen "atomicFile.m4v"
-  moveTranscoded "atomicFile.m4v" "$movie_dest_file" "$movie_dest_folder"
+  moveTranscoded "atomicFile.m4v" "$dest_file" "$movie_dest_folder"
   checkIfOpen "$file"
   moveOriginal
-  printMovieDetails
   printError
 
 fi
@@ -658,9 +682,9 @@ if [[ "$CATEGORY" = "tv" ]]; then
   
       # destination filename
       if [[ ! -z "$episode_name" ]]; then
-        tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"    
+        dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"    
       else    
-        tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
+        dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
       fi
   
     elif [[ $file =~ $regex_dated ]]; then
@@ -689,9 +713,9 @@ if [[ "$CATEGORY" = "tv" ]]; then
   
       # destination filename
       if [[ ! -z "$episode_name" ]]; then
-        tv_dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"    
+        dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"    
       else    
-        tv_dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
+        dest_file="${show_name} - ${year}-${month}-${day}.m4v"    
       fi
   
     elif [[ $file =~ $regex ]]; then
@@ -712,9 +736,9 @@ if [[ "$CATEGORY" = "tv" ]]; then
   
       # destination filename
       if [[ ! -z "$episode_name" ]]; then
-        tv_dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
+        dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
       else    
-        tv_dest_file="${show_name} - S${season}E${episode}.m4v"
+        dest_file="${show_name} - S${season}E${episode}.m4v"
       fi
   
     else
@@ -726,7 +750,7 @@ if [[ "$CATEGORY" = "tv" ]]; then
 
     # TODO improve this
     # skip file if it exists in the destination folder
-    # if [[ -e "${tv_dest_folder}${tv_dest_file}" ]]; then
+    # if [[ -e "${tv_dest_folder}${dest_file}" ]]; then
     #   echo "!!! a M4V with the same name already exists,"
     #   echo "!!! skipping $file"
     #   continue
@@ -751,13 +775,13 @@ if [[ "$CATEGORY" = "tv" ]]; then
 
     checkIfOpen "atomicFile.m4v"
     tagTv "$atomicFile" "$show_name" "$episode_name" "$episode" "$season"
+    printTvDetails "$file" "$dest_file"
     checkIfOpen "atomicFile.m4v"
-    moveTranscoded "atomicFile.m4v" "$tv_dest_file" "$tv_dest_folder"
+    moveTranscoded "atomicFile.m4v" "$dest_file" "$tv_dest_folder"
     if [[ -z $8 ]] || [[ $8 -ne "tag" ]]; then
       checkIfOpen "$file"
       moveOriginal
     fi
-    printTvDetails
   done < <(find . -maxdepth 1 -type f -size +30000k -regextype "posix-extended" -iregex ".*\.($media_types)" ! -name "atomicFile*.m4v" -print0)
 
   printError
@@ -828,14 +852,19 @@ if [[ "$CATEGORY" = "sonarr" ]]; then
   encodeTv "$atomicFile"
   checkIfOpen "$atomicFile"
   tagTv "$atomicFile" "$show_name" "$episode_name" "$episode" "$season"
-  checkIfOpen "$atomicFile"
-  dest_file=$(basename "$file" | sed 's/\.[^.]*$//')
-  mv "$atomicFile" "$dest_file.m4v"
+  dest_file="$(basename "$file" | sed 's/\.[^.]*$//').m4v"
+  # mv "$atomicFile" "$dest_file.m4v"
+  # moveTranscoded "$atomicFile" "$dest_file.m4v" "$tv_dest_folder"
   # if move successful, remove original
-  if [[ $? -eq 0 ]]; then
-    rm "$file"
-  fi
-  printTvDetails
+  # if [[ $? -eq 0 ]]; then
+  #   rm "$file"
+  #   # curl -i -X POST -H "Content-Type:application/json" http://localhost:8989/api/command/?apikey=3a8a51773183422c9a511d0c9e733fb6 -d '{"name":"DownloadedEpisodesScan"}'
+  # fi
+  printTvDetails "$file" "$atomicFile"
+  # remove original file to avoid name collision
+  rm "$file"
+  checkIfOpen "$atomicFile"
+  mv "$atomicFile" "$dest_file"
   printError
 fi
 
@@ -869,14 +898,12 @@ if [[ "$CATEGORY" = "radarr" ]]; then
   encodeMovie "$atomicFile"
   checkIfOpen "$atomicFile"
   tagMovie "$atomicFile"
+  dest_file="$(basename "$file" | sed 's/\.[^.]*$//').m4v"
+  printMovieDetails "$file" "$atomicFile"
+  # remove original file to avoid name collision
+  rm "$file"
   checkIfOpen "$atomicFile"
-  dest_file=$(basename "$file" | sed 's/\.[^.]*$//')
-  mv "$atomicFile" "$dest_file.m4v"
-  # if move successful, remove original
-  if [[ $? -eq 0 ]]; then
-    rm "$file"
-  fi
-  printMovieDetails
+  mv "$atomicFile" "$dest_file"
   printError
 fi
 
