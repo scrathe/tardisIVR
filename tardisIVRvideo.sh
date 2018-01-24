@@ -2,21 +2,21 @@
 
 # Home; https://github.com/scrathe/tardisIVR
 # Documentation; https://github.com/scrathe/tardisIVR/blob/master/README.md
+# Installation; https://github.com/scrathe/tardisIVR/blob/master/INSTALL.md
 # Settings; https://github.com/scrathe/tardisIVR/blob/master/SETTINGS.md
 
 # BIG thanks to the original author(s), especially the BASH/OSX community who helped me achieve my goals.
 # author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
 # author 2+) ??? (the scores of unnamed authors)
 
-# Dependencies:
-# Working SABnzbd, Sickbeard, CouchPotato stack. See installation guide for help; https://github.com/scrathe/tardisIVR/blob/master/INSTALL.md
-# HandbrakeCLI; http://handbrake.fr/
-# AtomicParsley; http://atomicparsley.sourceforge.net
-# avimerge; http://manpages.ubuntu.com/manpages/dapper/man1/avimerge.1.html
-# mkisofs; http://manpages.ubuntu.com/manpages/gutsy/man8/mkisofs.8.html
+# Prerequisites
 # .iso support requires sudo nopasswd for the mount/unmount commands.
-
-# apt-get update && apt-get install handbrake-cli atomicparsley lsof bc -y
+# apt-get update && apt-get install atomicparsley lsof bc -y
+# HandBrake releases for Ubuntu https://github.com/HandBrake/HandBrake
+# apt-get install software-properties-common -y
+# add-apt-repository ppa:stebbins/handbrake-releases -y
+# apt-get update
+# apt-get install handbrake-cli -y
 
 # user definable locations
 # ensure ALL directories end with '/'
@@ -28,7 +28,7 @@ media_types="avi|divx|img|iso|m4v|mkv|mp4|ts|wmv"
 movie_dest_folder="/movies/postprocessing/movies/"
 
 # Movie original downloaded file destination
-# this script keeps the original files in case something goes wrong.  empty this dir regularly.
+# this script keeps the original files in case something goes wrong. empty this dir regularly.
 unwatched_dest_folder="/movies/postprocessing/trash/movies/"
 
 # Movie artwork location if you have it
@@ -48,21 +48,22 @@ dest_false=" - SE.m4v"
 # files must be formatted to match the Show Name and have a jpg extension eg: "The TV Show Name.jpg"
 tv_artwork="/tv/postprocessing/tv/artwork/"
 
-# HandBrake alias
+# HandBrake options https://github.com/HandBrake/HandBrake
+handbrake_options="-e x264 -q 20 --optimize --srt-lang eng --native-language eng --native-dub -f mp4 --decomb --loose-anamorphic --modulus 2 -m --x264-preset medium --h264-profile high --h264-level 4.1"
+
+# HandBrake alias 
 handbrake_cli=$(which HandBrakeCLI)
 
+# set metadata into MPEG-4 files https://github.com/wez/atomicparsley
+# 0 = disable
+# 1 = enable
+enable_atomicparsley="0"
 # AtomicParsley alias
 atomicparsley=$(which AtomicParsley)
 
-# HandBrake options
-# x264_10bit, --all-audio, --all-subtitles options only work for more recent versions of handbrake
-# handbrake_options="-O -e x264_10bit -q 20 --encoder-preset=faster --all-audio --all-subtitles"
-handbrake_options="-e x264 -q 20 --optimize --srt-lang eng --native-language eng --native-dub -f mp4 --decomb --loose-anamorphic --modulus 2 -m --x264-preset medium --h264-profile high --h264-level 4.1"
-
-# options
-# 0 = disabled
-# 1 = enabled
-enable_atomicparsley="0"
+# tidy up the file-names in large collections of video files https://github.com/meermanr/TVSeriesRenamer
+# 0 = disable
+# 1 = enable
 enable_tvrenamer="0"
 
 # initialize array to log errors
@@ -87,7 +88,7 @@ STATUS="$7"
 # STATUS="0"
 
 # this fixes some problems; https://stackoverflow.com/questions/12729784/mv-cannot-stat-error-no-such-file-or-directory-error
-# shopt -s nullglob
+# or maybe this;  shopt -s nullglob
 shopt -s extglob
 
 encodeMovie(){
@@ -118,14 +119,12 @@ encodeMovie(){
       # find the largest .m2ts file
       M2TS=`find /media/iso/BDMV/STREAM -type f -print0 | xargs -0 du | sort -n | tail -1 | cut -f2`
       # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-      # TODO fix this
-      # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-      # channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
-      # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
-      #   handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3"
-      # elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
-      #   handbrake_options="$handbrake_options --aencoder copy:aac"
-      # fi
+      channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
+      if [[ $channels > 2 ]]; then
+        handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3,copy:dts,copy:dtshd"
+      elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
+        handbrake_options="$handbrake_options --aencoder copy:aac"
+      fi
       echo "  * Transcoding!!! BlueRay"
       echo "$handbrake_cli -i \"$M2TS\" -o $1 $handbrake_options"
       echo
@@ -146,10 +145,7 @@ encodeMovie(){
   # if not BlueRay just transcode
   else
     # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
-    # TODO fix this
-    # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
     channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
-    # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
     if [[ $channels > 2 ]]; then
       handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3,copy:dts,copy:dtshd"
     elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
@@ -190,12 +186,10 @@ encodeMovie(){
 encodeTv(){
   # $1 = atomicFile_XXX.m4v
   # convert using handbrake
-  # TODO fix this
   # custom encode options based on audio channels; https://gist.github.com/donmelton/5734177
   channels="$(mediainfo --Inform='Audio;%Channels%' "$file" | sed 's/[^0-9].*$//')"
-  # if [[ -z $channels ]] && [[ $channels > 2 ]]; then
   if [[ $channels > 2 ]]; then
-    handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3,copy:truehd,copy:dts,copy:dtshd"
+    handbrake_options="$handbrake_options --aencoder ca_aac,copy:ac3,copy:dts,copy:dtshd"
   elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
     handbrake_options="$handbrake_options --aencoder copy:aac"
   fi
@@ -233,6 +227,8 @@ printMovieDetails(){
   echo "    Dest File:       $dest_file"
   echo "    Title:           $title"
   echo "    Year:            $year"
+  echo "    Audio Channels:  $channels"
+  echo "    Quality:         $quality"
   # add some mediainfo
   # mediainfo $file | grep -i channel\( | awk '{print $3}' | tr '\n' ',' | sed 's/.$//'
   echo "    Input File:      $file $ISIZE"
@@ -262,6 +258,8 @@ printTvDetails(){
   echo "    Year:            $year"
   echo "    Month:           $month"
   echo "    Day:             $day"
+  echo "    Audio Channels:  $channels"
+  echo "    Quality:         $quality"
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
@@ -548,7 +546,9 @@ fi
 
 if [[ "$CATEGORY" = "movies" ]]; then
   # matches: movie name (2013).xyz
-  regex="(.*) \(([0-9]{4})\).*"
+  # regex="(.*) \(([0-9]{4})\).*"
+  # matches: movie name (2013) [hdtv-720p].xyz
+  regex="(.*) \(([0-9]{4})\)[- .]{0,3}(\[.*\])?\..*$"
 
   mkIsofs
   consolidateFiles
@@ -579,6 +579,7 @@ if [[ "$CATEGORY" = "movies" ]]; then
 
     # the test operator '=~' against the $regex '(filter)' populates BASH_REMATCH array
     year=${BASH_REMATCH[2]}
+    quality=${BASH_REMATCH[3]}
     # customize movie title tag for atomicparsley
     # title =${BASH_REMATCH[1]} # = "Movie"
     title=${NAME} # NAME = "Movie (2013)"
@@ -632,12 +633,14 @@ fi
 
 if [[ "$CATEGORY" = "tv" ]]; then
   # regex matches: show name - s01e02 - episode name.xyz
-  # regex="(.*) - S([0-9]{2})E([0-9]{2}) - (.*)$"
-  # regex="(.*?)[- .]{1,3}[sS]([0-9]{1,2})[eE]([0-9]{1,2})[- .]{1,3}(.*)$"
-  regex="(.*?)[- .]{1,3}[sS]([0-9]{1,4})[eE]([0-9]{1,2})[- .]{0,3}(.*?)\..*$"
+  # regex="(.*?)[- .]{1,3}[sS]([0-9]{1,4})[eE]([0-9]{1,2})[- .]{0,3}(.*?)\..*$"
+  # regex matches: show name - s01e02 - episode name [hdtv-720p].xyz
+  regex="(.*?)[- .]{1,3}[sS]([0-9]{1,4})[eE]([0-9]{1,2})[- .]{0,3}(.*?)[- .]{0,3}(\[.*\])?\..*$"
 
   # regex matches: the daily show - 2013-08-01 - episode name.xyz
-  regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
+  # regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
+  # regex matches: the daily show - 2013-08-01 - episode name [hdtv-720p].xyz
+  regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{0,3}(.*?)[- .]{0,3}(\[.*\])?\..*$"
 
   # custom processing for shows
   # regex matches: the soup - 2013-08-01 - episode name.xyz
@@ -678,6 +681,8 @@ if [[ "$CATEGORY" = "tv" ]]; then
       echo "  - \$month         = $month"
       echo "  - \$day           = $day"
       echo "  - \$episode       = $episode"
+      echo "  - \$channels      = $channels"
+      echo "  - \$quality       = $quality"
       echo
   
       # destination filename
@@ -699,6 +704,7 @@ if [[ "$CATEGORY" = "tv" ]]; then
       # month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
       episode_name=${BASH_REMATCH[5]}
+      quality=${BASH_REMATCH[6]}
       # use the year as the season for dated shows
       season=$year
       episode=${year}${month}${day}
@@ -709,8 +715,11 @@ if [[ "$CATEGORY" = "tv" ]]; then
       echo "  - \$day           = $day"
       echo "  - \$episode       = $episode"
       echo "  - \$episode_name  = $episode_name"
+      echo "  - \$channels      = $channels"
+      echo "  - \$quality       = $quality"
       echo
   
+      # TODO add handling for $quality naming
       # destination filename
       if [[ ! -z "$episode_name" ]]; then
         dest_file="${show_name} - ${year}-${month}-${day} - ${episode_name}.m4v"    
@@ -727,13 +736,17 @@ if [[ "$CATEGORY" = "tv" ]]; then
       season=${BASH_REMATCH[2]}
       episode=${BASH_REMATCH[3]}
       episode_name=${BASH_REMATCH[4]}
+      quality=${BASH_REMATCH[5]}
       cleanupFilename "$show_name" "$episode_name"
       echo "  - \$show_name     = $show_name"
       echo "  - \$season        = $season"
       echo "  - \$episode       = $episode"
       echo "  - \$episode_name  = $episode_name"
+      echo "  - \$channels      = $channels"
+      echo "  - \$quality       = $quality"
       echo
   
+      # TODO add handling for $quality naming
       # destination filename
       if [[ ! -z "$episode_name" ]]; then
         dest_file="${show_name} - S${season}E${episode} - ${episode_name}.m4v"
@@ -824,6 +837,8 @@ if [[ "$CATEGORY" = "sonarr" ]]; then
     echo "  - \$season        = $season"
     echo "  - \$episode       = $episode"
     echo "  - \$episode_name  = $episode_name"
+    echo "    Audio Channels:  $channels"
+    echo "    Quality:         $quality"
     echo
   elif [[ $series_type = "Daily" ]]; then
     # use the year as the season for dated shows
@@ -834,6 +849,7 @@ if [[ "$CATEGORY" = "sonarr" ]]; then
     echo "  - \$season        = $season"
     echo "  - \$episode       = $episode"
     echo "  - \$episode_name  = $episode_date"
+    echo "  - \$quality       = $quality"
     echo
   else
     echo "!!! ERROR, \$series_type = $series_type"
