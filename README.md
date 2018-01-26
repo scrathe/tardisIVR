@@ -1,7 +1,7 @@
 # tardisIVR
 A BASH post-processing script for Shell/SABnzbd/Radarr/Sonarr.
 
-## Features
+### Features
 * Encode TV and Movies using HandBrake to meet your specific audio and video requirements.
 * Passthru 2, 5.1, 7.1 audio channels.
 * Tag mp4 metadata using AtomicParsley.
@@ -47,7 +47,7 @@ START! Fri Jan 26 03:23:24 UTC 2018
 Fri Jan 26 05:27:22 UTC 2018
 ```
 
-## Requirements
+### Requirements
 * HandBrake https://github.com/HandBrake/HandBrake
 ```
 add-apt-repository ppa:stebbins/handbrake-releases -y && apt-get update && apt-get install handbrake-cli -y
@@ -56,20 +56,20 @@ add-apt-repository ppa:stebbins/handbrake-releases -y && apt-get update && apt-g
 * lsof
 * bc
 
-## Optional
+### Optional
 * AtomicParsley https://github.com/wez/atomicparsley
 * tvNamer https://github.com/dbr/tvnamer
 * mkisofs
 * avimerge
 * Encoding .iso requires sudoers nopasswd for mount/unmount commands
 
-## Install
+### Install
 You can download the latest version clicking [here](https://github.com/scrathe/tardisIVR/archive/master.zip) or close the repository with the command below.
 ```
 git clone https://github.com/scrathe/tardisIVR.git master
 ```
 
-## Shell Usage
+### Shell Usage
 #### TV
 ```
 ls
@@ -94,7 +94,7 @@ Movie (2014) [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x movies x x tag
 ```
 
-## Examples
+### Examples
 ```
 # movie encode and tag
 cd /media/Movies/Movie Name (2013)
