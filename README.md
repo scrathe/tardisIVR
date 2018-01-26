@@ -30,12 +30,12 @@ git clone https://github.com/scrathe/tardisIVR.git master
 ```
 
 # Usage
-### SABNZBd with Sonarr and Radarr
-Note that by using the tardisIVRvideo.sh script on Sonarr, the encoding CPU load shifts from SABnzbd to Sonarr.
-![SABNZBd](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr1.png?raw=true)
-![Sonarr](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr2.png?raw=true)
+### SABnzbd with Sonarr and Radarr
+Note that by using the tardisIVRvideo.sh script with Sonarr, the encoding CPU load shifts from SABnzbd to Sonarr.
+![SABnzbd](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr1.png?raw=true)
 For Radarr, change Category and Folder/Path
-### SABNZBd with SickBeard and CouchPotato
+![Sonarr](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr2.png?raw=true)
+### SABnzbd with SickBeard and CouchPotato
 ```
 Category = tv
 Script = tardisIVRvideo.sh
