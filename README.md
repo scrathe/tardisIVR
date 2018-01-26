@@ -7,6 +7,46 @@ A BASH post-processing script for Shell/SABnzbd/Radarr/Sonarr.
 * Tag mp4 metadata using AtomicParsley.
 * Run from BASH shell to re-encode single files, or multiple directories.
 
+### Example
+```
+/movies/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x 
+START! Fri Jan 26 03:23:24 UTC 2018
+  - Consolidating files in /movies/Movies/Movie Name (2016)
+
+  - Discovered Media File:
+    Movie Name (2016).mkv 6.8G
+  - REGEX detected Movie,
+  - (.*) \(([0-9]{4})\)[- .]{0,3}(\[.*\])?.*
+
+  - Audio Channels:  6
+  * Transcoding!!!
+/usr/bin/HandBrakeCLI -i "Movie Name (2016).mkv" -o atomicFile.m4v -e x264 -q 20 --optimize --srt-lang eng --native-language eng --native-dub -f mp4 --decomb --loose-anamorphic --modulus 2 -m --x264-preset medium --h264-profile high --h264-level 4.1 --aencoder ca_aac,copy:ac3,copy:dts,copy:dtshd
+
+  - Encoding Speed: 123.86 minutes
+  - Details:
+    DIR:             /movies/Movies/Movie Name (2016)
+    NZB_FILE:        x
+    NAME:            X-Men Apocalypse (2016)
+    NZB_ID:          x
+    CATEGORY:        movies
+    GROUP:           x
+    STATUS:          x
+    Dest Folder:     /movies/postprocessing/movies/
+    Dest File:       Movie Name (2016).m4v
+    Title:           Movie Name (2016)
+    Year:            2016
+    Audio Channels:  6
+    Quality:         
+    Input File:      Movie Name (2016).mkv 6.8G
+  - Finished:        Fri Jan 26 05:27:22 UTC 2018
+
+  * MOVIE COMPLETE!  Movie Name (2016).m4v 
+  * Moving transcoded file to folder.
+  - mv atomicFile.m4v "/movies/postprocessing/movies/Movie Name (2016).m4v"
+  * Moving original downloaded file to folder.
+Fri Jan 26 05:27:22 UTC 2018
+```
+
 # Requirements
 * HandBrake https://github.com/HandBrake/HandBrake
 ```
