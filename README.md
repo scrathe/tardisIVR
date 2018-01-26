@@ -42,18 +42,6 @@ ls
 Movie (2014) [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x movies
 ```
-#### sonarr = post-processing destination is same as current directory (Sonarr)
-```
-ls
-TV Show Name - S01E01 - Episode Name [HDTV].mkv
-tardisIVRvideo.sh "`pwd`" x x x sonarr
-```
-#### sonarr = post-processing destination is same as current directory (Radarr)
-```
-ls
-Movie (2014) [HDTV].mkv
-tardisIVRvideo.sh "`pwd`" x x x radarr
-```
 #### tag = skip encoding and just tag mp4 metadata
 ```
 ls
