@@ -2,7 +2,7 @@
 A BASH post-processing script for Shell/SABnzbd/Radarr/Sonarr.
 
 # Features
-* Encoding using HandBrake to meet your specific audio and video requirements.
+* Encode TV and Movies using HandBrake to meet your specific audio and video requirements.
 * Passthru 2, 5.1, 7.1 audio channels.
 * Tag mp4 metadata using AtomicParsley.
 * Run from BASH shell to re-encode single files, or multiple directories.
@@ -10,9 +10,7 @@ A BASH post-processing script for Shell/SABnzbd/Radarr/Sonarr.
 # Requirements
 * HandBrake https://github.com/HandBrake/HandBrake
 ```
-add-apt-repository ppa:stebbins/handbrake-releases -y
-apt-get update
-apt-get install handbrake-cli -y
+add-apt-repository ppa:stebbins/handbrake-releases -y && apt-get update && apt-get install handbrake-cli -y
 ```
 * MediaInfo https://github.com/MediaArea/MediaInfo
 * lsof
@@ -32,6 +30,44 @@ git clone https://github.com/scrathe/tardisIVR.git master
 ```
 
 # Usage
+### Sickbeard/CouchPotato/NZBDrobe
+### Sonarr/Radarr
+### Shell
+#### If you're using a post-processing destination folder for pickup (SickBeard/CouchPotato)
+```
+ls
+TV Show Name - S01E01 - Episode Name [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x tv
+```
+```
+ls
+Movie (2014) [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x movies
+```
+#### Or if you want to leave the newly encoded file in the source directory (Sonarr/Radarr)
+```
+ls
+TV Show Name - S01E01 - Episode Name [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x sonarr
+```
+```
+ls
+Movie (2014) [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x radarr
+```
+#### If you want to skip encoding and just tag mp4 metadata
+```
+ls
+TV Show Name - S01E01 - Episode Name [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x tv x x tag
+```
+```
+ls
+Movie (2014) [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x movies x x tag
+```
+
+
 
 # Examples
 
