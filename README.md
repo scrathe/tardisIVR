@@ -30,19 +30,19 @@ git clone https://github.com/scrathe/tardisIVR.git master
 ```
 
 ## Shell Usage
-#### tv = post-processing destination folder for pickup (SickBeard)
+#### TV
 ```
 ls
 TV Show Name - S01E01 - Episode Name [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x tv
 ```
-#### movies = post-processing destination folder for pickup (CouchPotato)
+#### Movies
 ```
 ls
 Movie (2014) [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x movies
 ```
-#### tag = skip encoding and just tag mp4 metadata
+#### Tag only, don't encode.
 ```
 ls
 TV Show Name - S01E01 - Episode Name [HDTV].mkv
