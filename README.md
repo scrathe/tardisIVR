@@ -30,32 +30,48 @@ git clone https://github.com/scrathe/tardisIVR.git master
 ```
 
 # Usage
-### Sickbeard/CouchPotato/NZBDrobe
-### Sonarr/Radarr
+### SABNZBd with Sonarr and Radarr
+Note that by using the tardisIVRvideo.sh script on Sonarr, the encoding CPU load shifts from SABnzbd to Sonarr.
+![SABNZBd](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr1.png?raw=true)
+![Sonarr](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr2.png?raw=true)
+For Radarr, change Category and Folder/Path
+### SABNZBd with SickBeard and CouchPotato
+```
+Category = tv
+Script = tardisIVRvideo.sh
+Folder = tv
+```
+```
+Category = movies
+Script = tardisIVRvideo.sh
+Folder = movies
+```
 ### Shell
-#### If you're using a post-processing destination folder for pickup (SickBeard/CouchPotato)
+#### tv = post-processing destination folder for pickup (SickBeard)
 ```
 ls
 TV Show Name - S01E01 - Episode Name [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x tv
 ```
+#### movies = post-processing destination folder for pickup (CouchPotato)
 ```
 ls
 Movie (2014) [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x movies
 ```
-#### Or if you want to leave the newly encoded file in the source directory (Sonarr/Radarr)
+#### sonarr = post-processing destination is same as current directory (Sonarr)
 ```
 ls
 TV Show Name - S01E01 - Episode Name [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x sonarr
 ```
+#### sonarr = post-processing destination is same as current directory (Radarr)
 ```
 ls
 Movie (2014) [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x radarr
 ```
-#### If you want to skip encoding and just tag mp4 metadata
+#### tag = skip encoding and just tag mp4 metadata
 ```
 ls
 TV Show Name - S01E01 - Episode Name [HDTV].mkv
@@ -67,9 +83,25 @@ Movie (2014) [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x movies x x tag
 ```
 
-
-
 # Examples
+Movie encode and tag
+```
+cd /media/Movies/Movie Name (2013)
+/tv/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x
+```
+Movie tag, skip encoding
+```
+cd /media/TV/Show Name (2013)
+/tv/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
+```
+Recurse through thru seasons of a TV show and encode
+cd /media/TV/Show Name
+for i in * ; do cd "`pwd`" && /tv/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv; done
+```
+Given a download directory full of TV shows in directories, find a show and encode all of those.
+```
+for i in `ls -d ShowName*` ; do cd "$i" && /tv/scripts/tardisIVR/tardisIVRvideo.sh `pwd` x x x tv x x ; cd .. ; done
+```
 
 #### Sources
 Thank You!
