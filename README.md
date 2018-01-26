@@ -26,7 +26,7 @@ START! Fri Jan 26 03:23:24 UTC 2018
   - Details:
     DIR:             /movies/Movies/Movie Name (2016)
     NZB_FILE:        x
-    NAME:            X-Men Apocalypse (2016)
+    NAME:            Movie Name (2016)
     NZB_ID:          x
     CATEGORY:        movies
     GROUP:           x
