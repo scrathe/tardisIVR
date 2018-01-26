@@ -29,33 +29,7 @@ You can download the latest version clicking [here](https://github.com/scrathe/t
 git clone https://github.com/scrathe/tardisIVR.git master
 ```
 
-# Usage
-### SABnzbd with Sonarr and Radarr
-Note that by using the tardisIVRvideo.sh script with Sonarr, the encoding CPU load shifts from SABnzbd to Sonarr.
-### SABnzbd with SickBeard
-```
-Category = tv
-Script = tardisIVRvideo.sh
-Folder = tv
-```
-### SABnzbd with CouchPotato
-```
-Category = movies
-Script = tardisIVRvideo.sh
-Folder = movies
-```
-![SABnzbd](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr1.png?raw=true)
-
-### Sonarr
-```
-Arguments = x x x x sonarr
-```
-### Radarr
-```
-Arguments = x x x x radarr
-```
-![Sonarr](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr2.png?raw=true)
-### Shell
+## Shell Usage
 #### tv = post-processing destination folder for pickup (SickBeard)
 ```
 ls
@@ -111,6 +85,32 @@ Given a download directory full of TV shows in directories, find a show and enco
 ```
 for i in `ls -d ShowName*` ; do cd "$i" && /tv/scripts/tardisIVR/tardisIVRvideo.sh `pwd` x x x tv x x ; cd .. ; done
 ```
+
+### SABnzbd with Sonarr and Radarr
+Note that by using the tardisIVRvideo.sh script with Sonarr, the encoding CPU load shifts from SABnzbd to Sonarr.
+### SABnzbd with SickBeard
+```
+Category = tv
+Script = tardisIVRvideo.sh
+Folder = tv
+```
+### SABnzbd with CouchPotato
+```
+Category = movies
+Script = tardisIVRvideo.sh
+Folder = movies
+```
+![SABnzbd](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr1.png?raw=true)
+
+### Sonarr
+```
+Arguments = x x x x sonarr
+```
+### Radarr
+```
+Arguments = x x x x radarr
+```
+![Sonarr](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr2.png?raw=true)
 
 #### Sources
 Thank You!
