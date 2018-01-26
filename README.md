@@ -55,26 +55,23 @@ tardisIVRvideo.sh "`pwd`" x x x movies x x tag
 ```
 
 # Examples
-Movie encode and tag
 ```
+# movie encode and tag
 cd /media/Movies/Movie Name (2013)
 /tv/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x
 ```
-
-Movie tag, skip encoding
 ```
+# movie tag, skip encoding
 cd /media/TV/Show Name (2013)
 /tv/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
 ```
-
-Recurse through thru seasons of a TV show and encode
 ```
+# recurse through thru seasons of a TV show and encode
 cd /media/TV/Show Name
 for i in * ; do cd "`pwd`" && /tv/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv; done
 ```
-
-Given a download directory full of TV shows in directories, find a show and encode all of those.
 ```
+# in a download directory full of TV shows in directories, find a show by name and encode all of those.
 for i in `ls -d ShowName*` ; do cd "$i" && /tv/scripts/tardisIVR/tardisIVRvideo.sh `pwd` x x x tv x x ; cd .. ; done
 ```
 
