@@ -46,7 +46,7 @@ START! Fri Jan 26 03:23:24 UTC 2018
   * Moving original downloaded file to folder.
 Fri Jan 26 05:27:22 UTC 2018
 ```
-
+---
 ### Requirements
 * HandBrake https://github.com/HandBrake/HandBrake
 ```
@@ -68,7 +68,7 @@ You can download the latest version clicking [here](https://github.com/scrathe/t
 ```
 git clone https://github.com/scrathe/tardisIVR.git master
 ```
-
+---
 ### Shell Usage
 #### TV
 ```
@@ -93,7 +93,7 @@ ls
 Movie (2014) [HDTV].mkv
 tardisIVRvideo.sh "`pwd`" x x x movies x x tag
 ```
-
+---
 ### Examples
 ```
 # movie encode and tag
@@ -114,7 +114,7 @@ for i in * ; do cd "`pwd`" && /tv/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x
 # in a download directory full of TV shows in directories, find a show by name and encode all of those.
 for i in `ls -d ShowName*` ; do cd "$i" && /tv/scripts/tardisIVR/tardisIVRvideo.sh `pwd` x x x tv x x ; cd .. ; done
 ```
-
+---
 ### SABnzbd with SickBeard
 ```
 Category = tv
@@ -142,7 +142,7 @@ Arguments = x x x x radarr
 ```
 
 ![Sonarr](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr2.png?raw=true)
-
+---
 #### Sources
 Thank You!
 * https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
