@@ -1,37 +1,147 @@
 # tardisIVR
-### A box that's bigger on the inside to put the internet in.
-![alt text](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR.png "tardisIVR Blueprint")
+A BASH post-processing script for Shell/SABnzbd/Radarr/Sonarr.
 
-## What is this?
-* Blueprints for a system that automates the download, encoding, naming and metadata tagging of Movies and TV shows. Comprised of:
-  * Baremetal host (front-end) for file management and sharing
-  * Linux VM or baremetal (back-end) for search and download (SickBeard, CouchPotato, HeadPhones, SABnzbd)
-  * BASH post-processing script (tardisIVRvideo.sh) that renames, encodes and tags (tvnamer, HandBrake, AtomicParsley) compatibile with media sharing environments; iTunes/AppleTV, Plex, DLNA, FireTV, Roku, anything!
+### Features
+* Encode TV and Movies using HandBrake to meet your specific audio and video requirements.
+* Passthru 2, 5.1, 7.1 audio channels.
+* Tag mp4 metadata using AtomicParsley.
+* Run from BASH shell to re-encode single files, or multiple directories.
 
-## What does it require?
-* Baremetal host with plenty of redundant storage
-  * e.g. Win8.x Pro w/ Hyper-V, Linux w/ Proxmox, Apple w/ Virtualbox
-* Linux virtual guest or standalone baremetal machine
-  * e.g. ubuntu-12.04.3-server-amd64.iso, RAM 1-2GB, HD 8-12GB, CPU 2+ cores, Bridged networking
-* Strong understanding of SABnzbd, SickBeard, CouchPotato, HeadPhones (you know there are a ton of settings right?  this adds more settings...)
-* Usenet and nzb index account
-* Patience and/or love of a challenge```(づ｡◕‿‿◕｡)づ```
+### Example
+```
+/movies/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x 
+START! Fri Jan 26 03:23:24 UTC 2018
+  - Consolidating files in /movies/Movies/Movie Name (2016)
 
-### SABnzbd Post-Processing Script
-  * ```tardisIVRvideo.sh``` BASH script supports run scenarios:
-    * via SABnzbd categories post-processing
-    * locally via shell
-    * recursive via shell -- i.e. process all Season subfolders
-    * remotely via Windows/plink.exe
-    * see the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Shell-Usage) for examples
-  * Uses/depends-on post-processing folder workflow in SABnzbd, SickBeard, and CouchPotato
-  * Supports TV SeasonEpisode (S01E01) and Dated (2013-08-01) filenames
-  * Attempts to improve SABnzbd filename stripping (PROPER, 1080p, 720p)
+  - Discovered Media File:
+    Movie Name (2016).mkv 6.8G
+  - REGEX detected Movie,
+  - (.*) \(([0-9]{4})\)[- .]{0,3}(\[.*\])?.*
 
-### Remote Execution Scripts
-  * See the [Wiki](https://github.com/scrathe/tardisIVR/wiki/Plink-(Remote-Execution)) for installation and configuration of the remote execution. (plink.exe) from Windows -> Linux
-  * ```plink-tardisIVR.bat``` -- Windows script
-  * ```plink-tardisIVR.sh``` -- Linux script
+  - Audio Channels:  6
+  * Transcoding!!!
+/usr/bin/HandBrakeCLI -i "Movie Name (2016).mkv" -o atomicFile.m4v -e x264 -q 20 --optimize --srt-lang eng --native-language eng --native-dub -f mp4 --decomb --loose-anamorphic --modulus 2 -m --x264-preset medium --h264-profile high --h264-level 4.1 --aencoder ca_aac,copy:ac3,copy:dts,copy:dtshd
+
+  - Encoding Speed: 123.86 minutes
+  - Details:
+    DIR:             /movies/Movies/Movie Name (2016)
+    NZB_FILE:        x
+    NAME:            Movie Name (2016)
+    NZB_ID:          x
+    CATEGORY:        movies
+    GROUP:           x
+    STATUS:          x
+    Dest Folder:     /movies/postprocessing/movies/
+    Dest File:       Movie Name (2016).m4v
+    Title:           Movie Name (2016)
+    Year:            2016
+    Audio Channels:  6
+    Quality:         
+    Input File:      Movie Name (2016).mkv 6.8G
+  - Finished:        Fri Jan 26 05:27:22 UTC 2018
+
+  * MOVIE COMPLETE!  Movie Name (2016).m4v 
+  * Moving transcoded file to folder.
+  - mv atomicFile.m4v "/movies/postprocessing/movies/Movie Name (2016).m4v"
+  * Moving original downloaded file to folder.
+Fri Jan 26 05:27:22 UTC 2018
+```
+
+### Requirements
+* HandBrake https://github.com/HandBrake/HandBrake
+```
+add-apt-repository ppa:stebbins/handbrake-releases -y && apt-get update && apt-get install handbrake-cli -y
+```
+* MediaInfo https://github.com/MediaArea/MediaInfo
+* lsof
+* bc
+
+### Optional
+* AtomicParsley https://github.com/wez/atomicparsley
+* tvNamer https://github.com/dbr/tvnamer
+* mkisofs
+* avimerge
+* Encoding .iso requires sudoers nopasswd for mount/unmount commands
+
+### Install
+You can download the latest version clicking [here](https://github.com/scrathe/tardisIVR/archive/master.zip) or close the repository with the command below.
+```
+git clone https://github.com/scrathe/tardisIVR.git master
+```
+
+### Shell Usage
+#### TV
+```
+ls
+TV Show Name - S01E01 - Episode Name [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x tv
+```
+#### Movies
+```
+ls
+Movie (2014) [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x movies
+```
+#### Tag only, don't encode.
+```
+ls
+TV Show Name - S01E01 - Episode Name [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x tv x x tag
+```
+```
+ls
+Movie (2014) [HDTV].mkv
+tardisIVRvideo.sh "`pwd`" x x x movies x x tag
+```
+
+### Examples
+```
+# movie encode and tag
+cd /media/Movies/Movie Name (2013)
+/tv/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x movies x x
+```
+```
+# movie tag, skip encoding
+cd /media/TV/Show Name (2013)
+/tv/scripts/tardisIVR/tardisIVRvideo.sh "`pwd`" x x x tv x x tag
+```
+```
+# recurse through thru seasons of a TV show and encode
+cd /media/TV/Show Name
+for i in * ; do cd "`pwd`" && /tv/scripts/tardisIVR/tardisIVRvideo.sh "$i" x x x tv; done
+```
+```
+# in a download directory full of TV shows in directories, find a show by name and encode all of those.
+for i in `ls -d ShowName*` ; do cd "$i" && /tv/scripts/tardisIVR/tardisIVRvideo.sh `pwd` x x x tv x x ; cd .. ; done
+```
+
+### SABnzbd with SickBeard
+```
+Category = tv
+Script = tardisIVRvideo.sh
+Folder = tv
+```
+
+### SABnzbd with CouchPotato
+```
+Category = movies
+Script = tardisIVRvideo.sh
+Folder = movies
+```
+
+![SABnzbd](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr1.png?raw=true)
+
+### Sonarr
+```
+Arguments = x x x x sonarr
+```
+
+### Radarr
+```
+Arguments = x x x x radarr
+```
+
+![Sonarr](https://github.com/scrathe/tardisIVR/blob/master/graphics/tardisIVR-Sonarr2.png?raw=true)
 
 #### Sources
 Thank You!
