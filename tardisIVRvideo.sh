@@ -1,9 +1,6 @@
 #!/bin/bash
 
 # Home; https://github.com/scrathe/tardisIVR
-# Documentation; https://github.com/scrathe/tardisIVR/blob/master/README.md
-# Installation; https://github.com/scrathe/tardisIVR/blob/master/INSTALL.md
-# Settings; https://github.com/scrathe/tardisIVR/blob/master/SETTINGS.md
 
 # BIG thanks to the original author(s), especially the BASH/OSX community who helped me achieve my goals.
 # author 1) https://forums.sabnzbd.org/viewtopic.php?p=30111&sid=a21a927758babb5b77386faa31e74f85#p30111
@@ -11,12 +8,19 @@
 
 # Prerequisites
 # .iso support requires sudo nopasswd for the mount/unmount commands.
-# apt-get update && apt-get install atomicparsley lsof bc -y
+# apt-get update && apt-get install autoconf automake bc build-essential software-properties-common zlib1g-dev -y
+
 # HandBrake releases for Ubuntu https://github.com/HandBrake/HandBrake
 # apt-get install software-properties-common -y
 # add-apt-repository ppa:stebbins/handbrake-releases -y
 # apt-get update
 # apt-get install handbrake-cli -y
+
+# AtomicParsley
+# curl https://bitbucket.org/wez/atomicparsley/get/9183fff907bf.zip --output atomicparsley.zip"
+# unzip atomicparsley.zip -d /opt
+# mv /opt/wez-* /opt/atomicparsley
+# cd /opt/atomicparsley && ./autogen.sh && ./configure && make && make install
 
 # user definable locations
 # ensure ALL directories end with '/'
@@ -57,17 +61,17 @@ handbrake_cli=$(which HandBrakeCLI)
 # set metadata into MPEG-4 files https://github.com/wez/atomicparsley
 # 0 = disable
 # 1 = enable
-enable_atomicparsley="0"
+enable_atomicparsley="1"
 # AtomicParsley alias
 atomicparsley=$(which AtomicParsley)
 
-# tidy up the file-names in large collections of video files https://github.com/meermanr/TVSeriesRenamer
+# automatic TV episode file renamer, uses data from thetvdb.com via tvdb_api https://github.com/dbr/tvnamer
 # 0 = disable
 # 1 = enable
 enable_tvrenamer="0"
 
 # initialize array to log errors
-logArray=()
+declare -a logArray=()
 
 # SABnzbd output parameters
 DIR="$1"
@@ -125,6 +129,7 @@ encodeMovie(){
       elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
         handbrake_options="$handbrake_options --aencoder copy:aac"
       fi
+      echo "  - Audio Channels:  $channels"
       echo "  * Transcoding!!! BlueRay"
       echo "$handbrake_cli -i \"$M2TS\" -o $1 $handbrake_options"
       echo
@@ -151,6 +156,7 @@ encodeMovie(){
     elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
       handbrake_options="$handbrake_options --aencoder copy:aac"
     fi
+    echo "  - Audio Channels:  $channels"
     echo "  * Transcoding!!!"
     echo "$handbrake_cli -i \"$file\" -o $1 $handbrake_options"
     echo
@@ -193,6 +199,7 @@ encodeTv(){
   elif [ "$(mediainfo --Inform='General;%Audio_Format_List%' "$file" | sed 's| /.*||')" == 'AAC' ]; then
     handbrake_options="$handbrake_options --aencoder copy:aac"
   fi
+  echo "  - Audio Channels:  $channels"
   echo "  * Transcoding!!!"
   echo "$handbrake_cli -i \"$file\" -o $1 $handbrake_options"
   echo
@@ -229,8 +236,6 @@ printMovieDetails(){
   echo "    Year:            $year"
   echo "    Audio Channels:  $channels"
   echo "    Quality:         $quality"
-  # add some mediainfo
-  # mediainfo $file | grep -i channel\( | awk '{print $3}' | tr '\n' ',' | sed 's/.$//'
   echo "    Input File:      $file $ISIZE"
   echo "  - Finished:        `date`"
   echo
@@ -390,8 +395,9 @@ consolidateFiles(){
   fi
 }
 
-# TODO remove dependency on tvrenamer.pl
 tvRenamer(){
+  # https://github.com/meermanr/TVSeriesRenamer
+  # TODO remove dependency on tvrenamer.pl
   if [[ $enable_tvrenamer -eq 0 ]]; then
       break
   fi
@@ -408,6 +414,7 @@ tvRenamer(){
 }
 
 tvNamer(){
+  # https://github.com/dbr/tvnamer
   if [[ $enable_tvrenamer -eq 1 ]]; then
     echo "  * RENAMING the file with tvnamer"
     /usr/local/bin/tvnamer --batch -q *
@@ -479,15 +486,15 @@ cleanupFilename(){
   # strip leading characters
   episode_name=$(echo $episode_name | sed -r 's/^[- .]{1,3}//g')
   # strip everything after " - HDTV"
-  episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
+  # episode_name=$(echo $episode_name | sed -r 's/[hH][dD][tT][vV].*//g' | sed -r 's/ *$//g')
   # strip WEBRIP
-  episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
+  # episode_name=$(echo $episode_name | sed -r 's/[wW][eE][bB][rR][iI][pP].*//g' | sed -r 's/ *$//g')
   # strip 1080P
-  episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
+  # episode_name=$(echo $episode_name | sed -r 's/1080[pP].*//g' | sed -r 's/ *$//g')
   # strip 720P
-  episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
+  # episode_name=$(echo $episode_name | sed -r 's/720[pP].*//g' | sed -r 's/ *$//g')
   # strip PROPER
-  episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
+  # episode_name=$(echo $episode_name | sed -r 's/PROPER.*//g' | sed -r 's/ *$//g')
   # strip ending characters
   episode_name=$(echo $episode_name | sed -r 's/[- .]{1,}$//g')
   # captialize first character of words
@@ -522,6 +529,7 @@ printError(){
 # below is execution
 
 if [[ "$CATEGORY" != "sonarr" ]] && [[ "$CATEGORY" != "radarr" ]]; then
+  # execution via shell or SABNZBD
   cd "$DIR"
   if [[ $? -ne 0 ]]; then
     echo "!!! ERROR, cd '$DIR'"
@@ -540,15 +548,16 @@ if [[ "$CATEGORY" != "sonarr" ]] && [[ "$CATEGORY" != "radarr" ]]; then
   fi
 fi
 
-  echo "START! `date`"
+echo "START! `date`"
 
 # BEGIN movies
 
 if [[ "$CATEGORY" = "movies" ]]; then
-  # matches: movie name (2013).xyz
+  # regex matches: movie name (2013).xyz
   # regex="(.*) \(([0-9]{4})\).*"
+
   # matches: movie name (2013) [hdtv-720p].xyz
-  regex="(.*) \(([0-9]{4})\)[- .]{0,3}(\[.*\])?\..*$"
+  regex="(.*) \(([0-9]{4})\)[- .]{0,3}(\[.*\])?.*"
 
   mkIsofs
   consolidateFiles
@@ -634,11 +643,13 @@ fi
 if [[ "$CATEGORY" = "tv" ]]; then
   # regex matches: show name - s01e02 - episode name.xyz
   # regex="(.*?)[- .]{1,3}[sS]([0-9]{1,4})[eE]([0-9]{1,2})[- .]{0,3}(.*?)\..*$"
+
   # regex matches: show name - s01e02 - episode name [hdtv-720p].xyz
   regex="(.*?)[- .]{1,3}[sS]([0-9]{1,4})[eE]([0-9]{1,2})[- .]{0,3}(.*?)[- .]{0,3}(\[.*\])?\..*$"
 
   # regex matches: the daily show - 2013-08-01 - episode name.xyz
   # regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{3}(.*).*"
+
   # regex matches: the daily show - 2013-08-01 - episode name [hdtv-720p].xyz
   regex_dated="(.*)[- .]{3}([0-9]{4})[- .]([0-9]{2})[- .]([0-9]{2})[- .]{0,3}(.*?)[- .]{0,3}(\[.*\])?\..*$"
 
@@ -671,7 +682,7 @@ if [[ "$CATEGORY" = "tv" ]]; then
       # strip leading 0 from month
       # month=$(echo $month | sed -r 's/^0//g')
       day=${BASH_REMATCH[4]}
-      # episode_name=${BASH_REMATCH[5]} # the soup doesn't have episode names
+      quality=${BASH_REMATCH[5]}
       # use the year as the season for dated shows
       season=$year
       episode=${year}${month}${day}
@@ -837,8 +848,7 @@ if [[ "$CATEGORY" = "sonarr" ]]; then
     echo "  - \$season        = $season"
     echo "  - \$episode       = $episode"
     echo "  - \$episode_name  = $episode_name"
-    echo "    Audio Channels:  $channels"
-    echo "    Quality:         $quality"
+    echo "  - \$quality       = $quality"
     echo
   elif [[ $series_type = "Daily" ]]; then
     # use the year as the season for dated shows
@@ -874,6 +884,7 @@ if [[ "$CATEGORY" = "sonarr" ]]; then
   # if move successful, remove original
   # if [[ $? -eq 0 ]]; then
   #   rm "$file"
+  # notify sonarr
   #   # curl -i -X POST -H "Content-Type:application/json" http://localhost:8989/api/command/?apikey=3a8a51773183422c9a511d0c9e733fb6 -d '{"name":"DownloadedEpisodesScan"}'
   # fi
   printTvDetails "$file" "$atomicFile"
