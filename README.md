@@ -64,7 +64,7 @@ add-apt-repository ppa:stebbins/handbrake-releases -y && apt-get update && apt-g
 * Encoding .iso requires sudoers nopasswd for mount/unmount commands
 
 ### Install
-You can download the latest version clicking [here](https://github.com/scrathe/tardisIVR/archive/master.zip) or close the repository with the command below.
+You can download the latest version clicking [here](https://github.com/scrathe/tardisIVR/archive/master.zip) or clone the repository with the command below.
 ```
 git clone https://github.com/scrathe/tardisIVR.git master
 ```
