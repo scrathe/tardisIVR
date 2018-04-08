@@ -8,7 +8,7 @@
 
 # Prerequisites
 # .iso support requires sudo nopasswd for the mount/unmount commands.
-# apt-get update && apt-get install autoconf automake bc build-essential software-properties-common zlib1g-dev -y
+# apt-get update && apt-get install autoconf automake bc build-essential mediainfo software-properties-common zlib1g-dev -y
 
 # HandBrake releases for Ubuntu https://github.com/HandBrake/HandBrake
 # apt-get install software-properties-common -y
