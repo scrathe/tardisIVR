@@ -1,3 +1,5 @@
+Project is no longer being developed. I recommend taking a look at this; https://github.com/HaveAGitGat/Tdarr
+
 # tardisIVR
 A BASH post-processing script for Shell/SABnzbd/Radarr/Sonarr.
 
